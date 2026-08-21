@@ -44,7 +44,6 @@ from auth_bp import make_before_request, login_required
 
 placenta_bp.before_request(make_before_request(
     api_prefix="/placenta/api/",
-    exempt_paths={"/placenta/api/cases/submit"},
     exempt_prefixes=("/placenta/pwa/",),
     check_mutations=True,
     redirect_on_unauth=False,

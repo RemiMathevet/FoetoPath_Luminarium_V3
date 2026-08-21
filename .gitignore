@@ -29,5 +29,8 @@ Lumi/embeddings/lora_*/
 # feedbacks saisis dans l'app : nominatifs + n° de cas
 Foeto/feedback/
 
+# exports ecrits par test_concat_v2.py a chaque run (horodates)
+Foeto/tests/test_output_v*.json
+
 # sauvegarde du viewer avant le chantier superpixels (31/07)
 Lumi_preSLIC/

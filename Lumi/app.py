@@ -134,12 +134,16 @@ def get_dz(slide_path: str) -> DeepZoomGenerator:
 
 # ── CHROMA (normalisation colorimétrique HES optionnelle, ?chroma=1) ────────
 _CHROMA_SRC_DIR = Path("/media/SSDsamsung/db/chroma_src")
+_CHROMA_CALIB = Path(
+    os.environ.get("CHROMA_CALIB", "/home/mathevet/Bureau/chroma/calib_target.json"))
 try:
-    sys.path.insert(0, "/home/mathevet/Bureau/FoetoPath_Luminarium/Lumi/embeddings")
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "embeddings"))
     import chroma as _chroma
-    _chroma_norm = _chroma.CHROMA(
-        json.loads(Path("/home/mathevet/Bureau/chroma/calib_target.json").read_text()))
-except Exception:
+    _chroma_norm = _chroma.CHROMA(json.loads(_CHROMA_CALIB.read_text()))
+except Exception as e:
+    # Fonctionnalite optionnelle : sans calibration le viewer tourne sans CHROMA,
+    # mais en silence on ne voit pas la difference — d'ou le log.
+    print(f"CHROMA desactive ({type(e).__name__}: {e})", file=sys.stderr)
     _chroma_norm = None
 
 

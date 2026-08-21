@@ -172,10 +172,10 @@ class TestCheckCase:
 
 class TestPwaSubmit:
 
-    def test_submit_creates_case(self, client, tmp_data_dir):
+    def test_submit_creates_case(self, user_client, tmp_data_dir):
         import db as foetopath_db
         foetopath_db.set_setting("data_root", tmp_data_dir)
-        resp = client.post("/placenta/api/cases/submit", data={
+        resp = user_client.post("/placenta/api/cases/submit", data={
             "dossier": "PWA_SUB01",
             "module": "macro_frais",
             "json_data": json.dumps({
@@ -190,20 +190,27 @@ class TestPwaSubmit:
         assert data["status"] == "ok"
         assert data["case_id"] is not None
 
-    def test_submit_missing_dossier(self, client):
-        resp = client.post("/placenta/api/cases/submit", data={
+    def test_submit_missing_dossier(self, user_client):
+        resp = user_client.post("/placenta/api/cases/submit", data={
             "module": "macro_frais",
             "json_data": "{}",
         })
         assert resp.status_code == 400
 
-    def test_submit_invalid_json(self, client):
-        resp = client.post("/placenta/api/cases/submit", data={
+    def test_submit_invalid_json(self, user_client):
+        resp = user_client.post("/placenta/api/cases/submit", data={
             "dossier": "BAD_JSON",
             "module": "macro_frais",
             "json_data": "{invalid json",
         })
         assert resp.status_code == 400
+
+    def test_submit_sans_session_renvoie_401(self, client):
+        # pwa_sync.js s'appuie sur ce 401 pour garder les donnees en local.
+        resp = client.post("/placenta/api/cases/submit", data={
+            "dossier": "PWA_SUB01", "module": "macro_frais", "json_data": "{}",
+        })
+        assert resp.status_code == 401
 
 
 class TestPermissions:

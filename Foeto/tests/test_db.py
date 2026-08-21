@@ -72,10 +72,10 @@ class TestCrudCases:
         assert len(results) == 1
         assert results[0]["numero_dossier"] == "24P1234"
 
-    def test_duplicate_numero_creates_second(self, foetus_db_ready, sample_foetus_case):
+    def test_duplicate_numero_refuse(self, foetus_db_ready, sample_foetus_case):
         foetus_db_ready.create_case(sample_foetus_case)
-        cid2 = foetus_db_ready.create_case(sample_foetus_case)
-        assert cid2 is not None
+        with pytest.raises(ValueError, match="existe déjà"):
+            foetus_db_ready.create_case(sample_foetus_case)
 
     def test_timestamps_set_on_create(self, foetus_db_ready, sample_foetus_case):
         cid = foetus_db_ready.create_case(sample_foetus_case)
