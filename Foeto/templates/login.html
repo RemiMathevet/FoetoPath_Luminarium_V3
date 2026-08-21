@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Connexion</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181a23;
+  --surface2: #1e2130;
+  --border: #2a2d3e;
+  --text: #e8eaf0;
+  --text2: #9498ab;
+  --muted: #5f6378;
+  --accent: #7c6aef;
+  --accent-hover: #6b5ad6;
+  --danger: #f87171;
+  --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px;
+  width: 380px;
+  max-width: 90vw;
+}
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.login-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.login-header p {
+  color: var(--text2);
+  font-size: 14px;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+.form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus {
+  border-color: var(--accent);
+}
+.btn-login {
+  width: 100%;
+  padding: 13px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+.btn-login:hover {
+  background: var(--accent-hover);
+}
+.error-msg {
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.3);
+  color: var(--danger);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="login-header">
+    <h1>FoetoPath</h1>
+    <p data-i18n="auth.login">Connexion requise</p>
+  </div>
+
+  {% if error %}
+  <div class="error-msg">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST" action="/auth/login">
+    {% if request.args.get('next') %}
+    <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+    {% endif %}
+
+    <div class="form-group">
+      <label for="username" data-i18n="auth.username">Identifiant</label>
+      <input type="text" id="username" name="username" autocomplete="username"
+             autofocus required data-i18n-placeholder="auth.username" placeholder="Votre identifiant">
+    </div>
+
+    <div class="form-group">
+      <label for="password" data-i18n="auth.password">Mot de passe</label>
+      <input type="password" id="password" name="password" autocomplete="current-password"
+             required data-i18n-placeholder="auth.password" placeholder="Votre mot de passe">
+    </div>
+
+    <button type="submit" class="btn-login" data-i18n="auth.submit">Se connecter</button>
+  </form>
+</div>
+
+<script src="/static/i18n.js"></script>
+<script>i18nInit().then(function() { i18nApply(); });</script>
+</body>
+</html>

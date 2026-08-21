@@ -1,0 +1,65 @@
+{{ t('cr.neuropath_title') }}
+========================
+
+Dossier : {{ numero or "#" }}
+Terme : {{ np_sa or "#" }} SA
+Date : {{ date_examen or "#" }}
+
+I. {{ t('cr.macroscopic_brain_exam') }}
+---------------------------------------
+{% for id, desc in (np_descriptions or {}).items() %}{% set labels = {"meninges": "Meninges", "gyration": "Gyration", "willis": "Polygone de Willis", "mamillaires": "Corps mamillaires", "colliculi": "Colliculi"} %}
+{{ labels.get(id, id) }} : {% if desc.status %}{{ desc.status }}{% else %}non evalue{% endif %}{% if desc.signes %} ({{ desc.signes|map(attribute='label')|join(', ') }}){% endif %}{% if desc.detail %} -- {{ desc.detail }}{% endif %}
+{% endfor %}
+
+II. {{ t('cr.brain_biometries') }}
+--------------------------
+
+{% if np_bio.masse_encephale %}Masse encephale fixee : {{ np_bio.masse_encephale }} g{% if np_zscores.zME %} ({{ np_zscores.zME }}){% endif %}{% else %}Masse encephale : non mesuree{% endif %}
+
+{% if np_bio.masse_cervelet %}Masse cervelet : {{ np_bio.masse_cervelet }} g{% if np_zscores.zMC %} ({{ np_zscores.zMC }}){% endif %}{% else %}Masse cervelet : non mesuree{% endif %}
+
+{% if np_cerv.ratio_ce %}Ratio cervelet/encephale : {{ np_cerv.ratio_ce }} %{% if np_zscores.zRatio %} ({{ np_zscores.zRatio }}){% endif %}{% endif %}
+
+{% set biom_labels = {"DOFD": "DOF droit", "DOFG": "DOF gauche", "DT": "DT (BIP cerebral)", "DTC": "DTC", "HautVermis": "Hauteur vermis", "CC": "Longueur corps calleux"} %}{% for key in ["DOFD", "DOFG", "DT", "DTC", "HautVermis", "CC"] %}{% if np_bio.get(key) %}{{ biom_labels.get(key, key) }} : {{ np_bio[key] }} mm{% if np_zscores.get(key) %} ({{ np_zscores[key] }}){% endif %}
+{% endif %}{% endfor %}
+
+{% if np_oculaire and (np_oculaire.oeil1.dt or np_oculaire.oeil2.dt) %}
+Biometries oculaires :
+{% if np_oculaire.oeil1.dt %}  Oeil 1 : DT {{ np_oculaire.oeil1.dt }} mm, DAP {{ np_oculaire.oeil1.dap or "#" }} mm, DC {{ np_oculaire.oeil1.dc or "#" }} mm{% endif %}
+{% if np_oculaire.oeil2.dt %}  Oeil 2 : DT {{ np_oculaire.oeil2.dt }} mm, DAP {{ np_oculaire.oeil2.dap or "#" }} mm, DC {{ np_oculaire.oeil2.dc or "#" }} mm{% endif %}
+{% endif %}
+
+III. {{ t('cr.cerebellum_aqueduct_cc') }}
+-----------------------------------------
+
+{% if np_aqueduc.status %}Aqueduc de Sylvius : {{ np_aqueduc.status|join(", ") }}{% if np_aqueduc.detail %} -- {{ np_aqueduc.detail }}{% endif %}{% else %}Aqueduc de Sylvius : non evalue{% endif %}
+
+{% if np_cc.status %}Corps calleux : {{ np_cc.status|join(", ") }}{% if np_cc.longueur %}, longueur {{ np_cc.longueur }} mm{% endif %}{% if np_cc.detail %} -- {{ np_cc.detail }}{% endif %}{% else %}Corps calleux : non evalue{% endif %}
+
+IV. {{ t('cr.right_hemisphere_sections') }}
+--------------------------------------------
+{% if np_thd %}{% for tranche in np_thd %}
+Tranche {{ tranche.numero or loop.index }} : {% if tranche.constatations %}{{ tranche.constatations|join(", ") }}{% else %}--{% endif %}{% if tranche.detail %} -- {{ tranche.detail }}{% endif %}{% if tranche.note %} ({{ tranche.note }}){% endif %}
+{% endfor %}{% else %}Non realisees.{% endif %}
+
+V. {{ t('cr.left_hemisphere_sections') }}
+--------------------------------------------
+{% if np_thg %}{% for tranche in np_thg %}
+Tranche {{ tranche.numero or loop.index }} : {% if tranche.constatations %}{{ tranche.constatations|join(", ") }}{% else %}--{% endif %}{% if tranche.detail %} -- {{ tranche.detail }}{% endif %}{% if tranche.note %} ({{ tranche.note }}){% endif %}
+{% endfor %}{% else %}Non realisees.{% endif %}
+
+{% if np_hpo %}
+VI. {{ t('cr.collected_hpo_codes') }}
+-------------------------
+{% for h in np_hpo %}{{ h.code }}  {{ h.term or "" }}  ({{ h.source or "" }}){% if h.auto %} [auto]{% endif %}
+{% endfor %}{% endif %}
+
+{{ t('cr.neuropath_conclusion') }}
+-----------------------------
+
+Examen neuropathologique realise a {{ np_sa or "#" }} SA.
+
+{% set anomalies_np = [] %}{% for id, desc in (np_descriptions or {}).items() %}{% if desc.status == "Anormal" %}{% if anomalies_np.append(id) %}{% endif %}{% endif %}{% endfor %}{% if np_aqueduc.status and np_aqueduc.status != ["Normal"] %}{% if anomalies_np.append("aqueduc") %}{% endif %}{% endif %}{% if np_cc.status and np_cc.status != ["Normal"] %}{% if anomalies_np.append("corps_calleux") %}{% endif %}{% endif %}
+{% if anomalies_np %}Anomalies notees :
+{% for a in anomalies_np %}  - {{ a }}
+{% endfor %}{% else %}Pas d'anomalie significative identifiee a l'examen neuropathologique.{% endif %}

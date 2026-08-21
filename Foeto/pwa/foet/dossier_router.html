@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>FœtoPath – Dossier</title>
+<link rel="manifest" href="/pwa/foet/manifest.json">
+<link rel="stylesheet" href="style.css">
+<style>
+  .dossier-screen {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 32px;
+    position: relative;
+  }
+  .dossier-screen h2 { font-size: 1.4rem; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .dossier-screen .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 28px; }
+  .dossier-input-wrap { width: 100%; max-width: 320px; }
+  .dossier-input-wrap input {
+    width: 100%; background: var(--surface); border: 2px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; color: var(--text);
+    font-size: 1.2rem; font-weight: 600; text-align: center;
+    letter-spacing: 0.05em; outline: none; transition: border-color 0.2s;
+    font-family: var(--font);
+  }
+  .dossier-input-wrap input:focus { border-color: var(--accent); }
+  .dossier-input-wrap input::placeholder { color: var(--text-muted); font-weight: 400; font-size: 1rem; }
+  .dossier-status { margin-top: 12px; font-size: 0.82rem; color: var(--text-muted); min-height: 2.8em; text-align: center; }
+  .status-new { color: var(--accent); }
+  .status-existing { color: var(--success); }
+  .dossier-btn {
+    width: 100%; max-width: 320px; margin-top: 10px; padding: 14px;
+    border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s; font-family: var(--font);
+  }
+  .dossier-btn:active { transform: scale(0.98); }
+  .btn-frais { background: var(--accent); color: #fff; }
+  .btn-fixe { background: var(--success); color: #0e1117; }
+  .btn-secondary-small {
+    background: var(--surface-hover); border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 0.85rem; opacity: 0.8;
+  }
+  .btn-row { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .gear-btn {
+    position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+    border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; color: var(--text-muted); cursor: pointer;
+    transition: background 0.2s;
+  }
+  .gear-btn:active { background: var(--surface-hover); }
+  .gear-btn.open { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .version-tag {
+    position: absolute; bottom: 16px; font-size: 0.65rem; color: var(--text-muted);
+    opacity: 0.5; letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+<div class="dossier-screen">
+  <div class="gear-btn" id="gear-btn" onclick="toggleSettings()">⚙</div>
+
+  <img src="logo.png" style="width:80px;height:80px;border-radius:16px;" onerror="this.style.display='none'">
+  <h2 data-i18n="pwa.foet.title">FœtoPath</h2>
+  <p class="subtitle" data-i18n="pwa.foet.subtitle">Examen fœtopathologique</p>
+
+  <!-- ═══ SETTINGS PANEL ═══ -->
+  <div class="settings-panel" id="settings-panel">
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Thème</div>
+      </div>
+    </div>
+    <div class="theme-chips" style="padding:8px 0 14px">
+      <div class="theme-chip" data-theme="sombre" onclick="setTheme('sombre')">🌙 Sombre</div>
+      <div class="theme-chip" data-theme="clair" onclick="setTheme('clair')">☀️ Clair</div>
+      <div class="theme-chip" data-theme="malvoyant" onclick="setTheme('malvoyant')">👁️ Malvoyant</div>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Mode gaucher</div>
+        <div class="setting-desc">Navigation et boutons à gauche</div>
+      </div>
+      <div class="toggle-switch" id="toggle-gaucher" onclick="toggleGaucher()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+    <div class="setting-row" style="border-bottom:none;padding-bottom:0">
+      <div>
+        <div class="setting-desc">v1.1 — Réf. Guihard-Costa, Maroun, Muller-Brochut</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DOSSIER INPUT ═══ -->
+  <div class="dossier-input-wrap" style="margin-top:20px">
+    <input type="text" id="dossier-input" placeholder="N° dossier (ex : 25P1234)" autocomplete="off" inputmode="text">
+  </div>
+  <div class="dossier-status" id="dossier-status"></div>
+  <div class="btn-row" id="btn-row"></div>
+
+  <div class="version-tag">FœtoPath v1.1</div>
+</div>
+
+<script src="helpers.js"></script>
+<script>
+// ═══ SETTINGS ═══
+function toggleSettings() {
+  var panel = document.getElementById('settings-panel');
+  var gear = document.getElementById('gear-btn');
+  panel.classList.toggle('open');
+  gear.classList.toggle('open');
+}
+
+function setTheme(t) {
+  var s = loadSettings();
+  s.theme = t;
+  saveSettings(s);
+  applyAll();
+}
+
+function toggleGaucher() {
+  var s = loadSettings();
+  s.gaucher = !s.gaucher;
+  saveSettings(s);
+  applyAll();
+}
+
+function applyAll() {
+  var s = loadSettings();
+  // Theme
+  document.body.classList.remove('theme-clair', 'theme-malvoyant');
+  if (s.theme === 'clair') document.body.classList.add('theme-clair');
+  else if (s.theme === 'malvoyant') document.body.classList.add('theme-malvoyant');
+  // Theme chips
+  var chips = document.querySelectorAll('.theme-chip');
+  for (var i = 0; i < chips.length; i++) {
+    chips[i].classList.toggle('active', chips[i].getAttribute('data-theme') === (s.theme || 'sombre'));
+  }
+  // Gaucher
+  if (s.gaucher) document.body.classList.add('gaucher');
+  else document.body.classList.remove('gaucher');
+  var tog = document.getElementById('toggle-gaucher');
+  if (tog) { if (s.gaucher) tog.classList.add('on'); else tog.classList.remove('on'); }
+}
+
+// ═══ FORMAT DOSSIER (aaPnnnn) ═══
+function normalizeDossier(val) {
+  return val.replace(/^(\d{2})p/i, '$1P');
+}
+function isValidDossierFormat(val) {
+  return /^\d{2}P\d+$/.test(val);
+}
+
+// ═══ DOSSIER LOGIC ═══
+var input = document.getElementById('dossier-input');
+var status = document.getElementById('dossier-status');
+var btnRow = document.getElementById('btn-row');
+
+// Auto-normalisation à la saisie : force le P majuscule
+input.addEventListener('input', function() {
+  var pos = input.selectionStart;
+  var before = input.value;
+  var after = normalizeDossier(before);
+  if (before !== after) {
+    input.value = after;
+    input.setSelectionRange(pos, pos);
+  }
+  updateUI();
+});
+input.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && input.value.trim() && isValidDossierFormat(normalizeDossier(input.value.trim()))) {
+    if (dossierExists(normalizeDossier(input.value.trim()))) goMacroAutopsie();
+    else goMacroFrais();
+  }
+});
+
+function dossierExists(id) {
+  if (window.Android && window.Android.dossierExists) return window.Android.dossierExists(id);
+  return false;
+}
+
+function updateUI() {
+  var val = normalizeDossier(input.value.trim());
+  if (!val) { status.innerHTML = ''; btnRow.innerHTML = ''; return; }
+  if (!isValidDossierFormat(val)) {
+    status.innerHTML = '<span style="color:#f87171;font-size:0.85rem;">Format attendu : <b>aaPnnnn</b> (ex: 25P1234)</span>';
+    btnRow.innerHTML = '';
+    return;
+  }
+  if (dossierExists(val)) {
+    status.innerHTML = '<span class="status-existing">● Dossier existant</span>';
+    btnRow.innerHTML = '<button class="dossier-btn btn-fixe" onclick="goMacroAutopsie()">Autopsie →</button><button class="dossier-btn btn-fixe" style="background:var(--purple);color:#fff" onclick="goMacroFixe()">Macro fixé →</button><button class="dossier-btn btn-fixe" style="background:var(--orange);color:#fff" onclick="goNeuro()">🧠 Neuropath →</button><button class="dossier-btn btn-secondary-small" onclick="goMacroFrais()">Reprendre macro frais</button>';
+  } else {
+    status.innerHTML = '<span class="status-new">● Nouveau dossier</span>';
+    btnRow.innerHTML = '<button class="dossier-btn btn-frais" onclick="goMacroFrais()">Macro état frais →</button>';
+  }
+}
+
+function goMacroFrais() { var d = normalizeDossier(input.value.trim()); if (d && isValidDossierFormat(d)) navigate('macro_frais.html', d); }
+function goMacroAutopsie() { var d = normalizeDossier(input.value.trim()); if (d && isValidDossierFormat(d)) navigate('macro_autopsie.html', d); }
+function goMacroFixe() { var d = normalizeDossier(input.value.trim()); if (d && isValidDossierFormat(d)) navigate('macro_fixe.html', d); }
+function goNeuro() { var d = normalizeDossier(input.value.trim()); if (d && isValidDossierFormat(d)) navigate('neuropath.html', d); }
+
+function navigate(page, dossier) {
+  if (window.Android && window.Android.navigateTo) window.Android.navigateTo(page, normalizeDossier(dossier));
+  else window.location.href = page + '?dossier=' + encodeURIComponent(normalizeDossier(dossier));
+}
+
+// ═══ INIT ═══
+applyAll();
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>pwaI18nInit();</script>
+</body>
+</html>

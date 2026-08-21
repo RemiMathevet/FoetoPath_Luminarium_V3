@@ -1,0 +1,130 @@
+COMPTE-RENDU D'EXAMEN FŒTOPLACENTAIRE / D'AUTOPSIE
+====================================================
+
+{{ t('cr.clinical_summary') }}
+---------------
+{{ type_issue or "IMG" }}{% if terme_sa %} à {{ terme_sa }} SA{% if terme_j %} + {{ terme_j }}j{% endif %}{% endif %}.
+Mère {{ nom_mere or "#" }} {{ prenom_mere or "#" }}{% if ddn_mere %}, née le {{ ddn_mere }}{% endif %}{% if age_mere %} ({{ age_mere }}){% endif %}{% if atcd_mat.gestite %}, G{{ atcd_mat.gestite }}P{{ atcd_mat.parite or "?" }}{% endif %}.
+{% if indication %}Contexte : {{ indication }}{% endif %}
+{% if atcd_mat.atcd_medicaux %}Antécédents maternels : {{ atcd_mat.atcd_medicaux }}{% endif %}
+{% if atcd_mat.fdr_consanguinite %}Consanguinité : oui{% endif %}
+{% if atcd_obs %}
+Récap ATCD obstétricaux :
+{{ _table_atcd_obs() }}
+{% endif %}
+{% if exam_prenataux %}{% if exam_prenataux.echo_t1_status %}Écho T1 : {{ exam_prenataux.echo_t1_status }}{% if exam_prenataux.echo_t1_details %} — {{ exam_prenataux.echo_t1_details }}{% endif %}
+{% endif %}{% if exam_prenataux.echo_t2_status %}Écho T2 : {{ exam_prenataux.echo_t2_status }}{% if exam_prenataux.echo_t2_details %} — {{ exam_prenataux.echo_t2_details }}{% endif %}
+{% endif %}{% endif %}
+{% if exam_prenataux.caryotype %}Caryotype : {{ exam_prenataux.caryotype }}{% endif %}
+{% if exam_prenataux.anomalies_suspectees %}Anomalies suspectées en prénatal : {{ exam_prenataux.anomalies_suspectees }}{% endif %}
+{% if exam_prenataux.anomalies_confirmees %}Anomalies confirmées : {{ exam_prenataux.anomalies_confirmees }}{% endif %}
+{% if date_deces %}Date d'accouchement/décès : {{ date_deces }}{% endif %}
+{% if date_autopsie_exif %}Date et heure de l'autopsie : {{ date_autopsie_exif }}{% elif date_examen %}Date de l'autopsie : {{ date_examen }}{% endif %}
+
+{{ t('cr.external_aspect') }}
+--------------
+Fœtus adressé à l'état {{ etat|lower or "frais" }}.
+{% if maceration and maceration.maroun_score is defined %}Macération : score Maroun {{ maceration.maroun_score }}{% endif %}
+{% if sexe %}Sexe : {{ "Masculin" if sexe == "M" else "Féminin" if sexe == "F" else "Indéterminé" }}{% endif %}
+{% if morpho %}
+Téguments : {{ _morpho('teguments') }}.
+Crâne : {{ _morpho('crane') }}.
+Fontanelles : {{ _morpho('fontanelles') }}.
+Face : {{ _morpho('symetrie') }}.
+Yeux : {{ _morpho('yeux') }}.
+Nez : {{ _morpho('nez') }}.
+Bouche : {{ _morpho('bouche') }}.
+Oreilles : {{ _morpho('oreilles') }}.
+Cou : {{ _morpho('cou') }}.
+Thorax : {{ _morpho('thorax') }}.
+Abdomen : {{ _morpho('abdomen') }}.
+Dos, rachis : {{ _morpho('dos') }}.
+Membres supérieurs : {{ _morpho('membres_sup') }}.
+Membres inférieurs : {{ _morpho('membres_inf') }}.
+Mains : {{ _morpho('mains') }}.
+Pieds : {{ _morpho('pieds_morpho') }}.
+OGE : {{ _morpho('oge') }}.
+Anus : {{ _morpho('anus') }}.
+Cordon : {{ _morpho('cordon') }}.
+{% endif %}
+{% if commentaire_frais %}Note : {{ commentaire_frais }}{% endif %}
+
+{{ t('cr.biometries') }}
+----------
+Courbes de référence : Guihard-Costa 2002.
+{{ table_biometries_externes() }}
+{% if bio.bip %}Diamètre bi-pariétal : {{ bio.bip }} mm{% endif %}
+{% if bio.pt %}Périmètre thoracique : {{ bio.pt }} mm{% endif %}
+{% if bio.pa %}Périmètre abdominal : {{ bio.pa }} mm{% endif %}
+{% if bio.dici %}Distance inter-canthi internes : {{ bio.dici }} mm{% endif %}
+
+{{ t('cr.internal_exam') }}
+--------------
+{% if ouverture.situs %}Situs viscéral : {{ ouverture.situs }}.{% endif %}
+{% if ouverture.diaphragme %}Coupoles diaphragmatiques : {{ ouverture.diaphragme|lower }}.{% endif %}
+{% if ouverture.ogi %}OGI : {{ ouverture.ogi|lower }}{% if ouverture.ogi_detail %} — {{ ouverture.ogi_detail }}{% endif %}.{% endif %}
+{% if ouverture.epanchements %}Épanchements : {% set ep = ouverture.epanchements %}{% if ep.pleural_d or ep.pleural_g %}pleural (D: {{ ep.pleural_d or 0 }} mL, G: {{ ep.pleural_g or 0 }} mL){% endif %}{% if ep.pericarde %}, péricardique {{ ep.pericarde }} mL{% endif %}{% if ep.peritoine %}, péritonéal {{ ep.peritoine }} mL{% endif %}.{% endif %}
+{% if voies_aeriennes.detail %}Voies aériennes : {{ voies_aeriennes.detail }}.{% endif %}
+
+{% if thorax.thymus %}Thymus : {{ thorax.thymus.aspect or "en place" }}{% if calc_org.thymus %}, masse {{ calc_org.thymus.valeur }} g ({{ calc_org.thymus.ds|round(2) }} DS){% endif %}.{% endif %}
+{% if thorax.tvi %}TVI : {{ thorax.tvi }}.{% endif %}
+{% if thorax.pericarde %}Péricarde : {{ thorax.pericarde|join(", ") if thorax.pericarde is iterable and thorax.pericarde is not string else thorax.pericarde }}.{% endif %}
+{% if thorax.tsa %}TSA : {{ thorax.tsa.etat or "normaux" }}{% if thorax.tsa.detail %} — {{ thorax.tsa.detail }}{% endif %}.{% endif %}
+{% if poumons %}Poumons : {{ poumons.morpho|join(", ") if poumons.morpho else "normalement lobés" }}{% if poumons.docimasie %}, docimasie {{ poumons.docimasie|lower }}{% endif %}{% if calc_org.poumons %}, masse totale {{ calc_org.poumons.valeur }} g ({{ calc_org.poumons.ds|round(2) }} DS){% endif %}{% if lbwr.valeur %}, LBWR = {{ "%.4f"|format(lbwr.valeur) }}{% if lbwr.alerte %} ⚠ {{ lbwr.alerte }}{% endif %}{% endif %}.{% endif %}
+{% if coeur %}Cœur : {% if coeur.crosse %}crosse {{ coeur.crosse|lower }}{% endif %}{% if coeur.isthme %}, isthme {{ coeur.isthme|lower }}{% endif %}{% if coeur.quatre_cav %}, {{ coeur.quatre_cav|lower }}{% endif %}{% if coeur.foramen_ovale %}, {{ coeur.foramen_ovale }}{% endif %}{% if coeur.sinus_cor %}, sinus coronaire {{ coeur.sinus_cor|lower }}{% endif %}{% if coeur.gros_vx %}, gros vaisseaux {{ coeur.gros_vx|lower }}{% endif %}{% if coeur.og_retours %}, retours veineux OG : {{ coeur.og_retours }}{% endif %}{% if calc_org.coeur %}, masse {{ calc_org.coeur.valeur }} g ({{ calc_org.coeur.ds|round(2) }} DS){% endif %}.
+{% if coeur.vd_ej and coeur.vd_ej.valve_pulm %}  Valve pulmonaire : {{ coeur.vd_ej.valve_pulm|lower }}.{% endif %}
+{% if coeur.vg_ej %}{% if coeur.vg_ej.septum_iv %}  Septum IV : {{ coeur.vg_ej.septum_iv|lower }}{% if coeur.vg_ej.civ_diam %} (CIV {{ coeur.vg_ej.civ_diam }} mm){% endif %}.{% endif %}{% if coeur.vg_ej.valve_aort %}  Valve aortique : {{ coeur.vg_ej.valve_aort|lower }}.{% endif %}{% endif %}
+{% if coeur.vd_av and coeur.vd_av.valve_tric %}  Valve tricuspide : {{ coeur.vd_av.valve_tric|lower }}.{% endif %}
+{% if coeur.vg_av %}{% if coeur.vg_av.valve_mitr %}  Valve mitrale : {{ coeur.vg_av.valve_mitr|lower }}{% if coeur.vg_av.detail %} — {{ coeur.vg_av.detail }}{% endif %}.{% endif %}{% endif %}
+{% endif %}
+{% if digestif.foie %}Foie : {{ digestif.foie.aspect or "normal" }}{% if calc_org.foie %}, masse {{ calc_org.foie.valeur }} g ({{ calc_org.foie.ds|round(2) }} DS){% endif %}.{% endif %}
+{% if digestif.estomac %}Estomac : {{ digestif.estomac.aspect or "normal" }}{% if digestif.estomac.docimasie_gastrique %}, docimasie gastrique {{ digestif.estomac.docimasie_gastrique|lower }}{% endif %}{% if digestif.estomac.contenu %}, contenu : {{ digestif.estomac.contenu }}{% endif %}.{% endif %}
+{% if digestif.tube_dig %}Tube digestif : {{ digestif.tube_dig.aspects|join(", ") if digestif.tube_dig.aspects else "normal" }}{% if digestif.tube_dig.detail %} — {{ digestif.tube_dig.detail }}{% endif %}.{% endif %}
+{% if digestif.meconium %}Méconium : {{ digestif.meconium|lower }}.{% endif %}
+{% if digestif.anus %}Anus (examen interne) : {{ digestif.anus|lower }}.{% endif %}
+{% if digestif.rate %}Rate : {{ digestif.rate.aspects|join(", ") if digestif.rate.aspects else "normale" }}{% if calc_org.rate %}, masse {{ calc_org.rate.valeur }} g ({{ calc_org.rate.ds|round(2) }} DS){% endif %}.{% endif %}
+{% if digestif.pancreas %}Pancréas : {{ digestif.pancreas.aspect or "normal" }}{% if calc_org.pancreas %}, masse {{ calc_org.pancreas.valeur }} g ({{ calc_org.pancreas.ds|round(2) }} DS){% endif %}.{% endif %}
+{% if retroperitoine.reins %}Reins : {{ retroperitoine.reins.aspects|join(", ") if retroperitoine.reins.aspects else "normaux" }}{% if calc_org.reins %}, masse totale {{ calc_org.reins.valeur }} g ({{ calc_org.reins.ds|round(2) }} DS){% endif %}.{% endif %}
+{% if retroperitoine.surrenales %}Surrénales : {{ retroperitoine.surrenales.aspects|join(", ") if retroperitoine.surrenales.aspects else "normales" }}{% if calc_org.surrenales %}, masse totale {{ calc_org.surrenales.valeur }} g ({{ calc_org.surrenales.ds|round(2) }} DS){% endif %}.{% endif %}
+{% if retroperitoine.voies_urin %}Voies urinaires : {{ retroperitoine.voies_urin|lower }}.{% endif %}
+{% if retroperitoine.vessie %}Vessie : {{ retroperitoine.vessie|lower }}.{% endif %}
+{% if retroperitoine.gonades_pos %}Gonades : {{ retroperitoine.gonades_pos|lower }}.{% endif %}
+{% if neuro %}Examen neuropathologique : {% if neuro.cerveau_ext %}{{ neuro.cerveau_ext|join(", ") }}{% else %}sans particularité{% endif %}{% if neuro.gyration %}, gyration {{ neuro.gyration|lower }}{% endif %}{% if neuro.moelle %}, moelle {{ neuro.moelle|lower }}{% endif %}{% if neuro.detail %} — {{ neuro.detail }}{% endif %}.{% endif %}
+
+{{ table_biometries_internes() }}
+Poids des organes en accord avec le terme (courbes GC 2002){% if alertes %}, à l'exception de :
+{% for a in alertes %}  - {{ a }}
+{% endfor %}{% else %}.{% endif %}
+{% if commentaire_autopsie %}
+Note d'autopsie : {{ commentaire_autopsie }}
+{% endif %}
+{% if macro_fixe and macro_fixe.organes %}
+{{ t('cr.exam_after_fixation') }}
+---------------------
+{% for org_id, org in macro_fixe.organes.items() %}{% if org.lesion_desc %}{{ org_id|replace("_", " ")|capitalize }} : {{ org.lesion_desc }}{% if org.lesion_k7 %} (cassettes lésion : {{ org.lesion_k7 }}){% endif %}.
+{% endif %}{% endfor %}{% if macro_fixe.commentaire %}Note : {{ macro_fixe.commentaire }}{% endif %}
+{% endif %}
+{{ t('cr.samples_collected') }}
+----------------------
+{% if prelevements.annexes %}Prélèvements standard : {{ prelevements.annexes|join(", ") }}.{% endif %}
+{% if prelevements.annexes_det %}Compléments : {{ prelevements.annexes_det }}.{% endif %}
+{% if prelevements.speciaux %}Prélèvements spéciaux : {{ prelevements.speciaux|join(", ") }}{% if prelevements.speciaux_det %} ({{ prelevements.speciaux_det }}){% endif %}.{% endif %}
+{% if prelevements.congelation %}Congélation : {{ prelevements.congelation }}.{% endif %}
+{% if prelevements.dnatheque %}DNAthèque : {{ prelevements.dnatheque }}.{% endif %}
+
+Photographies numériques : {{ photos_frais|length + photos_autopsie|length }} clichés.
+{% if labellisation_table or labellisation_micro_text %}
+{{ t('cr.microscopy') }}
+-----------
+{% if labellisation_table %}
+{% for row in labellisation_table %}
+{{ row.organe }} : {% for f in row.findings %}{{ f.text }}{% if f.nb_lames > 2 %} (diffus, {{ f.nb_lames }} lames){% endif %}{% if not loop.last %} {% endif %}{% endfor %}{% if row.notes %} — Note : {{ row.notes | join('; ') }}{% endif %}
+{% endfor %}
+{% else %}{{ labellisation_micro_text }}
+{% endif %}{% endif %}
+{{ t('cr.conclusion') }}
+----------
+Fœtus de {{ terme_sa or "#" }} SA, {% if maceration and maceration.maroun_score and maceration.maroun_score > 0 %}macéré (score Maroun {{ maceration.maroun_score }}){% else %}non macéré{% endif %}, de sexe {{ "masculin" if sexe == "M" else "féminin" if sexe == "F" else "indéterminé" }}, {{ trophicite }}{% if all_anomalies %}, présentant :
+{% for a in all_anomalies %}  - {{ a }}
+{% endfor %}{% else %}.
+Absence de malformation externe ou viscérale.{% endif %}

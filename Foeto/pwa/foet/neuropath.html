@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>FoetoPath - Neuropathologie</title>
+<meta name="theme-color" content="#0e1117">
+<link rel="manifest" href="/pwa/foet/manifest.json">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── Neuropath-specific styles ── */
+.biom-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.8rem}
+.biom-table th{text-align:left;padding:8px;background:var(--surface);color:var(--text-muted);font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.biom-table th:first-child{border-radius:var(--radius) 0 0 0}.biom-table th:last-child{border-radius:0 var(--radius) 0 0}
+.biom-table td{padding:8px;border-bottom:1px solid var(--border);vertical-align:middle}
+.biom-table .pn{font-weight:500;color:var(--text)}
+.biom-table input{width:76px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:"Courier New",monospace;font-size:.86rem;padding:6px 8px;border-radius:6px;text-align:center;outline:none}
+.biom-table input:focus{border-color:var(--border-focus)}
+.biom-ref{font-family:"Courier New",monospace;font-size:.74rem;color:var(--text-muted)}
+.zscore{display:inline-block;padding:3px 8px;border-radius:6px;font-family:"Courier New",monospace;font-size:.78rem;font-weight:600}
+.z-ok{background:var(--success-dim);color:var(--success)}
+.z-warn{background:var(--warning-dim);color:var(--warning)}
+.z-alert{background:var(--danger-dim);color:var(--danger)}
+.z-na{background:var(--surface);color:var(--text-muted)}
+.computed-val{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--surface);border-radius:8px;font-family:"Courier New",monospace;font-size:.86rem;font-weight:600}
+.ratio-highlight{font-size:1rem;color:var(--accent)}
+.hpo-tag{font-size:.6rem;font-family:"Courier New",monospace;color:var(--purple);background:var(--purple-dim);padding:2px 7px;border-radius:10px;white-space:nowrap;margin-left:4px}
+
+/* ── Photo grid ── */
+.photo-grid-np{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.photo-grid-np.cols-2{grid-template-columns:repeat(2,1fr)}
+.photo-slot-np{aspect-ratio:1;background:var(--bg);border:2px dashed var(--border);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s}
+.photo-slot-np:hover{border-color:var(--accent)}
+.photo-slot-np .slot-label{font-size:.62rem;color:var(--text-muted);text-align:center;padding:0 4px;font-weight:500;margin-top:4px}
+.photo-slot-np .slot-icon{font-size:1.2rem;color:var(--text-muted)}
+.photo-slot-np img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.photo-slot-np .rm-photo{position:absolute;top:3px;right:3px;width:20px;height:20px;background:var(--danger);border:none;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;z-index:2;display:none;align-items:center;justify-content:center}
+.photo-slot-np:hover .rm-photo{display:flex}
+.photo-slot-np.has-photo{border-style:solid;border-color:var(--success)}
+
+/* ── CC pair ── */
+.cc-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.cc-side{text-align:center}
+.cc-side-label{font-size:.78rem;font-weight:600;color:var(--accent);margin-bottom:8px}
+.photo-single-np{width:100px;height:100px;margin:0 auto;background:var(--bg);border:2px dashed var(--border);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s}
+.photo-single-np:hover{border-color:var(--accent)}
+.photo-single-np img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-single-np.has-photo{border-style:solid;border-color:var(--success)}
+.photo-single-np .rm-photo{position:absolute;top:3px;right:3px;width:20px;height:20px;background:var(--danger);border:none;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;z-index:2;display:none;align-items:center;justify-content:center}
+.photo-single-np:hover .rm-photo{display:flex}
+
+/* ── Slice items ── */
+.slice-item{display:flex;gap:8px;align-items:flex-start;padding:10px;background:var(--surface);border-radius:var(--radius);margin-bottom:6px}
+.slice-num{width:26px;height:26px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-size:.72rem;font-weight:600;color:var(--text-muted);flex-shrink:0}
+.slice-body{flex:1}
+.slice-photos{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.slice-photo-btn{width:48px;height:48px;background:var(--bg);border:1.5px dashed var(--border);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--text-muted);position:relative;overflow:hidden}
+.slice-photo-btn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slice-photo-btn.has-photo{border-style:solid;border-color:var(--success)}
+.slice-note{width:100%;margin-top:6px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:.76rem;padding:6px 8px;border-radius:6px;resize:vertical;min-height:28px;outline:none}
+.slice-note:focus{border-color:var(--border-focus)}
+.add-slice-btn{width:100%;padding:10px;background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--radius);color:var(--text-muted);font-family:var(--font);font-size:.8rem;cursor:pointer;transition:all .2s}
+.add-slice-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── Ocular biometrics ── */
+.eye-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.eye-col .eye-title{font-size:.78rem;font-weight:600;color:var(--accent);margin-bottom:8px;text-align:center}
+
+/* ── Description blocks ── */
+.desc-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px}
+.desc-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.desc-label{font-size:.82rem;font-weight:600;color:var(--text);flex:1;min-width:120px}
+.desc-detail{display:none;margin-top:8px}
+.desc-detail.show{display:block}
+.desc-area{width:100%;min-height:60px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:.84rem;padding:8px 10px;border-radius:6px;resize:vertical;outline:none}
+.desc-area:focus{border-color:var(--border-focus)}
+
+@media(max-width:400px){.photo-grid-np{grid-template-columns:repeat(2,1fr)}.biom-table input{width:60px}.cc-pair{grid-template-columns:1fr}.eye-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none">
+
+<div class="header">
+  <div class="header-top">
+    <h1 data-i18n="pwa.foet.neuropath">Neuropathologie</h1>
+    <span class="dossier-badge blue" id="badge-dossier">--</span>
+  </div>
+  <div class="nav-pills">
+    <a class="nav-pill active" onclick="scrollToSection('sec-macro')" data-nav="sec-macro"><span class="pill-dot" id="pdot-macro"></span>Macro</a>
+    <a class="nav-pill" onclick="scrollToSection('sec-biom')" data-nav="sec-biom"><span class="pill-dot" id="pdot-biom"></span>Biometries</a>
+    <a class="nav-pill" onclick="scrollToSection('sec-cerv')" data-nav="sec-cerv"><span class="pill-dot" id="pdot-cerv"></span>Cervelet / CC</a>
+    <a class="nav-pill" onclick="scrollToSection('sec-oculaire')" data-nav="sec-oculaire"><span class="pill-dot" id="pdot-oculaire"></span>Oculaire</a>
+    <a class="nav-pill" onclick="scrollToSection('sec-thd')" data-nav="sec-thd"><span class="pill-dot" id="pdot-thd"></span>Tranches HD</a>
+    <a class="nav-pill" onclick="scrollToSection('sec-thg')" data-nav="sec-thg"><span class="pill-dot" id="pdot-thg"></span>Tranches HG</a>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ── SA Selector ── -->
+<div class="acc-section open" id="sec-terme">
+<div class="acc-header" onclick="toggleAcc('sec-terme')"><span class="acc-icon"></span><span class="acc-title">Terme (SA)</span><span class="acc-chevron">&#9660;</span></div>
+<div class="acc-body"><div class="acc-body-inner">
+  <div class="field-row"><div class="field">
+    <label>Terme SA</label>
+    <select id="saSelect" onchange="onSAChange()" style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:1rem;padding:10px 12px;border-radius:8px;width:100%">
+      <option value="">Selectionner SA</option>
+      <option>18</option><option>19</option><option>20</option><option>21</option>
+      <option>22-23</option><option>24-25</option><option>26</option><option>27</option>
+      <option>28</option><option>29</option><option>30</option><option>31</option>
+      <option>32</option><option>33</option><option>34</option><option>35-36</option>
+      <option>37-38</option><option>38-39</option><option>40-41</option>
+    </select>
+  </div></div>
+  <div class="section-hint" id="terme-hint">Selectionner le terme pour afficher les references biometriques.</div>
+  <div id="terme-source" style="display:none;margin-top:6px;font-size:.75rem;padding:6px 10px;background:var(--accent-dim);border-radius:6px;color:var(--accent)"></div>
+</div></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SECTION 1 : MACROSCOPIE            -->
+<!-- ═══════════════════════════════════ -->
+<div class="acc-section sec-neuro open" id="sec-macro">
+<div class="acc-header" onclick="toggleAcc('sec-macro')"><span class="acc-icon"></span><span class="acc-title">Photos de l'encephale</span><span class="acc-status empty" id="ast-macro">--</span><span class="acc-chevron">&#9660;</span></div>
+<div class="acc-body"><div class="acc-body-inner">
+  <div class="photo-grid-np" id="macroGrid"></div>
+  <button class="btn-add-photo" onclick="addExtraPhotoNP('macroEx')" style="margin-top:8px">+ Photo supplementaire</button>
+  <div id="macroEx" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"></div>
+</div></div>
+</div>
+
+<div class="acc-section sec-neuro" id="sec-macro-desc">
+<div class="acc-header" onclick="toggleAcc('sec-macro-desc')"><span class="acc-icon"></span><span class="acc-title">Description macroscopique</span><span class="acc-status empty" id="ast-macro-desc">--</span><span class="acc-chevron">&#9660;</span></div>
+<div class="acc-body"><div class="acc-body-inner">
+  <div id="macroDescBlocks"></div>
+</div></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SECTION 2 : BIOMETRIES             -->
+<!-- ═══════════════════════════════════ -->
+<div class="acc-section sec-bio" id="sec-biom">
+<div class="acc-header" onclick="toggleAcc('sec-biom')"><span class="acc-icon"></span><span class="acc-title">Biometries cerebrales</span><span class="acc-status empty" id="ast-biom">--</span><span class="acc-chevron">&#9660;</span></div>
+<div class="acc-body"><div class="acc-body-inner">
+
+  <div class="sub-title">Masse encephale</div>
+  <div class="field-row"><div class="field">
+    <label>Masse fixee</label>
+    <input type="number" step="0.1" id="masseEnc" placeholder="--" oninput="calcAll()" inputmode="decimal">
+    <div class="unit">g</div>
+  </div></div>
+  <div class="field-row">
+    <div class="field"><label>Ref. attendue</label><span class="computed-val" id="refME">--</span></div>
+    <div class="field"><label>Z-score</label><span class="zscore z-na" id="zME">--</span></div>
+  </div>
+
+  <div class="separator"></div>
+  <div class="sub-title">Biometries cerebrales</div>
+  <div style="overflow-x:auto">
+    <table class="biom-table">
+      <thead><tr><th>Parametre</th><th>Mesure</th><th>Ref (moy +/- ET)</th><th>Z-score</th></tr></thead>
+      <tbody id="biomTBody"></tbody>
+    </table>
+  </div>
+
+</div></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SECTION 3 : CERVELET / CC          -->
+<!-- ═══════════════════════════════════ -->
+<div class="acc-section sec-neuro" id="sec-cerv">
+<div class="acc-header" onclick="toggleAcc('sec-cerv')"><span class="acc-icon"></span><span class="acc-title">Cervelet / Aqueduc / Corps calleux</span><span class="acc-status empty" id="ast-cerv">--</span><span class="acc-chevron">&#9660;</span></div>
+<div class="acc-body"><div class="acc-body-inner">
+
+  <!-- Cervelet -->
+  <div class="sub-title">Cervelet</div>
+  <div class="field-row"><div class="field">
+    <label>Masse cervelet</label>
+    <input type="number" step="0.1" id="masseCerv" placeholder="--" oninput="calcAll()" inputmode="decimal">
+    <div class="unit">g</div>
+  </div></div>
+  <div class="field-row">
+    <div class="field"><label>Ref. attendue</label><span class="computed-val" id="refMC">--</span></div>
+    <div class="field"><label>Z-score</label><span class="zscore z-na" id="zMC">--</span></div>
+  </div>
+  <div class="separator"></div>
+  <div class="field-row">
+    <div class="field"><label style="font-weight:700;color:var(--accent)">Ratio C/E</label><span class="computed-val ratio-highlight" id="ratioCE">--</span><div class="unit">%</div></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Ratio attendu</label><span class="computed-val" id="refRatio">--</span></div>
+    <div class="field"><label>Z-score ratio</label><span class="zscore z-na" id="zRatio">--</span></div>
+  </div>
+  <div class="separator"></div>
+
+  <div class="sub-title">Photos cervelet</div>
+  <div class="photo-grid-np cols-2" id="cervGrid"></div>
+  <button class="btn-add-photo" onclick="addExtraPhotoNP('cervEx')" style="margin-top:8px">+ Photo</button>
+  <div id="cervEx" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"></div>
+
+  <div class="separator"></div>
+
+  <!-- Aqueduc -->
+  <div class="sub-title">Aqueduc de Sylvius</div>
+  <div id="aquedDescBlock"></div>
+
+  <div class="separator"></div>
+
+  <!-- Corps Calleux -->
+  <div class="sub-title">Corps calleux - Callosotomie</div>
+  <div class="cc-pair">
+    <div class="cc-side">
+      <div class="cc-side-label">CC Droit</div>
+      <div class="photo-single-np" id="ccPhotoD" onclick="pickSinglePhotoNP(this)">
+        <span class="slot-icon">+</span>
+        <button class="rm-photo" onclick="rmSingleNP(event,this)">x</button>
+      </div>
+    </div>
+    <div class="cc-side">
+      <div class="cc-side-label">CC Gauche</div>
+      <div class="photo-single-np" id="ccPhotoG" onclick="pickSinglePhotoNP(this)">
+        <span class="slot-icon">+</span>
+        <button class="rm-photo" onclick="rmSingleNP(event,this)">x</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-row"><div class="field">
+    <label>Longueur CC</label>
+    <input type="number" step="0.1" id="biom_CC" placeholder="--" oninput="calcBiom('CC')" inputmode="decimal">
+    <div class="unit">mm</div>
+  </div></div>
+  <div class="field-row">
+    <div class="field"><label>Ref. CC</label><span class="computed-val biom-ref" id="ref_CC">--</span></div>
+    <div class="field"><label>Z-score CC</label><span class="zscore z-na" id="z_CC">--</span></div>
+  </div>
+
+  <div class="separator"></div>
+  <div id="ccDescBlock"></div>
+
+</div></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SECTION 4 : BIOMETRIES OCULAIRES   -->
+<!-- ═══════════════════════════════════ -->
+<div class="acc-section sec-bio" id="sec-oculaire">
+<div class="acc-header" onclick="toggleAcc('sec-oculaire')"><span class="acc-icon"></span><span class="acc-title">Biometries oculaires</span><span class="acc-status empty" id="ast-oculaire">--</span><span class="acc-chevron">&#9660;</span></div>
+<div class="acc-body"><div class="acc-body-inner">
+  <div class="eye-grid">
+    <div class="eye-col">
+      <div class="eye-title">Oeil 1</div>
+      <div class="field-row"><div class="field"><label>DT</label><input type="number" step="0.1" id="oeil1_dt" placeholder="--" inputmode="decimal"><div class="unit">mm</div></div></div>
+      <div class="field-row"><div class="field"><label>DAP</label><input type="number" step="0.1" id="oeil1_dap" placeholder="--" inputmode="decimal"><div class="unit">mm</div></div></div>
+      <div class="field-row"><div class="field"><label>DC</label><input type="number" step="0.1" id="oeil1_dc" placeholder="--" inputmode="decimal"><div class="unit">mm</div></div></div>
+    </div>
+    <div class="eye-col">
+      <div class="eye-title">Oeil 2</div>
+      <div class="field-row"><div class="field"><label>DT</label><input type="number" step="0.1" id="oeil2_dt" placeholder="--" inputmode="decimal"><div class="unit">mm</div></div></div>
+      <div class="field-row"><div class="field"><label>DAP</label><input type="number" step="0.1" id="oeil2_dap" placeholder="--" inputmode="decimal"><div class="unit">mm</div></div></div>
+      <div class="field-row"><div class="field"><label>DC</label><input type="number" step="0.1" id="oeil2_dc" placeholder="--" inputmode="decimal"><div class="unit">mm</div></div></div>
+    </div>
+  </div>
+</div></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SECTION 5 : TRANCHES HD            -->
+<!-- ═══════════════════════════════════ -->
+<div class="acc-section sec-neuro" id="sec-thd">
+<div class="acc-header" onclick="toggleAcc('sec-thd')"><span class="acc-icon"></span><span class="acc-title">Tranches - Hemisphere Droit</span><span class="acc-status empty" id="ast-thd">--</span><span class="acc-chevron">&#9660;</span></div>
+<div class="acc-body"><div class="acc-body-inner">
+  <div id="slicesHD"></div>
+  <button class="add-slice-btn" onclick="addSlice('HD')">+ Ajouter une tranche</button>
+</div></div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- SECTION 6 : TRANCHES HG            -->
+<!-- ═══════════════════════════════════ -->
+<div class="acc-section sec-neuro" id="sec-thg">
+<div class="acc-header" onclick="toggleAcc('sec-thg')"><span class="acc-icon"></span><span class="acc-title">Tranches - Hemisphere Gauche</span><span class="acc-status empty" id="ast-thg">--</span><span class="acc-chevron">&#9660;</span></div>
+<div class="acc-body"><div class="acc-body-inner">
+  <div id="slicesHG"></div>
+  <button class="add-slice-btn" onclick="addSlice('HG')">+ Ajouter une tranche</button>
+</div></div>
+</div>
+
+</div><!-- end content -->
+
+<div class="bottom-bar">
+  <button class="btn btn-secondary" onclick="goBack()" data-i18n="pwa.common.back_dossier">&#8592; Dossier</button>
+  <button class="btn btn-primary" id="btnSave" style="flex:1.5" onclick="saveAndExport()" data-i18n="pwa.common.save">Enregistrer</button>
+</div>
+
+<script src="helpers.js"></script>
+<script src="pwa_common.js"></script>
+<script>
+// ══════════════════════════════════════════════════════
+// GLOBALS
+// ══════════════════════════════════════════════════════
+var dossier = initDossierField();
+applySettings();
+
+var REF_ME = {}, REF_MI = {}, REF_RI = {}, REF_B = {}, REG = {};
+var npPhotos = {};
+var sliceN = { HD: 0, HG: 0 };
+
+// ══════════════════════════════════════════════════════
+// LOAD BIOMETRY TABLES (from JSON files)
+// ══════════════════════════════════════════════════════
+function loadBiometryTables() {
+  var base = 'Biometry_tables/';
+  return Promise.all([
+    fetch(base + 'ref_masse_encephale.json').then(function(r){return r.json()}),
+    fetch(base + 'ref_masse_infratentoriel.json').then(function(r){return r.json()}),
+    fetch(base + 'ref_ratio_infra_encephale.json').then(function(r){return r.json()}),
+    fetch(base + 'ref_biometries_cerebrales.json').then(function(r){return r.json()})
+  ]).then(function(results) {
+    REF_ME = results[0].data;
+    REF_MI = results[1].data;
+    REF_RI = results[2].data;
+    REF_B = results[3].data;
+    REG = results[3].regression;
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// HPO MAPPINGS (curated from hpo_mapping.js - Encephale)
+// ══════════════════════════════════════════════════════
+var MACRO_DESCS = [
+  { id: 'meninges', label: 'Meninges',
+    hpo_abnormal: 'HP:0010651', hpo_label: 'Abnormality of the meninges',
+    sub_hpo: [
+      { code: 'HP:0002170', label: 'Hemorragie meningee' },
+      { code: 'HP:0001287', label: 'Meningite / inflammation' },
+      { code: 'HP:0100028', label: 'Epaississement meninge' }
+    ],
+    placeholder: 'Decrire anomalie des meninges...' },
+  { id: 'gyration', label: 'Gyration',
+    hpo_abnormal: 'HP:0002536', hpo_label: 'Abnormal cortical gyration',
+    sub_hpo: [
+      { code: 'HP:0002126', label: 'Polymicrogyrie' },
+      { code: 'HP:0001302', label: 'Pachygyrie' },
+      { code: 'HP:0001339', label: 'Lissencephalie' },
+      { code: 'HP:0009879', label: 'Gyration simplifiee' }
+    ],
+    placeholder: 'Decrire anomalie de gyration...' },
+  { id: 'willis', label: 'Polygone de Willis',
+    hpo_abnormal: 'HP:0002617', hpo_label: 'Cerebrovascular abnormality',
+    sub_hpo: [
+      { code: 'HP:0002617', label: 'Asymetrie vasculaire' },
+      { code: 'HP:0002631', label: 'Anevrisme' },
+      { code: 'HP:0100028', label: 'Hypoplasie arterielle' }
+    ],
+    placeholder: 'Decrire anomalie du polygone de Willis...' },
+  { id: 'mamillaires', label: 'Corps mamillaires',
+    hpo_abnormal: 'HP:0007160', hpo_label: 'Abnormality of mammillary bodies',
+    sub_hpo: [
+      { code: 'HP:0007160', label: 'Hypoplasie' },
+      { code: 'HP:0007160', label: 'Asymetrie' },
+      { code: 'HP:0007160', label: 'Absence' }
+    ],
+    placeholder: 'Decrire anomalie des corps mamillaires...' },
+  { id: 'colliculi', label: 'Colliculi',
+    hpo_abnormal: 'HP:0002363', hpo_label: 'Abnormal brainstem morphology',
+    sub_hpo: [
+      { code: 'HP:0007392', label: 'Mesencephalosynapsis (fusion)' },
+      { code: 'HP:0002363', label: 'Asymetrie' },
+      { code: 'HP:0002363', label: 'Hypoplasie' }
+    ],
+    placeholder: 'Decrire anomalie des colliculi...' }
+];
+
+var CC_CHIPS = [
+  { label: 'Normal', cls: 'normal', hpo: null },
+  { label: 'CC incomplet', cls: 'abnormal', hpo: 'HP:0001338', hpo_l: 'Partial agenesis of CC' },
+  { label: 'CC court / hypoplasique', cls: 'warning', hpo: 'HP:0002079', hpo_l: 'Hypoplasia of CC' },
+  { label: 'Agenesie CC', cls: 'abnormal', hpo: 'HP:0001274', hpo_l: 'Agenesis of CC' },
+  { label: 'Autre', cls: 'other', hpo: null }
+];
+
+var AQUED_CHIPS = [
+  { label: 'Normal', cls: 'normal', hpo: null },
+  { label: 'Stenose', cls: 'abnormal', hpo: 'HP:0002410', hpo_l: 'Aqueductal stenosis' },
+  { label: 'Atresie', cls: 'abnormal', hpo: 'HP:0002410', hpo_l: 'Aqueductal stenosis' },
+  { label: 'Autre', cls: 'other', hpo: null }
+];
+
+var SLICE_CHIPS = [
+  { label: 'Normales', cls: 'normal', hpo: null },
+  { label: 'Hemorragie periventriculaire', cls: 'abnormal', hpo: 'HP:0030746', hpo_l: 'Intraventricular hemorrhage' },
+  { label: 'Heterotopie nodulaire', cls: 'purple', hpo: 'HP:0002281', hpo_l: 'Periventricular nodular heterotopia' },
+  { label: 'Dilatation ventriculaire', cls: 'warning', hpo: 'HP:0002119', hpo_l: 'Ventriculomegaly' },
+  { label: 'Autre', cls: 'other', hpo: null }
+];
+
+var BIOM_P = [
+  { id: 'DOFD', label: 'DOF droit', unit: 'mm' },
+  { id: 'DOFG', label: 'DOF gauche', unit: 'mm' },
+  { id: 'DT', label: 'DT (BIP cerebral)', unit: 'mm' },
+  { id: 'DTC', label: 'DTC', unit: 'mm' },
+  { id: 'HautVermis', label: 'Hauteur vermis', unit: 'mm' }
+];
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function masseKey(sa) {
+  var s = String(sa), n = parseFloat(s);
+  if (REF_ME[s]) return s;
+  if (n <= 9) return '8-9'; if (n <= 11) return '10-11'; if (n <= 13) return '12-13';
+  if (n <= 15) return '14-15'; if (n <= 17) return '16-17'; if (n <= 19) return '18-19';
+  if (n <= 21) return '20-21'; if (n <= 23) return '22-23'; if (n <= 25) return '24-25';
+  if (n <= 27) return '26-27'; if (n <= 29) return '28-29'; if (n <= 31) return '30-31';
+  if (n <= 33) return '32-33'; if (n <= 35) return '34-35'; if (n <= 37) return '36-37';
+  if (n <= 39) return '38-39'; return '40-41';
+}
+function setZ(el, z) {
+  var a = Math.abs(z);
+  el.textContent = (z >= 0 ? '+' : '') + z.toFixed(2) + ' ET';
+  el.className = 'zscore ' + (a < 1 ? 'z-ok' : a < 2 ? 'z-warn' : 'z-alert');
+}
+function resetZ(el) { el.textContent = '--'; el.className = 'zscore z-na'; }
+
+// ══════════════════════════════════════════════════════
+// SA CHANGE
+// ══════════════════════════════════════════════════════
+function onSAChange() {
+  var sa = gval('saSelect');
+  updateRefs(); calcAll();
+}
+
+// ══════════════════════════════════════════════════════
+// PHOTO UTILITIES (neuropath-specific)
+// ══════════════════════════════════════════════════════
+function _npSlugify(str) {
+  return str.toLowerCase().replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u').replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+}
+
+function buildGridNP(id, views, cols) {
+  var g = gid(id); if (!g) return;
+  g.innerHTML = '';
+  if (cols) g.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)';
+  for (var i = 0; i < views.length; i++) {
+    var v = views[i];
+    var s = document.createElement('div');
+    s.className = 'photo-slot-np';
+    // Use descriptive key: neuropath_{slug_of_label} instead of np_macroGrid_0
+    var slug = _npSlugify(v.label);
+    s.setAttribute('data-key', 'neuropath_' + slug);
+    s.setAttribute('data-original-label', v.label);
+    s.innerHTML = '<span class="slot-icon">+</span><span class="slot-label">' + v.label + '</span><button class="rm-photo" onclick="rmSlotNP(event,this)">x</button>';
+    s.addEventListener('click', (function(slot) { return function(e) { if (!e.target.classList.contains('rm-photo')) pickPhotoNP(slot); }; })(s));
+    g.appendChild(s);
+  }
+}
+
+function pickPhotoNP(slot) {
+  var inp = gid('photo-file-input');
+  if (!inp) return;
+  inp.onchange = function(e) {
+    var f = e.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(ev) {
+      var ic = slot.querySelector('.slot-icon'), lb = slot.querySelector('.slot-label');
+      if (ic) ic.style.display = 'none'; if (lb) lb.style.display = 'none';
+      var img = slot.querySelector('img');
+      if (!img) { img = document.createElement('img'); slot.appendChild(img); }
+      img.src = ev.target.result; slot.classList.add('has-photo');
+      var key = slot.getAttribute('data-key');
+      if (key) npPhotos[key] = { dataUrl: ev.target.result, label: slot.getAttribute('data-original-label') || key };
+    };
+    r.readAsDataURL(f);
+    inp.value = '';
+  };
+  inp.click();
+}
+
+function rmSlotNP(e, btn) {
+  e.stopPropagation();
+  var s = btn.parentElement;
+  var img = s.querySelector('img'); if (img) img.remove();
+  var ic = s.querySelector('.slot-icon'), lb = s.querySelector('.slot-label');
+  if (ic) ic.style.display = ''; if (lb) lb.style.display = '';
+  s.classList.remove('has-photo');
+  var key = s.getAttribute('data-key');
+  if (key) delete npPhotos[key];
+}
+
+function pickSinglePhotoNP(el) {
+  if (event && event.target.classList.contains('rm-photo')) return;
+  var inp = gid('photo-file-input');
+  if (!inp) return;
+  inp.onchange = function(e) {
+    var f = e.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(ev) {
+      var img = el.querySelector('img');
+      if (!img) { img = document.createElement('img'); el.appendChild(img); }
+      img.src = ev.target.result; el.classList.add('has-photo');
+      var ic = el.querySelector('.slot-icon'); if (ic) ic.style.display = 'none';
+      var key = el.id || 'single';
+      npPhotos[key] = { dataUrl: ev.target.result, label: key };
+    };
+    r.readAsDataURL(f);
+    inp.value = '';
+  };
+  inp.click();
+}
+
+function rmSingleNP(e, btn) {
+  e.stopPropagation();
+  var s = btn.parentElement;
+  var img = s.querySelector('img'); if (img) img.remove();
+  var ic = s.querySelector('.slot-icon'); if (ic) ic.style.display = '';
+  s.classList.remove('has-photo');
+  var key = s.id || 'single';
+  delete npPhotos[key];
+}
+
+function addExtraPhotoNP(cId) {
+  var c = gid(cId); if (!c) return;
+  var inp = gid('photo-file-input');
+  if (!inp) return;
+  inp.onchange = function(e) {
+    var f = e.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(ev) {
+      var key = 'xp_' + cId + '_' + Date.now();
+      var t = document.createElement('div');
+      t.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1';
+      t.innerHTML = '<img src="' + ev.target.result + '" style="width:100%;height:100%;object-fit:cover"><button onclick="this.parentElement.remove();delete npPhotos[\'' + key + '\']" style="position:absolute;top:3px;right:3px;width:20px;height:20px;background:var(--danger);border:none;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center">x</button>';
+      c.appendChild(t);
+      npPhotos[key] = { dataUrl: ev.target.result, label: key };
+    };
+    r.readAsDataURL(f);
+    inp.value = '';
+  };
+  inp.click();
+}
+
+// ══════════════════════════════════════════════════════
+// DESCRIPTION BLOCKS (Normal/Anormal chips + HPO)
+// ══════════════════════════════════════════════════════
+function buildDescBlock(conf, container) {
+  var div = document.createElement('div');
+  div.className = 'desc-block';
+  div.setAttribute('data-id', conf.id);
+  var hpoHtml = conf.hpo_abnormal ? '<span class="hpo-tag">' + conf.hpo_abnormal + ' ' + conf.hpo_label + '</span>' : '';
+
+  // Build sub-HPO as selectable chips (not passive tags)
+  var subChipsHtml = '';
+  if (conf.sub_hpo && conf.sub_hpo.length) {
+    subChipsHtml = '<div class="chip-group multi sub-hpo-chips" data-field="subhpo_' + conf.id + '" style="margin-bottom:8px">';
+    for (var i = 0; i < conf.sub_hpo.length; i++) {
+      var h = conf.sub_hpo[i];
+      subChipsHtml += '<div class="chip" onclick="toggleChip(this)" data-hpo="' + h.code + '">' + h.label + ' <span class="hpo-tag">' + h.code + '</span></div>';
+    }
+    subChipsHtml += '</div>';
+  }
+
+  div.innerHTML =
+    '<div class="desc-header"><span class="desc-label">' + conf.label + '</span>' + hpoHtml + '</div>' +
+    '<div class="chip-group" data-field="desc_' + conf.id + '">' +
+      '<div class="chip" onclick="setNormalAbnormal(this,\'normal\')">Normal</div>' +
+      '<div class="chip" onclick="setNormalAbnormal(this,\'abnormal\')">Anormal</div>' +
+    '</div>' +
+    '<div class="desc-detail" data-role="abnormal-detail">' +
+      subChipsHtml +
+      '<textarea class="desc-area" placeholder="' + conf.placeholder + '"></textarea>' +
+      '<div style="display:flex;gap:8px;align-items:center;margin-top:8px">' +
+        '<div class="photo-single-np" onclick="pickSinglePhotoNP(this)" id="photo_' + conf.id + '"><span class="slot-icon">+</span><button class="rm-photo" onclick="rmSingleNP(event,this)">x</button></div>' +
+        '<button class="btn-add-photo" onclick="addExtraPhotoNP(\'extra_' + conf.id + '\')" style="font-size:.7rem;padding:4px 10px">+ Photo</button>' +
+        '<div id="extra_' + conf.id + '" style="display:inline-flex;gap:6px"></div>' +
+      '</div>' +
+    '</div>';
+  container.appendChild(div);
+}
+
+function setNormalAbnormal(btn, type) {
+  var group = findParent(btn, 'chip-group');
+  if (!group) return;
+  var chips = group.querySelectorAll('.chip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('selected');
+  btn.classList.add('selected');
+  var detail = group.parentElement.querySelector('[data-role="abnormal-detail"]');
+  if (type === 'abnormal') { if (detail) detail.classList.add('show'); }
+  else { if (detail) detail.classList.remove('show'); }
+}
+
+function buildChipGroupNP(chips, container, opts) {
+  opts = opts || {};
+  var div = document.createElement('div');
+  div.className = 'desc-block';
+  var html = '<div class="chip-group multi" data-field="' + (opts.field || '') + '">';
+  for (var i = 0; i < chips.length; i++) {
+    var c = chips[i];
+    var hpo = c.hpo ? ' <span class="hpo-tag">' + c.hpo + '</span>' : '';
+    html += '<div class="chip" onclick="toggleChipMulti(this)" data-hpo="' + (c.hpo || '') + '">' + c.label + hpo + '</div>';
+  }
+  html += '</div>';
+  html += '<div class="desc-detail" data-role="autre-detail"><textarea class="desc-area" placeholder="Preciser..."></textarea></div>';
+  if (opts.withPhoto) {
+    html += '<div style="display:flex;gap:8px;align-items:center;margin-top:8px">' +
+      '<div class="photo-single-np" onclick="pickSinglePhotoNP(this)" id="' + (opts.photoId || '') + '"><span class="slot-icon">+</span><button class="rm-photo" onclick="rmSingleNP(event,this)">x</button></div>' +
+      '<button class="btn-add-photo" onclick="addExtraPhotoNP(\'' + (opts.extraId || '') + '\')" style="font-size:.7rem;padding:4px 10px">+ Photo</button>' +
+      '<div id="' + (opts.extraId || '') + '" style="display:inline-flex;gap:6px"></div>' +
+    '</div>';
+  }
+  div.innerHTML = html;
+  container.appendChild(div);
+}
+
+// ══════════════════════════════════════════════════════
+// BIOMETRICS TABLE
+// ══════════════════════════════════════════════════════
+function buildBiomTable() {
+  var tb = gid('biomTBody'); if (!tb) return;
+  tb.innerHTML = '';
+  for (var i = 0; i < BIOM_P.length; i++) {
+    var p = BIOM_P[i];
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="pn">' + p.label + '<br><span style="font-size:.67rem;color:var(--text-muted)">' + p.unit + '</span></td>' +
+      '<td><input type="number" step="0.1" id="biom_' + p.id + '" oninput="calcBiom(\'' + p.id + '\')" inputmode="decimal"></td>' +
+      '<td class="biom-ref" id="ref_' + p.id + '">--</td>' +
+      '<td><span class="zscore z-na" id="z_' + p.id + '">--</span></td>';
+    tb.appendChild(tr);
+  }
+}
+
+function updateRefs() {
+  var sa = gval('saSelect');
+  var mk = masseKey(sa);
+  // Masse encephale
+  if (sa && REF_ME[mk]) { gid('refME').textContent = REF_ME[mk].m.toFixed(1) + ' +/- ' + REF_ME[mk].s.toFixed(1); }
+  else { gid('refME').textContent = '--'; }
+  // Masse infratentorielle
+  if (sa && REF_MI[mk]) { gid('refMC').textContent = REF_MI[mk].m.toFixed(1) + ' +/- ' + REF_MI[mk].s.toFixed(1); }
+  else { gid('refMC').textContent = '--'; }
+  // Ratio
+  if (sa && REF_RI[mk]) { gid('refRatio').textContent = REF_RI[mk].m.toFixed(2) + ' +/- ' + REF_RI[mk].s.toFixed(2); }
+  else { gid('refRatio').textContent = '--'; }
+  // Biometrics
+  var allP = BIOM_P.concat([{id:'CC'}]);
+  for (var i = 0; i < allP.length; i++) {
+    var p = allP[i];
+    var ref = REF_B[p.id]; var el = gid('ref_' + p.id); if (!el) continue;
+    if (ref && ref[sa]) {
+      el.textContent = ref[sa].m.toFixed(1) + ' +/- ' + ref[sa].s.toFixed(1);
+    } else if (sa && REG[p.id]) {
+      var n = parseFloat(sa);
+      if (!isNaN(n)) {
+        var m = REG[p.id].slope * n + REG[p.id]['int'];
+        var s = REG[p.id].sET * n + REG[p.id].iET;
+        el.innerHTML = m.toFixed(1) + ' +/- ' + s.toFixed(1) + '<br><span style="color:var(--warning);font-size:.6rem">regression</span>';
+      } else { el.textContent = '--'; }
+    } else { el.textContent = '--'; }
+  }
+}
+
+function calcBiom(pid) {
+  var sa = gval('saSelect');
+  var v = parseFloat(gid('biom_' + pid) ? gid('biom_' + pid).value : '');
+  var zEl = gid('z_' + pid);
+  if (isNaN(v) || !sa) { resetZ(zEl); return; }
+  var ref = REF_B[pid]; var m, s;
+  if (ref && ref[sa]) { m = ref[sa].m; s = ref[sa].s; }
+  else if (REG[pid]) { var n = parseFloat(sa); if (!isNaN(n)) { m = REG[pid].slope * n + REG[pid]['int']; s = REG[pid].sET * n + REG[pid].iET; } }
+  if (m !== undefined && s !== undefined && s > 0) { setZ(zEl, (v - m) / s); } else { resetZ(zEl); }
+}
+
+function calcAll() {
+  var sa = gval('saSelect');
+  var mk = masseKey(sa);
+  var mE = parseFloat(gval('masseEnc'));
+  var mC = parseFloat(gval('masseCerv'));
+  // Z masse encephale
+  if (sa && REF_ME[mk] && !isNaN(mE)) { setZ(gid('zME'), (mE - REF_ME[mk].m) / REF_ME[mk].s); }
+  else { resetZ(gid('zME')); }
+  // Z masse cervelet
+  if (sa && REF_MI[mk] && !isNaN(mC)) { setZ(gid('zMC'), (mC - REF_MI[mk].m) / REF_MI[mk].s); }
+  else { resetZ(gid('zMC')); }
+  // Ratio
+  if (!isNaN(mE) && !isNaN(mC) && mE > 0) {
+    var ratio = (mC / mE) * 100;
+    gid('ratioCE').textContent = ratio.toFixed(2);
+    if (sa && REF_RI[mk]) { setZ(gid('zRatio'), (ratio - REF_RI[mk].m) / REF_RI[mk].s); }
+    else { resetZ(gid('zRatio')); }
+  } else {
+    gid('ratioCE').textContent = '--';
+    resetZ(gid('zRatio'));
+  }
+  // Biom table
+  for (var i = 0; i < BIOM_P.length; i++) calcBiom(BIOM_P[i].id);
+  calcBiom('CC');
+  safeUpdateStatuses();
+}
+
+// ══════════════════════════════════════════════════════
+// SLICES (Tranches)
+// ══════════════════════════════════════════════════════
+function addSlice(hemi) {
+  sliceN[hemi]++;
+  var n = sliceN[hemi];
+  var c = gid('slices' + hemi); if (!c) return;
+  var row = document.createElement('div');
+  row.className = 'slice-item';
+  var chipsHtml = '';
+  for (var i = 0; i < SLICE_CHIPS.length; i++) {
+    var ch = SLICE_CHIPS[i];
+    var hpo = ch.hpo ? ' <span class="hpo-tag" style="font-size:.58rem">' + ch.hpo + '</span>' : '';
+    chipsHtml += '<div class="chip" onclick="toggleChipMulti(this)">' + ch.label + hpo + '</div>';
+  }
+  row.innerHTML =
+    '<div class="slice-num">' + n + '</div>' +
+    '<div class="slice-body">' +
+      '<div class="slice-photos">' +
+        '<div class="slice-photo-btn" onclick="pickSliceP(this)">+</div>' +
+        '<button class="btn-add-photo" style="padding:4px 10px;font-size:.68rem" onclick="addSliceP(this)">+</button>' +
+      '</div>' +
+      '<div style="margin-top:6px" class="chip-group multi">' + chipsHtml + '</div>' +
+      '<div class="desc-detail" data-role="autre-detail"><textarea class="desc-area" placeholder="Preciser..." style="min-height:40px"></textarea></div>' +
+      '<textarea class="slice-note" placeholder="Note libre..." rows="1"></textarea>' +
+    '</div>';
+  c.appendChild(row);
+}
+
+function pickSliceP(btn) {
+  var inp = gid('photo-file-input');
+  if (!inp) return;
+  inp.onchange = function(e) {
+    var f = e.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function(ev) {
+      var img = btn.querySelector('img');
+      if (!img) { img = document.createElement('img'); btn.appendChild(img); }
+      img.src = ev.target.result; btn.classList.add('has-photo'); btn.textContent = '';
+      btn.appendChild(img);
+    };
+    r.readAsDataURL(f);
+    inp.value = '';
+  };
+  inp.click();
+}
+
+function addSliceP(addBtn) {
+  var area = addBtn.parentElement;
+  var ns = document.createElement('div');
+  ns.className = 'slice-photo-btn'; ns.textContent = '+';
+  ns.onclick = function() { pickSliceP(this); };
+  area.insertBefore(ns, addBtn);
+}
+
+// ══════════════════════════════════════════════════════
+// STATUS UPDATES
+// ══════════════════════════════════════════════════════
+function safeUpdateStatuses() {
+  try { updateStatuses(); } catch(e) {}
+}
+function updateStatuses() {
+  // Macro photos
+  var macroPhotos = qsa('#macroGrid .has-photo');
+  setStatus('macro', macroPhotos.length > 0 ? 'done' : 'empty', macroPhotos.length > 0 ? macroPhotos.length + ' photos' : '--');
+
+  // Macro descriptions
+  var descChips = qsa('#macroDescBlocks .chip.selected');
+  setStatus('macro-desc', descChips.length > 0 ? 'partial' : 'empty', descChips.length > 0 ? descChips.length + ' items' : '--');
+
+  // Biometries
+  var masseVal = gval('masseEnc');
+  var biomInputs = qsa('#biomTBody input');
+  var filled = 0;
+  for (var i = 0; i < biomInputs.length; i++) { if (biomInputs[i].value) filled++; }
+  if (masseVal || filled > 0) setStatus('biom', filled >= BIOM_P.length ? 'done' : 'partial', (filled + (masseVal ? 1 : 0)) + ' mesures');
+  else setStatus('biom', 'empty', '--');
+
+  // Cervelet
+  var cervVal = gval('masseCerv') || gval('biom_CC');
+  setStatus('cerv', cervVal ? 'partial' : 'empty', cervVal ? 'Donnees' : '--');
+
+  // Oculaire
+  var eyeCount = 0;
+  var eyeIds = ['oeil1_dt','oeil1_dap','oeil1_dc','oeil2_dt','oeil2_dap','oeil2_dc'];
+  for (var i = 0; i < eyeIds.length; i++) { if (gval(eyeIds[i])) eyeCount++; }
+  setStatus('oculaire', eyeCount > 0 ? (eyeCount >= 6 ? 'done' : 'partial') : 'empty', eyeCount > 0 ? eyeCount + '/6' : '--');
+
+  // Slices
+  setStatus('thd', sliceN.HD > 0 ? 'partial' : 'empty', sliceN.HD > 0 ? sliceN.HD + ' tranches' : '--');
+  setStatus('thg', sliceN.HG > 0 ? 'partial' : 'empty', sliceN.HG > 0 ? sliceN.HG + ' tranches' : '--');
+}
+
+// ══════════════════════════════════════════════════════
+// COLLECT DATA
+// ══════════════════════════════════════════════════════
+function collectData() {
+  var sa = gval('saSelect');
+
+  // Macro descriptions
+  var descriptions = {};
+  var blocks = qsa('#macroDescBlocks .desc-block');
+  for (var i = 0; i < blocks.length; i++) {
+    var b = blocks[i];
+    var id = b.getAttribute('data-id');
+    // Get Normal/Anormal status from first chip-group
+    var statusChips = b.querySelectorAll('[data-field="desc_' + id + '"] .chip.selected');
+    var val = null;
+    for (var j = 0; j < statusChips.length; j++) {
+      val = statusChips[j].textContent.trim();
+    }
+    // Get selected sub-HPO chips
+    var subSelected = [];
+    var subChips = b.querySelectorAll('.sub-hpo-chips .chip.selected');
+    for (var j = 0; j < subChips.length; j++) {
+      subSelected.push({
+        label: subChips[j].textContent.trim().replace(/HP:\d+/g, '').trim(),
+        hpo: subChips[j].getAttribute('data-hpo') || null
+      });
+    }
+    var textarea = b.querySelector('.desc-area');
+    descriptions[id] = {
+      status: val,
+      signes: subSelected.length > 0 ? subSelected : null,
+      detail: textarea ? textarea.value || null : null
+    };
+  }
+
+  // Biometries
+  var biometries = {
+    masse_encephale: parseFloat(gval('masseEnc')) || null,
+    masse_cervelet: parseFloat(gval('masseCerv')) || null
+  };
+  for (var i = 0; i < BIOM_P.length; i++) {
+    biometries[BIOM_P[i].id] = parseFloat(gval('biom_' + BIOM_P[i].id)) || null;
+  }
+  biometries.CC = parseFloat(gval('biom_CC')) || null;
+
+  // Z-scores (computed)
+  var zscores = {};
+  var zIds = ['zME', 'zMC', 'zRatio'];
+  for (var i = 0; i < zIds.length; i++) {
+    var el = gid(zIds[i]);
+    if (el && !el.classList.contains('z-na')) zscores[zIds[i]] = el.textContent;
+  }
+  for (var i = 0; i < BIOM_P.length; i++) {
+    var el = gid('z_' + BIOM_P[i].id);
+    if (el && !el.classList.contains('z-na')) zscores[BIOM_P[i].id] = el.textContent;
+  }
+  var zCC = gid('z_CC');
+  if (zCC && !zCC.classList.contains('z-na')) zscores.CC = zCC.textContent;
+
+  // Oculaire
+  var oculaire = {
+    oeil1: { dt: parseFloat(gval('oeil1_dt')) || null, dap: parseFloat(gval('oeil1_dap')) || null, dc: parseFloat(gval('oeil1_dc')) || null },
+    oeil2: { dt: parseFloat(gval('oeil2_dt')) || null, dap: parseFloat(gval('oeil2_dap')) || null, dc: parseFloat(gval('oeil2_dc')) || null }
+  };
+
+  // CC chips
+  var ccChips = [];
+  var ccSel = qsa('#ccDescBlock .chip.selected');
+  for (var i = 0; i < ccSel.length; i++) {
+    ccChips.push(ccSel[i].textContent.trim().replace(/HP:\d+/g, '').trim());
+  }
+  var ccTextarea = qs('#ccDescBlock .desc-area');
+
+  // Aqueduc chips
+  var aqChips = [];
+  var aqSel = qsa('#aquedDescBlock .chip.selected');
+  for (var i = 0; i < aqSel.length; i++) {
+    aqChips.push(aqSel[i].textContent.trim().replace(/HP:\d+/g, '').trim());
+  }
+  var aqTextarea = qs('#aquedDescBlock .desc-area');
+
+  // Ratio
+  var ratioCE = gid('ratioCE') ? gid('ratioCE').textContent : null;
+
+  // Slices
+  function collectSlices(hemi) {
+    var items = qsa('#slices' + hemi + ' .slice-item');
+    var arr = [];
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var chips = item.querySelectorAll('.chip.selected');
+      var chipLabels = [];
+      for (var j = 0; j < chips.length; j++) {
+        chipLabels.push(chips[j].textContent.trim().replace(/HP:\d+/g, '').trim());
+      }
+      var autreText = item.querySelector('.desc-area');
+      var note = item.querySelector('.slice-note');
+      arr.push({
+        numero: i + 1,
+        constatations: chipLabels,
+        detail: autreText ? autreText.value : null,
+        note: note ? note.value : null
+      });
+    }
+    return arr;
+  }
+
+  // Collect HPO codes
+  var hpo_codes = collectHPOCodes();
+
+  // Photo keys
+  var photoKeys = Object.keys(npPhotos);
+
+  return {
+    dossier: dossier,
+    timestamp: new Date().toISOString(),
+    type: 'neuropath',
+    sa: sa,
+    descriptions: descriptions,
+    biometries: biometries,
+    zscores: zscores,
+    oculaire: oculaire,
+    cervelet: {
+      masse: biometries.masse_cervelet,
+      ratio_ce: ratioCE !== '--' ? parseFloat(ratioCE) : null
+    },
+    aqueduc: { status: aqChips, detail: aqTextarea ? aqTextarea.value : null },
+    corps_calleux: { status: ccChips, longueur: biometries.CC, detail: ccTextarea ? ccTextarea.value : null },
+    tranches_hd: collectSlices('HD'),
+    tranches_hg: collectSlices('HG'),
+    hpo_codes: hpo_codes,
+    photo_keys: photoKeys
+  };
+}
+
+// ══════════════════════════════════════════════════════
+// HPO CODE COLLECTION
+// ══════════════════════════════════════════════════════
+function collectHPOCodes() {
+  var codes = [];
+
+  // From macro descriptions
+  for (var i = 0; i < MACRO_DESCS.length; i++) {
+    var conf = MACRO_DESCS[i];
+    var block = qs('[data-id="' + conf.id + '"]');
+    if (!block) continue;
+    // Check if "Anormal" is selected
+    var descChips = block.querySelectorAll('[data-field="desc_' + conf.id + '"] .chip.selected');
+    var isAbnormal = false;
+    for (var j = 0; j < descChips.length; j++) {
+      if (descChips[j].textContent.trim() === 'Anormal') { isAbnormal = true; break; }
+    }
+    if (isAbnormal && conf.hpo_abnormal) {
+      codes.push({ code: conf.hpo_abnormal, term: conf.hpo_label, source: conf.label });
+    }
+    // Only collect sub-HPO chips that are actually SELECTED
+    if (isAbnormal) {
+      var subChips = block.querySelectorAll('.sub-hpo-chips .chip.selected');
+      for (var j = 0; j < subChips.length; j++) {
+        var hpoCode = subChips[j].getAttribute('data-hpo');
+        if (hpoCode) {
+          var chipLabel = subChips[j].textContent.trim().replace(/HP:\d+/g, '').trim();
+          codes.push({ code: hpoCode, term: chipLabel, source: conf.label });
+        }
+      }
+    }
+  }
+
+  // From CC chips
+  var ccSel = qsa('#ccDescBlock .chip.selected');
+  for (var i = 0; i < ccSel.length; i++) {
+    var hpo = ccSel[i].getAttribute('data-hpo');
+    if (hpo) codes.push({ code: hpo, term: ccSel[i].textContent.trim().replace(/HP:\d+/g, '').trim(), source: 'Corps calleux' });
+  }
+
+  // From aqueduc chips
+  var aqSel = qsa('#aquedDescBlock .chip.selected');
+  for (var i = 0; i < aqSel.length; i++) {
+    var hpo = aqSel[i].getAttribute('data-hpo');
+    if (hpo) codes.push({ code: hpo, term: aqSel[i].textContent.trim().replace(/HP:\d+/g, '').trim(), source: 'Aqueduc' });
+  }
+
+  // From slice chips
+  var allSliceChips = qsa('.slice-item .chip.selected[data-hpo]');
+  for (var i = 0; i < allSliceChips.length; i++) {
+    var hpo = allSliceChips[i].getAttribute('data-hpo');
+    if (hpo) codes.push({ code: hpo, term: allSliceChips[i].textContent.trim().replace(/HP:\d+/g, '').trim(), source: 'Tranches' });
+  }
+
+  // Z-score-based automatic codes
+  var zME = gid('zME');
+  if (zME && zME.classList.contains('z-alert')) {
+    var val = parseFloat(gval('masseEnc'));
+    var sa = gval('saSelect'); var mk = masseKey(sa);
+    if (REF_ME[mk] && val < REF_ME[mk].m) {
+      codes.push({ code: 'HP:0000252', term: 'Microcephaly', source: 'Masse encephale (auto)', auto: true });
+    } else if (REF_ME[mk] && val > REF_ME[mk].m) {
+      codes.push({ code: 'HP:0000256', term: 'Macrocephaly', source: 'Masse encephale (auto)', auto: true });
+    }
+  }
+
+  return codes;
+}
+
+// ══════════════════════════════════════════════════════
+// SAVE & EXPORT
+// ══════════════════════════════════════════════════════
+function saveAndExport() {
+  var data = collectData();
+  pwaSave('neuropath', dossier, data);
+  var btn = gid('btnSave');
+  btn.disabled = true; btn.textContent = 'Envoi...';
+  pwaSubmit(dossier, 'neuropath', data, npPhotos).then(function() {
+    btn.disabled = false; btn.textContent = 'Enregistrer';
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// LOAD EXISTING DATA
+// ══════════════════════════════════════════════════════
+function loadExistingData() {
+  pwaLoadFromHub(dossier, 'neuropath')
+    .then(function(res) {
+      if (!res.found) {
+        var local = pwaLoad('neuropath', dossier);
+        if (local) restoreData(local, []);
+        return;
+      }
+      var npData = null;
+      var photosList = res.photos_on_disk || [];
+      if (res.modules && res.modules.neuropath) npData = res.modules.neuropath.data;
+      if (npData) restoreData(npData, photosList);
+
+      // Auto-fill SA if not already set
+      if (!gval('saSelect')) {
+        autoFillTerme(res);
+      }
+    });
+}
+
+function autoFillTerme(res) {
+  var sa = null;
+  var source = '';
+
+  // 1) Try macro_frais terme
+  if (res.modules && res.modules.macro_frais && res.modules.macro_frais.data) {
+    var mf = res.modules.macro_frais.data;
+    if (mf.terme && mf.terme.sa) {
+      sa = mf.terme.sa;
+      source = 'Recupere depuis macro frais';
+    }
+  }
+
+  // 2) Fallback: terme_issue from case
+  if (!sa && res.terme_issue) {
+    var m = String(res.terme_issue).match(/(\d+)/);
+    if (m) { sa = parseInt(m[1]); source = 'Recupere depuis le dossier (' + res.terme_issue + ')'; }
+  }
+
+  if (!sa) return;
+
+  // Map integer SA to the closest select option (ranges like "22-23")
+  var sel = gid('saSelect');
+  if (!sel) return;
+  var bestOpt = '';
+  for (var i = 0; i < sel.options.length; i++) {
+    var opt = sel.options[i].value;
+    if (!opt) continue;
+    var parts = opt.split('-');
+    var lo = parseInt(parts[0]);
+    var hi = parts.length > 1 ? parseInt(parts[1]) : lo;
+    if (sa >= lo && sa <= hi) { bestOpt = opt; break; }
+  }
+  if (bestOpt) {
+    sel.value = bestOpt;
+    onSAChange();
+    var hint = gid('terme-source');
+    if (hint) {
+      hint.textContent = source + ' (SA ' + sa + ' -> ' + bestOpt + '). Modifiable si besoin (MFIU, etc.).';
+      hint.style.display = 'block';
+    }
+  }
+}
+
+function restoreData(d, photosList) {
+  // SA
+  if (d.sa) {
+    var sel = gid('saSelect');
+    if (sel) { sel.value = d.sa; onSAChange(); }
+  }
+
+  // Biometries
+  if (d.biometries) {
+    if (d.biometries.masse_encephale) { var el = gid('masseEnc'); if (el) el.value = d.biometries.masse_encephale; }
+    if (d.biometries.masse_cervelet) { var el = gid('masseCerv'); if (el) el.value = d.biometries.masse_cervelet; }
+    for (var i = 0; i < BIOM_P.length; i++) {
+      var v = d.biometries[BIOM_P[i].id];
+      if (v) { var el = gid('biom_' + BIOM_P[i].id); if (el) el.value = v; }
+    }
+    if (d.biometries.CC) { var el = gid('biom_CC'); if (el) el.value = d.biometries.CC; }
+  }
+
+  // Oculaire
+  if (d.oculaire) {
+    if (d.oculaire.oeil1) {
+      if (d.oculaire.oeil1.dt) { var el = gid('oeil1_dt'); if (el) el.value = d.oculaire.oeil1.dt; }
+      if (d.oculaire.oeil1.dap) { var el = gid('oeil1_dap'); if (el) el.value = d.oculaire.oeil1.dap; }
+      if (d.oculaire.oeil1.dc) { var el = gid('oeil1_dc'); if (el) el.value = d.oculaire.oeil1.dc; }
+    }
+    if (d.oculaire.oeil2) {
+      if (d.oculaire.oeil2.dt) { var el = gid('oeil2_dt'); if (el) el.value = d.oculaire.oeil2.dt; }
+      if (d.oculaire.oeil2.dap) { var el = gid('oeil2_dap'); if (el) el.value = d.oculaire.oeil2.dap; }
+      if (d.oculaire.oeil2.dc) { var el = gid('oeil2_dc'); if (el) el.value = d.oculaire.oeil2.dc; }
+    }
+  }
+
+  // Descriptions
+  if (d.descriptions) {
+    for (var id in d.descriptions) {
+      var desc = d.descriptions[id];
+      var block = qs('[data-id="' + id + '"]');
+      if (!block) continue;
+      if (desc.status) {
+        var statusChips = block.querySelectorAll('[data-field="desc_' + id + '"] .chip');
+        for (var i = 0; i < statusChips.length; i++) {
+          if (statusChips[i].textContent.trim() === desc.status) {
+            statusChips[i].click();
+          }
+        }
+      }
+      // Restore selected sub-HPO chips
+      if (desc.signes && desc.signes.length > 0) {
+        var subChips = block.querySelectorAll('.sub-hpo-chips .chip');
+        for (var i = 0; i < subChips.length; i++) {
+          var chipLabel = subChips[i].textContent.trim().replace(/HP:\d+/g, '').trim();
+          for (var j = 0; j < desc.signes.length; j++) {
+            if (desc.signes[j].label === chipLabel) {
+              subChips[i].classList.add('selected');
+              break;
+            }
+          }
+        }
+      }
+      if (desc.detail) {
+        var ta = block.querySelector('.desc-area');
+        if (ta) ta.value = desc.detail;
+      }
+    }
+  }
+
+  // Aqueduc
+  if (d.aqueduc && d.aqueduc.status) {
+    restoreMultiChipsInContainer('aquedDescBlock', d.aqueduc.status);
+    if (d.aqueduc.detail) {
+      var ta = qs('#aquedDescBlock .desc-area');
+      if (ta) ta.value = d.aqueduc.detail;
+    }
+  }
+
+  // Corps calleux
+  if (d.corps_calleux && d.corps_calleux.status) {
+    restoreMultiChipsInContainer('ccDescBlock', d.corps_calleux.status);
+    if (d.corps_calleux.detail) {
+      var ta = qs('#ccDescBlock .desc-area');
+      if (ta) ta.value = d.corps_calleux.detail;
+    }
+  }
+
+  // Slices
+  function restoreSlices(hemi, data) {
+    if (!data || !data.length) return;
+    // Remove default slices, add the right count
+    var container = gid('slices' + hemi);
+    if (container) container.innerHTML = '';
+    sliceN[hemi] = 0;
+    for (var i = 0; i < data.length; i++) {
+      addSlice(hemi);
+      var items = qsa('#slices' + hemi + ' .slice-item');
+      var item = items[items.length - 1];
+      if (!item) continue;
+      // Restore chips
+      if (data[i].constatations) {
+        var chips = item.querySelectorAll('.chip');
+        for (var j = 0; j < chips.length; j++) {
+          var label = chips[j].textContent.trim().replace(/HP:\d+/g, '').trim();
+          if (data[i].constatations.indexOf(label) >= 0) {
+            chips[j].classList.add('selected');
+          }
+        }
+      }
+      if (data[i].detail) {
+        var ta = item.querySelector('.desc-area');
+        if (ta) ta.value = data[i].detail;
+      }
+      if (data[i].note) {
+        var note = item.querySelector('.slice-note');
+        if (note) note.value = data[i].note;
+      }
+    }
+  }
+  restoreSlices('HD', d.tranches_hd);
+  restoreSlices('HG', d.tranches_hg);
+
+  // Recalc
+  calcAll();
+
+  // Restore photos from server
+  if (photosList && photosList.length > 0) {
+    for (var i = 0; i < photosList.length; i++) {
+      var p = photosList[i];
+      var url = HUB + '/admin/api/pwa/photo?dossier=' + encodeURIComponent(dossier) + '&key=' + encodeURIComponent(p.key);
+      restorePhotoFromServer(p.key, url);
+    }
+  }
+}
+
+function restoreMultiChipsInContainer(containerId, values) {
+  var container = gid(containerId);
+  if (!container) return;
+  var chips = container.querySelectorAll('.chip');
+  for (var i = 0; i < chips.length; i++) {
+    var label = chips[i].textContent.trim().replace(/HP:\d+/g, '').trim();
+    if (values.indexOf(label) >= 0) {
+      chips[i].classList.add('selected');
+    }
+  }
+}
+
+function restorePhotoFromServer(key, url) {
+  var slot = qs('[data-key="' + key + '"]');
+  if (slot) {
+    var img = document.createElement('img');
+    img.src = url;
+    slot.appendChild(img);
+    slot.classList.add('has-photo');
+    var ic = slot.querySelector('.slot-icon');
+    var lb = slot.querySelector('.slot-label');
+    if (ic) ic.style.display = 'none';
+    if (lb) lb.style.display = 'none';
+    npPhotos[key] = { dataUrl: null, label: key, serverUrl: url };
+  }
+  // Single photo slots (CC, etc.)
+  var single = gid(key);
+  if (single && single.classList.contains('photo-single-np')) {
+    var img = document.createElement('img');
+    img.src = url;
+    single.appendChild(img);
+    single.classList.add('has-photo');
+    var ic = single.querySelector('.slot-icon');
+    if (ic) ic.style.display = 'none';
+    npPhotos[key] = { dataUrl: null, label: key, serverUrl: url };
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  initPhotoInput();
+
+  // Load biometry tables then init
+  loadBiometryTables().then(function() {
+    // Macro photo grid
+    buildGridNP('macroGrid', [
+      { label: 'Face frontale' }, { label: 'Cote droit' },
+      { label: 'Cote gauche' }, { label: 'Par derriere' },
+      { label: 'Dessus' }, { label: 'Dessous' }
+    ]);
+
+    // Macro description blocks
+    var macroC = gid('macroDescBlocks');
+    if (macroC) {
+      for (var i = 0; i < MACRO_DESCS.length; i++) buildDescBlock(MACRO_DESCS[i], macroC);
+    }
+
+    // Cervelet photo grid
+    buildGridNP('cervGrid', [
+      { label: 'Coupe sagittale' }, { label: 'Vue posterieure' }
+    ], 2);
+
+    // Aqueduc chips
+    var aqC = gid('aquedDescBlock');
+    if (aqC) buildChipGroupNP(AQUED_CHIPS, aqC, { withPhoto: true, photoId: 'photo_aqueduc', extraId: 'extraAqued', field: 'aqueduc' });
+
+    // CC chips
+    var ccC = gid('ccDescBlock');
+    if (ccC) buildChipGroupNP(CC_CHIPS, ccC, { withPhoto: false, extraId: 'extraCC', field: 'cc_status' });
+
+    // Biom table
+    buildBiomTable();
+
+    // Initial slices
+    for (var i = 0; i < 5; i++) { addSlice('HD'); addSlice('HG'); }
+
+    // Load existing data
+    if (dossier && dossier !== '--') loadExistingData();
+
+    safeUpdateStatuses();
+
+  }).catch(function(err) {
+    console.error('Erreur chargement tables biometriques:', err);
+    // Fallback: still build UI without reference data
+    buildGridNP('macroGrid', [
+      { label: 'Face frontale' }, { label: 'Cote droit' },
+      { label: 'Cote gauche' }, { label: 'Par derriere' },
+      { label: 'Dessus' }, { label: 'Dessous' }
+    ]);
+    var macroC = gid('macroDescBlocks');
+    if (macroC) { for (var i = 0; i < MACRO_DESCS.length; i++) buildDescBlock(MACRO_DESCS[i], macroC); }
+    buildGridNP('cervGrid', [{ label: 'Coupe sagittale' }, { label: 'Vue posterieure' }], 2);
+    var aqC = gid('aquedDescBlock');
+    if (aqC) buildChipGroupNP(AQUED_CHIPS, aqC, { withPhoto: true, photoId: 'photo_aqueduc', extraId: 'extraAqued', field: 'aqueduc' });
+    var ccC = gid('ccDescBlock');
+    if (ccC) buildChipGroupNP(CC_CHIPS, ccC, { withPhoto: false, extraId: 'extraCC', field: 'cc_status' });
+    buildBiomTable();
+    for (var i = 0; i < 5; i++) { addSlice('HD'); addSlice('HG'); }
+    if (dossier && dossier !== '--') loadExistingData();
+  });
+});
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>pwaI18nInit();</script>
+</body>
+</html>

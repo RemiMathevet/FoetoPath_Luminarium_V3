@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Codes de récupération</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181a23;
+  --surface2: #1e2130;
+  --border: #2a2d3e;
+  --text: #e8eaf0;
+  --text2: #9498ab;
+  --muted: #5f6378;
+  --accent: #7c6aef;
+  --accent-hover: #6b5ad6;
+  --danger: #f87171;
+  --warning: #fbbf24;
+  --success: #34d399;
+  --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px;
+  width: 460px;
+  max-width: 95vw;
+}
+.card-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.card-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.card-header p {
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.success-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+  display: block;
+}
+.warning-box {
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--warning);
+  line-height: 1.6;
+  text-align: center;
+}
+.codes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.code-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  font-family: 'DM Sans', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--text);
+  user-select: all;
+}
+.btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text2);
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.btn-secondary:hover { background: var(--border); color: var(--text); }
+.hint {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <span class="success-icon">&#x2705;</span>
+    <h1 data-i18n="auth.backup_title">2FA activée avec succes</h1>
+    <p data-i18n="auth.backup_subtitle">Votre compte est maintenant protégé par la double authentification.</p>
+  </div>
+
+  <div class="warning-box">
+    <strong data-i18n="auth.backup_warning">Sauvegardez ces codes de récupération</strong><br>
+    <span data-i18n="auth.backup_warning_detail">Chaque code ne peut être utilisé qu'une seule fois. Ils vous permettront de vous connecter si vous perdez votre téléphone.</span><br>
+    <strong data-i18n="auth.backup_warning_once">Cette page ne sera plus affichée.</strong>
+  </div>
+
+  <div class="codes-grid">
+    {% for code in backup_codes %}
+    <div class="code-item">{{ code }}</div>
+    {% endfor %}
+  </div>
+
+  <button class="btn btn-secondary" onclick="copyAll()" data-i18n="auth.backup_copy">Copier tous les codes</button>
+  <a href="/" class="btn btn-primary" style="display:block;text-align:center;text-decoration:none;" data-i18n="auth.backup_continue">
+    J'ai sauvegardé mes codes — Continuer
+  </a>
+
+  <p class="hint" data-i18n="auth.backup_safe_hint">
+    Conservez ces codes dans un endroit sûr (gestionnaire de mots de passe, coffre-fort...).
+  </p>
+</div>
+
+<script src="/static/i18n.js"></script>
+<script>i18nInit().then(function() { i18nApply(); });</script>
+
+<script>
+function copyAll() {
+  const codes = [{% for code in backup_codes %}"{{ code }}"{% if not loop.last %}, {% endif %}{% endfor %}];
+  const text = "FoetoPath — Codes de récupération 2FA\n" + codes.join("\n");
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-secondary');
+    btn.textContent = "Copié !";
+    setTimeout(() => btn.textContent = "Copier tous les codes", 2000);
+  });
+}
+</script>
+
+</body>
+</html>

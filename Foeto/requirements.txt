@@ -1,0 +1,10 @@
+flask>=3.0,<4.0
+flask-talisman>=1.1,<2.0
+jinja2>=3.1,<4.0
+markupsafe>=2.1,<3.0
+itsdangerous>=2.1,<3.0
+Pillow>=10.1,<12.0
+argon2-cffi>=23.1,<26.0
+pyotp>=2.9,<3.0
+qrcode[pil]>=7.4,<9.0
+requests>=2.31,<3.0

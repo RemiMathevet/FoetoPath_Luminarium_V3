@@ -1,0 +1,25 @@
+{
+  "name": "Poumon",
+  "description": "Grille de lecture pulmonaire — architecture, maturation, lésions",
+  "icon": "",
+  "organ_type": "poumon",
+  "fields": [
+    {
+      "id": "stade_maturation",
+      "label": "Stade de maturation",
+      "type": "select",
+      "options": ["Pseudo-glandulaire", "Canaliculaire", "Sacculaire", "Alvéolaire"]
+    },
+    {
+      "id": "architecture",
+      "label": "Architecture générale",
+      "type": "select",
+      "options": ["Normal", "Remanié", "Immature", "Hypoplasique"]
+    },
+    {
+      "id": "commentaire",
+      "label": "Commentaire",
+      "type": "text"
+    }
+  ]
+}

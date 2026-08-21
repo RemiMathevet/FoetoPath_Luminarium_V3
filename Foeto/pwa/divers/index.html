@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>Cas Divers – Dossier</title>
+<link rel="manifest" href="/pwa/divers/manifest.json">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b22;
+    --surface-hover: #1c2230;
+    --border: #2a3140;
+    --border-focus: #9b6dd7;
+    --text: #e2e8f0;
+    --text-muted: #8b95a5;
+    --accent: #9b6dd7;
+    --accent-dim: rgba(155, 109, 215, 0.15);
+    --danger: #e55b5b;
+    --success: #3ddc84;
+    --success-dim: rgba(61, 220, 132, 0.15);
+    --warning: #f0a850;
+    --warning-dim: rgba(240, 168, 80, 0.15);
+    --curetage: #4a90d9;
+    --curetage-dim: rgba(74, 144, 217, 0.15);
+    --gemellaire: #9b6dd7;
+    --gemellaire-dim: rgba(155, 109, 215, 0.15);
+    --radius: 10px;
+    --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .dossier-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+  .logo-icon { font-size: 3.2rem; margin-bottom: 8px; }
+  .dossier-screen h2 {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .dossier-screen .subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 28px;
+  }
+
+  .dossier-input-wrap {
+    width: 100%;
+    max-width: 320px;
+  }
+  .dossier-input-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: var(--text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.05em;
+    outline: none;
+    transition: border-color 0.2s;
+    font-variant-numeric: tabular-nums;
+  }
+  .dossier-input-wrap input:focus { border-color: var(--accent); }
+  .dossier-input-wrap input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 1rem;
+  }
+
+  .dossier-status {
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    min-height: 2.8em;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .status-new { color: var(--accent); }
+  .status-existing { color: var(--success); }
+
+  .btn-row {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .dossier-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+  .dossier-btn:active { transform: scale(0.98); }
+  .dossier-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-curetage {
+    background: var(--curetage);
+    color: #fff;
+  }
+  .btn-gemellaire {
+    background: var(--gemellaire);
+    color: #fff;
+  }
+  .btn-resume {
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+
+  /* Connectivity badge */
+  .conn-badge {
+    position: fixed; top: 12px; right: 12px;
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 0.7rem; font-weight: 600;
+  }
+  .conn-badge.online { background: var(--success-dim); color: var(--success); }
+  .conn-badge.offline { background: var(--warning-dim); color: var(--warning); }
+
+  /* Cas récents */
+  .recent-section {
+    width: 100%; max-width: 320px;
+    margin-top: 28px;
+  }
+  .recent-title {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted); margin-bottom: 8px;
+  }
+  .recent-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .recent-item:hover { background: var(--surface-hover); }
+  .recent-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .recent-dossier { font-weight: 600; font-size: 0.9rem; flex: 1; }
+  .recent-type {
+    font-size: 0.7rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px;
+  }
+  .type-cur { background: var(--curetage-dim); color: var(--curetage); }
+  .type-gem { background: var(--gemellaire-dim); color: var(--gemellaire); }
+  .recent-date { font-size: 0.7rem; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="conn-badge" id="conn-badge"></div>
+
+<div class="dossier-screen">
+  <div class="logo-icon">&#9877;</div>
+  <h2>Cas Divers</h2>
+  <p class="subtitle">Curetage &middot; Placenta g&eacute;mellaire</p>
+
+  <div class="dossier-input-wrap" style="margin-bottom:12px;">
+    <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;text-align:center;">Utilisateur</div>
+    <input type="text" id="pwa-user-input" placeholder="(non identifi&eacute;)"
+           autocomplete="off" style="font-size:0.95rem;font-weight:400;letter-spacing:0;padding:10px 14px;opacity:0.8;"
+           oninput="savePwaUser(this.value)">
+  </div>
+
+  <div class="dossier-input-wrap">
+    <input type="text" id="dossier-input" placeholder="Ex : 2026-0142"
+           autocomplete="off" inputmode="text">
+  </div>
+
+  <div class="dossier-status" id="dossier-status"></div>
+
+  <div class="btn-row" id="btn-row">
+    <!-- Buttons injected dynamically -->
+  </div>
+
+  <div class="recent-section" id="recent-section" style="display:none;">
+    <div class="recent-title">Cas r&eacute;cents</div>
+    <div id="recent-list"></div>
+  </div>
+</div>
+
+<script>
+// ═══════ HUB URL ═══════
+const HUB = window.location.origin;
+
+// ═══════ PWA User ═══════
+function _getCookie(name) {
+  var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : '';
+}
+function syncPwaUserFromCookie() {
+  var cookieUser = _getCookie('pwa_username');
+  if (cookieUser) {
+    try {
+      var stored = localStorage.getItem('divers_pwa_user');
+      if (stored !== cookieUser) localStorage.setItem('divers_pwa_user', cookieUser);
+    } catch(e) {}
+  }
+}
+function getPwaUser() {
+  syncPwaUserFromCookie();
+  try { return localStorage.getItem('divers_pwa_user') || ''; } catch(e) { return ''; }
+}
+function savePwaUser(val) {
+  try { localStorage.setItem('divers_pwa_user', (val || '').trim()); } catch(e) {}
+}
+syncPwaUserFromCookie();
+document.addEventListener('DOMContentLoaded', function() {
+  var u = document.getElementById('pwa-user-input');
+  if (u) u.value = getPwaUser();
+});
+
+// ═══════ PWA Registration ═══════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/divers/sw.js').catch(() => {});
+}
+
+// ═══════ Connectivity ═══════
+function updateConn() {
+  const badge = document.getElementById('conn-badge');
+  if (navigator.onLine) {
+    badge.className = 'conn-badge online';
+    badge.textContent = '\u25CF En ligne';
+  } else {
+    badge.className = 'conn-badge offline';
+    badge.textContent = '\u25CF Hors ligne';
+  }
+}
+window.addEventListener('online', updateConn);
+window.addEventListener('offline', updateConn);
+updateConn();
+
+// ═══════ Dossier check ═══════
+const input = document.getElementById('dossier-input');
+const status = document.getElementById('dossier-status');
+const btnRow = document.getElementById('btn-row');
+
+let debounceTimer = null;
+
+input.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(updateUI, 300);
+});
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && input.value.trim()) updateUI();
+});
+
+function dossierExists(id) {
+  // Vérifier localStorage pour les données hors-ligne
+  try {
+    var keys = Object.keys(localStorage);
+    for (var i = 0; i < keys.length; i++) {
+      if (keys[i] === 'divers_curetage_' + id || keys[i] === 'divers_gemellaire_' + id) {
+        return keys[i].includes('curetage') ? 'curetage' : 'gemellaire';
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+function updateUI() {
+  const val = input.value.trim();
+  if (!val) {
+    status.innerHTML = '';
+    btnRow.innerHTML = '';
+    return;
+  }
+
+  const existing = dossierExists(val);
+
+  if (existing) {
+    var typeLabel = existing === 'curetage' ? 'Curetage' : 'G\u00e9mellaire';
+    status.innerHTML = '<span class="status-existing">\u25CF Dossier existant (' + typeLabel + ')</span>';
+    btnRow.innerHTML =
+      '<button class="dossier-btn btn-resume" onclick="goTo(\'' + existing + '\')">Reprendre ' + typeLabel + ' \u2192</button>' +
+      '<button class="dossier-btn btn-curetage" onclick="goTo(\'curetage\')" style="opacity:0.7;font-size:0.85rem">Curetage</button>' +
+      '<button class="dossier-btn btn-gemellaire" onclick="goTo(\'gemellaire\')" style="opacity:0.7;font-size:0.85rem">G\u00e9mellaire</button>';
+  } else {
+    status.innerHTML = '<span class="status-new">\u25CF Nouveau dossier</span>';
+    btnRow.innerHTML =
+      '<button class="dossier-btn btn-curetage" onclick="goTo(\'curetage\')">Curetage \u2192</button>' +
+      '<button class="dossier-btn btn-gemellaire" onclick="goTo(\'gemellaire\')">G\u00e9mellaire \u2192</button>';
+  }
+}
+
+function goTo(type) {
+  const dossier = input.value.trim();
+  if (!dossier) return;
+  window.location.href = '/pwa/divers/' + type + '.html?dossier=' + encodeURIComponent(dossier);
+}
+
+// ═══════ Cas récents ═══════
+function loadRecent() {
+  var items = [];
+  try {
+    var keys = Object.keys(localStorage);
+    keys.forEach(function(k) {
+      var m;
+      if ((m = k.match(/^divers_(curetage|gemellaire)_(.+)$/))) {
+        try {
+          var data = JSON.parse(localStorage.getItem(k));
+          items.push({
+            type: m[1],
+            dossier: m[2],
+            date: data.timestamp || '',
+            key: k
+          });
+        } catch(e) {}
+      }
+    });
+  } catch(e) {}
+
+  items.sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); });
+
+  var section = document.getElementById('recent-section');
+  var list = document.getElementById('recent-list');
+
+  if (!items.length) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = '';
+  var html = '';
+  items.slice(0, 10).forEach(function(item) {
+    var typeCls = item.type === 'curetage' ? 'type-cur' : 'type-gem';
+    var typeLabel = item.type === 'curetage' ? 'CUR' : 'GEM';
+    var dotColor = item.type === 'curetage' ? 'var(--curetage)' : 'var(--gemellaire)';
+    var date = item.date ? item.date.substring(0, 10) : '';
+    html += '<div class="recent-item" onclick="goRecent(\'' + item.type + '\',\'' + item.dossier.replace(/'/g, "\\'") + '\')">' +
+      '<div class="recent-dot" style="background:' + dotColor + '"></div>' +
+      '<span class="recent-dossier">' + item.dossier + '</span>' +
+      '<span class="recent-type ' + typeCls + '">' + typeLabel + '</span>' +
+      '<span class="recent-date">' + date + '</span>' +
+    '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function goRecent(type, dossier) {
+  window.location.href = '/pwa/divers/' + type + '.html?dossier=' + encodeURIComponent(dossier);
+}
+
+loadRecent();
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>
+  i18nInit(window.location.origin).then(function() { i18nApply(); }).catch(function() {});
+</script>
+</body>
+</html>

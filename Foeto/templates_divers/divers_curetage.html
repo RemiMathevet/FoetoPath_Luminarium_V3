@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curetage — Macroscopie | FoetoPath</title>
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #161b27; --bg3: #1e2435; --bg4: #252d42;
+    --border: #2e3854; --border2: #3d4f75;
+    --text: #e2e8f8; --text2: #8892aa; --text3: #556080;
+    --blue: #4f8ef7; --blue-dim: #1e3a6e; --blue-text: #93b8fa;
+    --green: #2dca72; --green-dim: #0f3d25; --green-text: #6ee8a2;
+    --amber: #f5a623; --amber-dim: #3d2800; --amber-text: #fbc85c;
+    --red: #e8445a; --red-dim: #3d1018; --red-text: #f88a9a;
+    --purple: #9b72f5; --purple-dim: #251850; --purple-text: #c4a8ff;
+    --radius: 8px; --radius-lg: 12px;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+  .app { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .header { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+  .header-icon { width: 36px; height: 36px; background: var(--blue-dim); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; }
+  .header-icon svg { color: var(--blue); }
+  .header h1 { font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+  .header small { font-size: 12px; color: var(--text3); display: block; font-weight: 400; margin-top: 1px; }
+
+  .section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+  .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .row { display: grid; gap: 10px; margin-bottom: 10px; }
+  .c2 { grid-template-columns: 1fr 1fr; }
+  .c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .c4 { grid-template-columns: repeat(4, 1fr); }
+  .c14 { grid-template-columns: 1fr 4fr; }
+
+  .fld { display: flex; flex-direction: column; gap: 4px; }
+  label.lbl { font-size: 11px; color: var(--text2); font-weight: 500; }
+  input, select, textarea {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text); font-size: 13px; padding: 7px 10px;
+    font-family: inherit; transition: border-color 0.15s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--blue); }
+  textarea { resize: vertical; min-height: 70px; }
+  select option { background: var(--bg3); }
+
+  .toggle-group { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .toggle-btn { flex: 1; padding: 7px 10px; background: transparent; border: none; color: var(--text2); font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.15s; text-align: center; }
+  .toggle-btn.active { background: var(--blue-dim); color: var(--blue-text); font-weight: 500; }
+  .toggle-btn:hover:not(.active) { background: var(--bg4); }
+
+  .cb-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cb-item { display: flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 10px; cursor: pointer; transition: all 0.15s; }
+  .cb-item:hover { border-color: var(--border2); }
+  .cb-item.checked { background: var(--blue-dim); border-color: var(--blue); }
+  .cb-item input[type=checkbox] { display: none; }
+  .cb-item span { font-size: 12px; color: var(--text2); pointer-events: none; }
+  .cb-item.checked span { color: var(--blue-text); }
+
+  .organ-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+  .organ-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+  .organ-card.present { border-color: var(--green); background: var(--green-dim); }
+  .organ-name { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+  .organ-card.present .organ-name { color: var(--green-text); }
+  .organ-toggle { display: flex; gap: 4px; }
+  .pres-btn { font-size: 11px; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--text3); cursor: pointer; font-family: inherit; transition: all 0.12s; }
+  .pres-btn.on { background: var(--green-dim); border-color: var(--green); color: var(--green-text); }
+  .organ-detail { margin-top: 6px; display: none; }
+  .organ-card.present .organ-detail { display: block; }
+  .organ-detail select, .organ-detail input { font-size: 12px; padding: 4px 8px; }
+  .mesure-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .mesure-row label { font-size: 11px; color: var(--text2); white-space: nowrap; }
+  .mesure-row input { width: 70px; }
+
+  .alert { border-radius: var(--radius); padding: 10px 14px; font-size: 12px; margin-top: 8px; display: none; line-height: 1.5; }
+  .alert-amber { background: var(--amber-dim); border: 1px solid var(--amber); color: var(--amber-text); }
+  .alert-red { background: var(--red-dim); border: 1px solid var(--red); color: var(--red-text); }
+
+  .cr-panel { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1rem; }
+  .cr-text { font-family: var(--mono); font-size: 12px; color: var(--text); line-height: 1.8; white-space: pre-wrap; min-height: 120px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+  .btn-primary { background: var(--blue-dim); border: 1px solid var(--blue); color: var(--blue-text); padding: 9px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .btn-primary:hover { background: var(--blue); color: #fff; }
+  .btn-save { background: var(--green-dim); border: 1px solid var(--green); color: var(--green-text); padding: 9px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .btn-save:hover { background: var(--green); color: #fff; }
+  .btn-copy { background: var(--bg4); border: 1px solid var(--border); color: var(--text2); padding: 7px 14px; border-radius: var(--radius); font-size: 12px; cursor: pointer; font-family: inherit; }
+  .btn-copy:hover { border-color: var(--border2); color: var(--text); }
+  .actions { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+  .copy-ok { font-size: 11px; color: var(--green); display: none; }
+  .save-ok { font-size: 11px; color: var(--green); display: none; }
+
+  .sep { height: 1px; background: var(--border); margin: 12px 0; }
+  .hint { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  @media (max-width: 600px) { .c3, .c4 { grid-template-columns: 1fr 1fr; } .c2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-icon">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Produit de curetage — Macroscopie</h1>
+      <small>FoetoPath Hub · Template de saisie macroscopique</small>
+    </div>
+    <a href="/divers/" style="color:var(--text3);font-size:12px;text-decoration:none;margin-left:auto">← Cas divers</a>
+  </div>
+
+  <!-- IDENTIFICATION -->
+  <div class="section">
+    <div class="section-title">Identification</div>
+    <div class="row c3">
+      <div class="fld"><label class="lbl">N° dossier</label><input type="text" id="dossier" placeholder="2025-CUR-XXX"></div>
+      <div class="fld"><label class="lbl">Date prélèvement</label><input type="date" id="date-prel"></div>
+      <div class="fld"><label class="lbl">Opérateur</label><input type="text" id="operateur" placeholder="Nom"></div>
+    </div>
+    <div class="row c3">
+      <div class="fld"><label class="lbl">Âge gestationnel (SA)</label><input type="number" id="ag-sa" placeholder="10" min="4" max="24"></div>
+      <div class="fld"><label class="lbl">+ jours</label><input type="number" id="ag-j" placeholder="0" min="0" max="6"></div>
+      <div class="fld"><label class="lbl">Indication</label>
+        <select id="indication" onchange="checkInd()">
+          <option value="">— Choisir —</option>
+          <option value="IVG">IVG</option>
+          <option value="FCS">FCS spontanée</option>
+          <option value="arret">Grossesse arrêtée (embryon mort)</option>
+          <option value="retention">Rétention post-partum / post-IMG</option>
+          <option value="mole">Suspicion môle hydatiforme</option>
+          <option value="GEU">GEU (curetage diagnostique)</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="row c2" id="autre-ind-wrap" style="display:none">
+      <div class="fld"><label class="lbl">Indication (préciser)</label><input type="text" id="autre-ind" placeholder="Préciser"></div>
+    </div>
+  </div>
+
+  <!-- ÉTAT ET ASPECT GÉNÉRAL -->
+  <div class="section">
+    <div class="section-title">État & aspect général</div>
+    <div class="row c2">
+      <div class="fld">
+        <label class="lbl">État du prélèvement</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('etat','frais',this)">Frais</button>
+          <button class="toggle-btn" onclick="setToggle('etat','fixe',this)">Fixé au formol</button>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Aspect macroscopique global</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('conglom','conglom',this)">Conglomérat</button>
+          <button class="toggle-btn" onclick="setToggle('conglom','fragment',this)">Fragment(s) séparé(s)</button>
+        </div>
+      </div>
+    </div>
+    <div class="row c3">
+      <div class="fld"><label class="lbl">Poids total (g)</label><input type="number" id="poids" placeholder="—" min="0" step="0.1"></div>
+      <div class="fld"><label class="lbl">Volume (mL)</label><input type="number" id="volume" placeholder="—" min="0"></div>
+      <div class="fld"><label class="lbl">Grand axe (cm)</label><input type="number" id="grand-axe" placeholder="—" step="0.1" min="0"></div>
+    </div>
+    <div class="fld">
+      <label class="lbl">Aspect libre complémentaire</label>
+      <input type="text" id="aspect-libre" placeholder="Ex : fragments hémorragiques, tissu brunâtre, formations vésiculeuses...">
+    </div>
+  </div>
+
+  <!-- FRAGMENTS PLACENTAIRES -->
+  <div class="section">
+    <div class="section-title">Fragments placentaires</div>
+
+    <div class="fld" style="margin-bottom:10px">
+      <label class="lbl">Arbres villeux</label>
+      <div class="cb-group" id="villeux-group">
+        <label class="cb-item" onclick="toggleCb(this,'villeux','normaux')">
+          <input type="checkbox" value="normaux"><span>Normaux</span>
+        </label>
+        <label class="cb-item" onclick="toggleCb(this,'villeux','kystiques')">
+          <input type="checkbox" value="kystiques"><span>Aspect kystique</span>
+        </label>
+        <label class="cb-item" onclick="toggleCb(this,'villeux','gros_kystes')">
+          <input type="checkbox" value="gros_kystes"><span>Gros kystes</span>
+        </label>
+        <label class="cb-item" onclick="toggleCb(this,'villeux','hydropiques')" id="cb-hydro">
+          <input type="checkbox" value="hydropiques"><span>Aspect hydropique</span>
+        </label>
+        <label class="cb-item" onclick="toggleCb(this,'villeux','vesiculeux')">
+          <input type="checkbox" value="vesiculeux"><span>Vésiculeux / bulleux</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="row c2">
+      <div class="fld">
+        <label class="lbl">Caduque</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('caduque','presente',this)">Présente</button>
+          <button class="toggle-btn" onclick="setToggle('caduque','absente',this)">Absente</button>
+          <button class="toggle-btn" onclick="setToggle('caduque','douteux',this)">Douteuse</button>
+        </div>
+      </div>
+      <div class="fld">
+        <label class="lbl">Sac gestationnel</label>
+        <div class="toggle-group">
+          <button class="toggle-btn" onclick="setToggle('sac','identifie',this)">Identifié</button>
+          <button class="toggle-btn active" onclick="setToggle('sac','non',this)">Non identifié</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-amber" id="alert-mole">
+      <strong>Aspect hydropique / vésiculeux</strong> — Envisager : caryotype sur villosités, immunohistochimie p57<sup>KIP2</sup>, génotypage moléculaire. Coter suspicion de môle.
+    </div>
+  </div>
+
+  <!-- FRAGMENTS FŒTAUX -->
+  <div class="section">
+    <div class="section-title">Fragments fœtaux</div>
+    <div class="fld" style="margin-bottom:12px">
+      <label class="lbl">Fragments fœtaux identifiés ?</label>
+      <div class="toggle-group" style="max-width:300px">
+        <button class="toggle-btn" onclick="setToggle('foetaux','oui',this);toggleFoetaux(true)">Oui</button>
+        <button class="toggle-btn active" onclick="setToggle('foetaux','non',this);toggleFoetaux(false)">Non</button>
+        <button class="toggle-btn" onclick="setToggle('foetaux','parciel',this);toggleFoetaux(true)">Partiels</button>
+      </div>
+    </div>
+
+    <div id="foetaux-detail" style="display:none">
+      <div class="organ-grid" id="organ-grid">
+
+        <!-- MAINS -->
+        <div class="organ-card" id="card-mains">
+          <div class="organ-name">Mains
+            <div class="organ-toggle">
+              <button class="pres-btn on" onclick="toggleOrgan('mains',true,this)">Présentes</button>
+              <button class="pres-btn" onclick="toggleOrgan('mains',false,this)">Absentes</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <div class="mesure-row">
+              <label>Long. main (mm)</label>
+              <input type="number" id="mains-mm" placeholder="—" step="0.5" min="0">
+            </div>
+            <div style="margin-top:6px">
+              <select id="mains-aspect">
+                <option value="normales">Normales</option>
+                <option value="polydactylie">Polydactylie</option>
+                <option value="syndactylie">Syndactylie</option>
+                <option value="brachydactylie">Brachydactylie</option>
+                <option value="clinodactylie">Clinodactylie V</option>
+                <option value="camptodactylie">Camptodactylie</option>
+                <option value="poing_ferme">Poing fermé</option>
+                <option value="autre_main">Autre anomalie</option>
+              </select>
+            </div>
+            <div class="mesure-row" id="mains-autre-wrap" style="display:none">
+              <input type="text" id="mains-autre" placeholder="Préciser anomalie">
+            </div>
+          </div>
+        </div>
+
+        <!-- PIEDS -->
+        <div class="organ-card present" id="card-pieds">
+          <div class="organ-name">Pieds
+            <div class="organ-toggle">
+              <button class="pres-btn on" onclick="toggleOrgan('pieds',true,this)">Présents</button>
+              <button class="pres-btn" onclick="toggleOrgan('pieds',false,this)">Absents</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <div class="mesure-row">
+              <label>Long. pied (mm)</label>
+              <input type="number" id="pieds-mm" placeholder="—" step="0.5" min="0">
+            </div>
+            <div style="margin-top:6px">
+              <select id="pieds-aspect">
+                <option value="normaux">Normaux</option>
+                <option value="polydactylie">Polydactylie</option>
+                <option value="syndactylie">Syndactylie</option>
+                <option value="pied_bot">Pied bot</option>
+                <option value="pied_plat">Pied plat / rocker-bottom</option>
+                <option value="brachydactylie">Brachydactylie</option>
+                <option value="autre_pied">Autre anomalie</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEUROCRÂNE -->
+        <div class="organ-card present" id="card-neurocrane">
+          <div class="organ-name">Neurocrâne
+            <div class="organ-toggle">
+              <button class="pres-btn on" onclick="toggleOrgan('neurocrane',true,this)">Présent</button>
+              <button class="pres-btn" onclick="toggleOrgan('neurocrane',false,this)">Absent</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="neurocrane-aspect">
+              <option value="normal">Normal</option>
+              <option value="anencephalie">Anencéphalie</option>
+              <option value="exencephalie">Exencéphalie</option>
+              <option value="craniorachischisis">Craniorachischisis</option>
+              <option value="deformation">Déformation / aplatissement</option>
+              <option value="autre_nc">Autre anomalie</option>
+            </select>
+            <div class="mesure-row" id="neurocrane-autre-wrap" style="display:none">
+              <input type="text" id="neurocrane-autre" placeholder="Préciser">
+            </div>
+          </div>
+        </div>
+
+        <!-- CŒUR -->
+        <div class="organ-card present" id="card-coeur">
+          <div class="organ-name">Cœur
+            <div class="organ-toggle">
+              <button class="pres-btn on" onclick="toggleOrgan('coeur',true,this)">Présent</button>
+              <button class="pres-btn" onclick="toggleOrgan('coeur',false,this)">Absent</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="coeur-aspect">
+              <option value="normal">Normal</option>
+              <option value="malformation">Malformation — à préciser</option>
+              <option value="petit">Petit / hypoplasique</option>
+              <option value="autre_c">Autre anomalie</option>
+            </select>
+            <div style="margin-top:4px"><input type="text" id="coeur-detail" placeholder="Précisions macro cardiaques..."></div>
+          </div>
+        </div>
+
+        <!-- POUMONS -->
+        <div class="organ-card present" id="card-poumons">
+          <div class="organ-name">Poumons
+            <div class="organ-toggle">
+              <button class="pres-btn on" onclick="toggleOrgan('poumons',true,this)">Présents</button>
+              <button class="pres-btn" onclick="toggleOrgan('poumons',false,this)">Absents</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="poumons-aspect">
+              <option value="normaux">Normaux</option>
+              <option value="hypoplasiques">Hypoplasiques</option>
+              <option value="malformation">Malformation — à préciser</option>
+              <option value="autre_p">Autre anomalie</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- FOIE -->
+        <div class="organ-card present" id="card-foie">
+          <div class="organ-name">Foie
+            <div class="organ-toggle">
+              <button class="pres-btn on" onclick="toggleOrgan('foie',true,this)">Présent</button>
+              <button class="pres-btn" onclick="toggleOrgan('foie',false,this)">Absent</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="foie-aspect">
+              <option value="normal">Normal</option>
+              <option value="anormal">Anomalie — à préciser</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- REINS -->
+        <div class="organ-card present" id="card-reins">
+          <div class="organ-name">Reins
+            <div class="organ-toggle">
+              <button class="pres-btn on" onclick="toggleOrgan('reins',true,this)">Présents</button>
+              <button class="pres-btn" onclick="toggleOrgan('reins',false,this)">Absents</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="reins-aspect">
+              <option value="normaux">Normaux</option>
+              <option value="agénésie_uni">Agénésie unilatérale</option>
+              <option value="polykystiques">Polykystiques</option>
+              <option value="dysplasiques">Dysplasiques</option>
+              <option value="hydrn">Hydronéphrose</option>
+              <option value="autre_r">Autre anomalie</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SURRÉNALES -->
+        <div class="organ-card present" id="card-surrenales">
+          <div class="organ-name">Surrénales
+            <div class="organ-toggle">
+              <button class="pres-btn on" onclick="toggleOrgan('surrenales',true,this)">Présentes</button>
+              <button class="pres-btn" onclick="toggleOrgan('surrenales',false,this)">Absentes</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="surrenales-aspect">
+              <option value="normales">Normales</option>
+              <option value="hypoplasiques">Hypoplasiques</option>
+              <option value="autre_s">Autre anomalie</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- THYMUS -->
+        <div class="organ-card" id="card-thymus">
+          <div class="organ-name">Thymus
+            <div class="organ-toggle">
+              <button class="pres-btn" onclick="toggleOrgan('thymus',true,this)">Présent</button>
+              <button class="pres-btn on" onclick="toggleOrgan('thymus',false,this)">Absent</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="thymus-aspect">
+              <option value="normal">Normal</option>
+              <option value="hypoplasique">Hypoplasique</option>
+              <option value="absent_digeorge">Aplasie (Di George ?)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- INTESTINS -->
+        <div class="organ-card" id="card-intestins">
+          <div class="organ-name">Intestins / Estomac
+            <div class="organ-toggle">
+              <button class="pres-btn" onclick="toggleOrgan('intestins',true,this)">Présents</button>
+              <button class="pres-btn on" onclick="toggleOrgan('intestins',false,this)">Absents</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="intestins-aspect">
+              <option value="normaux">Normaux</option>
+              <option value="dilatation">Dilatation / occlusion</option>
+              <option value="atrésie">Atrésie</option>
+              <option value="autre_i">Autre</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- CORDON -->
+        <div class="organ-card" id="card-cordon">
+          <div class="organ-name">Cordon ombilical
+            <div class="organ-toggle">
+              <button class="pres-btn" onclick="toggleOrgan('cordon',true,this)">Présent</button>
+              <button class="pres-btn on" onclick="toggleOrgan('cordon',false,this)">Absent</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="cordon-aspect">
+              <option value="normal">Normal (3 vaisseaux)</option>
+              <option value="2vaiss">2 vaisseaux (artère unique)</option>
+              <option value="court">Court</option>
+              <option value="long">Long</option>
+              <option value="autre_co">Autre</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- RACHIS -->
+        <div class="organ-card" id="card-rachis">
+          <div class="organ-name">Rachis / Moelle
+            <div class="organ-toggle">
+              <button class="pres-btn" onclick="toggleOrgan('rachis',true,this)">Présent</button>
+              <button class="pres-btn on" onclick="toggleOrgan('rachis',false,this)">Absent</button>
+            </div>
+          </div>
+          <div class="organ-detail">
+            <select id="rachis-aspect">
+              <option value="normal">Normal</option>
+              <option value="spina_bifida">Spina bifida</option>
+              <option value="myelo">Myéloméningocèle</option>
+              <option value="autre_ra">Autre</option>
+            </select>
+          </div>
+        </div>
+
+      </div><!-- /organ-grid -->
+
+      <div class="fld" style="margin-top:10px">
+        <label class="lbl">Autres fragments / éléments identifiés</label>
+        <input type="text" id="autres-foetaux" placeholder="Ex : fragments cutanés, membres partiels, os longs, peau...">
+      </div>
+    </div><!-- /foetaux-detail -->
+  </div>
+
+  <!-- ORIENTATION DIAGNOSTIQUE -->
+  <div class="section">
+    <div class="section-title">Orientation diagnostique</div>
+    <div class="row c2">
+      <div class="fld"><label class="lbl">Suspicion môle</label>
+        <select id="susp-mole">
+          <option value="">Non</option>
+          <option value="partielle">Partielle — à confirmer histo</option>
+          <option value="complete">Complète — à confirmer histo</option>
+          <option value="indeterminer">Équivoque — à préciser</option>
+        </select>
+      </div>
+      <div class="fld"><label class="lbl">Prélèvements complémentaires</label>
+        <select id="prelevements">
+          <option value="">Aucun</option>
+          <option value="cyto">Caryotype sur villosités</option>
+          <option value="ihc">IHC p57KIP2</option>
+          <option value="cyto_ihc">Caryotype + IHC p57</option>
+          <option value="genotypage">Génotypage moléculaire</option>
+          <option value="cyto_geno">Caryotype + génotypage</option>
+        </select>
+      </div>
+    </div>
+    <div class="fld">
+      <label class="lbl">Observations complémentaires libres</label>
+      <textarea id="obs-libres" placeholder="Corrélations cliniques, remarques macroscopiques supplémentaires, éléments à signaler..."></textarea>
+    </div>
+  </div>
+
+  <!-- COMPTE-RENDU GÉNÉRÉ -->
+  <div class="section">
+    <div class="section-title">Compte-rendu macroscopique</div>
+    <div class="actions" style="margin-top:0">
+      <button class="btn-primary" onclick="generateCR()">Générer le texte</button>
+      <button class="btn-save" onclick="saveCas()" id="btn-save">Sauvegarder</button>
+      <span class="save-ok" id="save-status">✓ Sauvegardé</span>
+    </div>
+    <div class="cr-panel" id="cr-panel" style="display:none">
+      <pre class="cr-text" id="cr-text"></pre>
+      <div class="actions">
+        <button class="btn-copy" onclick="copyCR()">Copier</button>
+        <span class="copy-ok" id="copy-ok">✓ Copié</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+const state = {
+  etat: 'frais', conglom: 'conglom', caduque: 'presente',
+  sac: 'non', foetaux: 'non',
+  villeux: new Set(),
+  organs: {
+    mains: true, pieds: true, neurocrane: true, coeur: true,
+    poumons: true, foie: true, reins: true, surrenales: true,
+    thymus: false, intestins: false, cordon: false, rachis: false
+  }
+};
+
+function setToggle(key, val, btn) {
+  state[key] = val;
+  var group = btn.closest('.toggle-group');
+  group.querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  checkMoleAlert();
+}
+
+function toggleCb(el, group, val) {
+  var cb = el.querySelector('input');
+  var checked = !cb.checked;
+  cb.checked = checked;
+  el.classList.toggle('checked', checked);
+  if (checked) state[group].add(val); else state[group].delete(val);
+  checkMoleAlert();
+}
+
+function checkMoleAlert() {
+  var show = state.villeux.has('hydropiques') || state.villeux.has('vesiculeux');
+  document.getElementById('alert-mole').style.display = show ? 'block' : 'none';
+  if (show) document.getElementById('susp-mole').value = 'indeterminer';
+}
+
+function toggleFoetaux(show) {
+  document.getElementById('foetaux-detail').style.display = show ? 'block' : 'none';
+}
+
+function toggleOrgan(name, present, btn) {
+  state.organs[name] = present;
+  var card = document.getElementById('card-' + name);
+  card.classList.toggle('present', present);
+  var btns = btn.closest('.organ-toggle').querySelectorAll('.pres-btn');
+  btns.forEach(function(b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+}
+
+function checkInd() {
+  var val = document.getElementById('indication').value;
+  document.getElementById('autre-ind-wrap').style.display = val === 'autre' ? 'grid' : 'none';
+  if (val === 'mole') {
+    document.getElementById('alert-mole').style.display = 'block';
+    document.getElementById('susp-mole').value = 'indeterminer';
+  }
+}
+
+function v(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+
+function generateCR() {
+  var ag_sa = v('ag-sa'); var ag_j = v('ag-j');
+  var ag = ag_sa ? (ag_sa + (ag_j && ag_j !== '0' ? ' SA + ' + ag_j + ' j' : ' SA')) : '';
+  var poids = v('poids'); var vol = v('volume'); var axe = v('grand-axe');
+  var aspect_libre = v('aspect-libre');
+
+  var etatText = state.etat === 'frais' ? 'à frais' : 'après fixation au formol';
+  var conglomText = state.conglom === 'conglom' ? 'un conglomérat de débris fœtoplacentaires' : 'des fragments de débris fœtoplacentaires';
+
+  var tailleBloc = '';
+  if (poids) tailleBloc += 'pesant ' + poids + ' g';
+  if (vol) tailleBloc += (tailleBloc ? ', ' : '') + 'volume ' + vol + ' mL';
+  if (axe) tailleBloc += (tailleBloc ? ', ' : '') + 'mesurant ' + axe + ' cm en grand axe';
+  if (aspect_libre) tailleBloc += (tailleBloc ? ' — ' : '') + aspect_libre;
+
+  var compo = [];
+
+  if (state.villeux.size > 0) {
+    var vMap = {
+      normaux: 'normaux', kystiques: 'à aspect kystique',
+      gros_kystes: 'présentant de gros kystes',
+      hydropiques: 'à aspect hydropique', vesiculeux: 'à aspect vésiculeux / bulleux'
+    };
+    var vText = Array.from(state.villeux).map(function(k) { return vMap[k]; }).join(', ');
+    var caduqText = '';
+    if (state.caduque === 'presente') caduqText = ', avec caduque';
+    else if (state.caduque === 'absente') caduqText = ', sans caduque identifiable';
+    else if (state.caduque === 'douteux') caduqText = ', avec tissu caducéal douteux';
+    var sacText = state.sac === 'identifie' ? ', sac gestationnel identifié' : '';
+    compo.push('des fragments placentaires comportant des arbres villeux ' + vText + caduqText + sacText);
+  } else {
+    var caduqText2 = state.caduque === 'presente' ? 'fragments placentaires et caduque'
+      : state.caduque === 'absente' ? 'fragments placentaires sans caduque identifiable'
+      : 'fragments placentaires';
+    compo.push(caduqText2);
+  }
+
+  if (state.foetaux !== 'non') {
+    var ff = [];
+
+    if (state.organs.mains) {
+      var mm = v('mains-mm');
+      var asp = v('mains-aspect');
+      var aspMap = {
+        normales:'normales', polydactylie:'présentant une polydactylie',
+        syndactylie:'présentant une syndactylie', brachydactylie:'présentant une brachydactylie',
+        clinodactylie:'avec clinodactylie du V', camptodactylie:'présentant une camptodactylie',
+        poing_ferme:'en poing fermé', autre_main:v('mains-autre')||'anomalie à préciser'
+      };
+      ff.push('des mains' + (mm ? ' mesurant ' + mm + ' mm' : '') + ', ' + (aspMap[asp]||asp));
+    }
+    if (state.organs.pieds) {
+      var mmP = v('pieds-mm');
+      var aspP = v('pieds-aspect');
+      var aspMapP = {
+        normaux:'normaux', polydactylie:'présentant une polydactylie',
+        syndactylie:'présentant une syndactylie', pied_bot:'en pied bot',
+        pied_plat:'à aspect de pied plat / rocker-bottom',
+        brachydactylie:'présentant une brachydactylie', autre_pied:'anomalie à préciser'
+      };
+      ff.push('des pieds' + (mmP ? ' mesurant ' + mmP + ' mm' : '') + ', ' + (aspMapP[aspP]||aspP));
+    }
+
+    var simpleOrgans = [
+      ['neurocrane', 'un neurocrâne', 'neurocrane-aspect', {normal:'normal', anencephalie:'anencéphalie', exencephalie:'exencéphalie', craniorachischisis:'craniorachischisis', deformation:'avec déformation', autre_nc:'à préciser'}],
+      ['coeur', 'un cœur', 'coeur-aspect', {normal:'normal', malformation:'avec malformation', petit:'hypoplasique', autre_c:'à préciser'}],
+      ['poumons', 'des poumons', 'poumons-aspect', {normaux:'normaux', hypoplasiques:'hypoplasiques', malformation:'avec malformation', autre_p:'à préciser'}],
+      ['foie', 'un foie', 'foie-aspect', {normal:'normal', anormal:'avec anomalie'}],
+      ['reins', 'des reins', 'reins-aspect', {normaux:'normaux', 'agénésie_uni':'avec agénésie unilatérale', polykystiques:'polykystiques', dysplasiques:'dysplasiques', hydrn:'avec hydronéphrose', autre_r:'à préciser'}],
+      ['surrenales', 'des surrénales', 'surrenales-aspect', {normales:'normales', hypoplasiques:'hypoplasiques', autre_s:'à préciser'}],
+      ['thymus', 'un thymus', 'thymus-aspect', {normal:'normal', hypoplasique:'hypoplasique', absent_digeorge:'aplasique (Di George ?)'}],
+      ['intestins', 'des intestins / estomac', 'intestins-aspect', {normaux:'normaux', dilatation:'dilatés / occlusis', 'atrésie':'avec atrésie', autre_i:'à préciser'}],
+      ['cordon', 'un cordon ombilical', 'cordon-aspect', {normal:'normal (3 vaisseaux)', '2vaiss':'à 2 vaisseaux (artère unique)', court:'court', long:'long', autre_co:'à préciser'}],
+      ['rachis', 'un rachis', 'rachis-aspect', {normal:'normal', spina_bifida:'avec spina bifida', myelo:'avec myéloméningocèle', autre_ra:'à préciser'}]
+    ];
+
+    simpleOrgans.forEach(function(item) {
+      var key = item[0], label = item[1], aspId = item[2], aspMap2 = item[3];
+      if (state.organs[key]) {
+        var aspVal = v(aspId);
+        ff.push(label + ', ' + (aspMap2[aspVal]||aspVal));
+      }
+    });
+
+    var autres = v('autres-foetaux');
+    if (autres) ff.push(autres);
+
+    if (ff.length) {
+      compo.push('des fragments fœtaux comprenant : ' + ff.join(' ; '));
+    } else {
+      compo.push('des fragments fœtaux (sans identification organique précise)');
+    }
+  }
+
+  var lines = [];
+  lines.push('Examen ' + etatText + ' de ' + conglomText + (tailleBloc ? ', ' + tailleBloc : '') + ', permettant l\'identification de :');
+  compo.forEach(function(c) { lines.push('— ' + c); });
+
+  var susp = v('susp-mole');
+  if (susp) {
+    var suspMap = {partielle:'partielle', complete:'complète', indeterminer:'indéterminée (aspect équivoque)'};
+    lines.push('\nSuspicion de môle hydatiforme ' + (suspMap[susp]||susp) + ' — à confirmer histologiquement.');
+  }
+
+  var prel = v('prelevements');
+  if (prel) {
+    var prelMap = {
+      cyto:'Caryotype réalisé sur villosités choriales.',
+      ihc:'IHC p57KIP2 réalisée.',
+      cyto_ihc:'Caryotype et IHC p57KIP2 réalisés.',
+      genotypage:'Génotypage moléculaire réalisé.',
+      cyto_geno:'Caryotype et génotypage moléculaire réalisés.'
+    };
+    if (prelMap[prel]) lines.push(prelMap[prel]);
+  }
+
+  var obs = v('obs-libres');
+  if (obs) lines.push('\n' + obs);
+
+  var dossier = v('dossier'); var operateur = v('operateur');
+  var header = '';
+  if (dossier) header += 'Dossier : ' + dossier;
+  if (ag) header += (header ? ' | ' : '') + 'AG : ' + ag;
+  var indication = document.getElementById('indication');
+  var indText = indication.options[indication.selectedIndex] ? indication.options[indication.selectedIndex].text : '';
+  if (indText && indText !== '— Choisir —') header += (header ? ' | ' : '') + 'Indication : ' + indText;
+  if (operateur) header += (header ? ' | ' : '') + 'Opérateur : ' + operateur;
+
+  var full = (header ? header + '\n' + '—'.repeat(Math.min(header.length, 60)) + '\n\n' : '') + lines.join('\n');
+
+  document.getElementById('cr-text').textContent = full;
+  document.getElementById('cr-panel').style.display = 'block';
+  document.getElementById('cr-panel').scrollIntoView({behavior:'smooth'});
+}
+
+function copyCR() {
+  var text = document.getElementById('cr-text').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var ok = document.getElementById('copy-ok');
+    ok.style.display = 'inline';
+    setTimeout(function() { ok.style.display = 'none'; }, 2000);
+  });
+}
+
+// === API COMMUNICATION ===
+var CAS_TYPE = 'curetage';
+var currentCasId = null;
+
+function collectFormData() {
+  return {
+    conglom: state.conglom,
+    poids: parseFloat(v('poids')) || null,
+    volume: parseInt(v('volume')) || null,
+    grand_axe: parseFloat(v('grand-axe')) || null,
+    aspect_libre: v('aspect-libre'),
+    villeux: Array.from(state.villeux),
+    caduque: state.caduque,
+    sac: state.sac,
+    foetaux: state.foetaux,
+    organes: Object.fromEntries(
+      Object.entries(state.organs).map(function(entry) {
+        var key = entry[0];
+        return [key, {
+          present: entry[1],
+          mm: parseFloat(v(key + '-mm')) || null,
+          aspect: v(key + '-aspect') || null,
+          autre: v(key + '-autre') || null,
+          detail: v(key + '-detail') || null
+        }];
+      })
+    ),
+    autres_foetaux: v('autres-foetaux'),
+    susp_mole: v('susp-mole'),
+    prelevements: v('prelevements'),
+    obs_libres: v('obs-libres')
+  };
+}
+
+async function saveCas() {
+  var btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = 'Sauvegarde...';
+
+  generateCR();
+
+  var payload = {
+    type_cas: CAS_TYPE,
+    dossier: v('dossier'),
+    date_prel: v('date-prel'),
+    operateur: v('operateur'),
+    ag_sa: parseInt(v('ag-sa')) || null,
+    ag_j: parseInt(v('ag-j')) || 0,
+    indication: v('indication'),
+    etat: state.etat,
+    form_data: collectFormData(),
+    cr_text: document.getElementById('cr-text').textContent || ''
+  };
+
+  if (currentCasId) payload.id = currentCasId;
+
+  try {
+    var resp = await fetch('/divers/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var data = await resp.json();
+    currentCasId = data.id;
+
+    var status = document.getElementById('save-status');
+    status.style.display = 'inline';
+    setTimeout(function() { status.style.display = 'none'; }, 3000);
+  } catch(e) {
+    alert('Erreur de sauvegarde : ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sauvegarder';
+  }
+}
+
+function setToggleByValue(key, val) {
+  var allGroups = document.querySelectorAll('.toggle-group');
+  allGroups.forEach(function(group) {
+    group.querySelectorAll('.toggle-btn').forEach(function(btn) {
+      if (btn.textContent.trim().toLowerCase().indexOf(val) >= 0 ||
+          btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + val + "'") >= 0) {
+        btn.click();
+      }
+    });
+  });
+}
+
+async function loadCas(id) {
+  try {
+    var resp = await fetch('/divers/api/load/' + id);
+    var data = await resp.json();
+    if (data.error) { console.error(data.error); return; }
+    currentCasId = data.id;
+    document.getElementById('dossier').value = data.dossier || '';
+    document.getElementById('date-prel').value = data.date_prel || '';
+    document.getElementById('operateur').value = data.operateur || '';
+    document.getElementById('ag-sa').value = data.ag_sa || '';
+    document.getElementById('ag-j').value = data.ag_j || '';
+    document.getElementById('indication').value = data.indication || '';
+    checkInd();
+
+    var fd = data.form_data || {};
+    if (fd.conglom) setToggle('conglom', fd.conglom, document.querySelector('.toggle-btn'));
+    if (fd.etat) setToggle('etat', fd.etat, document.querySelector('.toggle-btn'));
+    if (fd.poids) document.getElementById('poids').value = fd.poids;
+    if (fd.volume) document.getElementById('volume').value = fd.volume;
+    if (fd.grand_axe) document.getElementById('grand-axe').value = fd.grand_axe;
+    if (fd.aspect_libre) document.getElementById('aspect-libre').value = fd.aspect_libre;
+    if (fd.villeux && Array.isArray(fd.villeux)) {
+      fd.villeux.forEach(function(val) {
+        var items = document.querySelectorAll('.cb-item');
+        items.forEach(function(item) {
+          var cb = item.querySelector('input');
+          if (cb && cb.value === val) { toggleCb(item, 'villeux', val); }
+        });
+      });
+    }
+    if (fd.susp_mole) document.getElementById('susp-mole').value = fd.susp_mole;
+    if (fd.prelevements) document.getElementById('prelevements').value = fd.prelevements;
+    if (fd.obs_libres) document.getElementById('obs-libres').value = fd.obs_libres;
+    if (fd.autres_foetaux) document.getElementById('autres-foetaux').value = fd.autres_foetaux;
+
+    if (data.cr_text) {
+      document.getElementById('cr-text').textContent = data.cr_text;
+      document.getElementById('cr-panel').style.display = 'block';
+    }
+  } catch(e) {
+    console.error('Erreur chargement:', e);
+  }
+}
+
+// Init
+document.querySelectorAll('.cb-item').forEach(function(el) {
+  el.addEventListener('click', function(e) { e.preventDefault(); });
+});
+document.getElementById('card-pieds').classList.add('present');
+
+// Charger un cas existant si ?id=XX
+var urlParams = new URLSearchParams(window.location.search);
+var editId = urlParams.get('id');
+if (editId) loadCas(editId);
+</script>
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Paramètres</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #0f1117; --bg2: #181a24; --bg3: #1e2030; --bg4: #262940;
+    --text: #e8e6e1; --text2: #a0a0a0; --text3: #6a6a6a;
+    --accent: #7c6aef; --accent-dim: #5a4ec0; --accent-bg: rgba(124,106,239,0.1);
+    --success: #2ecc71; --success-bg: rgba(46,204,113,0.1);
+    --warning: #f39c12; --warning-bg: rgba(243,156,18,0.1);
+    --danger: #e74c3c; --danger-bg: rgba(231,76,60,0.1);
+    --info: #3498db; --info-bg: rgba(52,152,219,0.1);
+    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+    --radius: 8px; --radius-lg: 12px;
+    --font: 'DM Sans', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* ── Top nav bar ─────────────────────────── */
+.topnav {
+    height: 40px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 16px; gap: 4px;
+    font-size: 13px; font-family: var(--font);
+}
+.topnav a {
+    color: var(--text2); text-decoration: none; padding: 4px 10px; border-radius: 6px;
+}
+.topnav a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+.topnav a.active {
+    color: var(--accent); background: rgba(124,106,239,0.1);
+}
+.topnav .spacer { flex: 1; }
+.topnav .nav-user { color: var(--text3); font-size: 12px; }
+
+/* ── Main layout ─────────────────────────── */
+.settings-wrap {
+    max-width: 720px;
+    margin: 48px auto;
+    padding: 0 24px;
+}
+.settings-title {
+    font-size: 24px; font-weight: 700; margin-bottom: 8px;
+}
+.settings-subtitle {
+    color: var(--text2); font-size: 14px; margin-bottom: 36px;
+}
+
+/* ── Sections ────────────────────────────── */
+.section {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 24px;
+    margin-bottom: 20px;
+}
+.section-title {
+    font-size: 15px; font-weight: 600; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+}
+.section-title svg { width: 18px; height: 18px; opacity: 0.6; }
+
+/* ── Theme picker ────────────────────────── */
+.theme-picker { display: flex; gap: 12px; flex-wrap: wrap; }
+.theme-option { cursor: pointer; text-align: center; transition: all 0.15s; }
+.theme-option span {
+    display: block; font-size: 11px; color: var(--text3);
+    margin-top: 6px; font-weight: 500;
+}
+.theme-option:hover span { color: var(--text); }
+.theme-preview {
+    width: 88px; height: 60px; border-radius: 6px; border: 2px solid var(--border2);
+    overflow: hidden; display: flex; flex-direction: column; transition: all 0.15s;
+}
+.theme-option:hover .theme-preview { transform: scale(1.05); }
+.theme-option.active .theme-preview {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-bg, rgba(124,106,239,0.2));
+}
+.theme-option.active span { color: var(--accent); font-weight: 700; }
+
+/* ── Form fields ─────────────────────────── */
+.form-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label {
+    font-size: 12px; font-weight: 600; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.form-input {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 12px;
+    color: var(--text); font-size: 14px; font-family: var(--font);
+    outline: none; transition: border-color 0.15s;
+}
+.form-input:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--text3); }
+.path-hint {
+    font-size: 11px; color: var(--text3); margin-top: 2px; line-height: 1.5;
+}
+.path-hint code {
+    background: var(--bg3); padding: 1px 5px; border-radius: 3px;
+    font-family: var(--mono); font-size: 11px; color: var(--text2);
+}
+.path-hint b { color: var(--text2); font-weight: 600; }
+.path-status {
+    font-size: 11px; margin-top: 4px; padding: 4px 8px;
+    border-radius: 4px; display: inline-block;
+}
+.path-status.ok { color: var(--success); background: var(--success-bg); }
+.path-status.err { color: var(--danger); background: var(--danger-bg); }
+.path-status.warn { color: var(--warning); background: var(--warning-bg); }
+
+/* ── Save bar ────────────────────────────── */
+.save-bar {
+    display: flex; justify-content: flex-end; gap: 12px;
+    margin-top: 24px; padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+.btn {
+    padding: 8px 20px; border-radius: var(--radius); border: 1px solid var(--border);
+    background: var(--bg3); color: var(--text); font-size: 13px; font-weight: 500;
+    font-family: var(--font); cursor: pointer; transition: all 0.15s;
+}
+.btn:hover { background: var(--bg4); border-color: var(--border2); }
+.btn-primary {
+    background: var(--accent); border-color: var(--accent);
+    color: #fff; font-weight: 600;
+}
+.btn-primary:hover { background: var(--accent-dim); }
+
+/* ── Toast ────────────────────────────────── */
+.toast {
+    position: fixed; bottom: 20px; right: 20px;
+    padding: 12px 20px; border-radius: var(--radius);
+    background: var(--bg4); border: 1px solid var(--border2);
+    color: var(--text); font-size: 13px; font-family: var(--font);
+    opacity: 0; transform: translateY(10px);
+    transition: all 0.3s; pointer-events: none; z-index: 999;
+}
+.toast.visible { opacity: 1; transform: translateY(0); }
+.toast.success { border-color: var(--success); color: var(--success); }
+.toast.error { border-color: var(--danger); color: var(--danger); }
+</style>
+<link rel="stylesheet" href="/static/themes.css">
+</head>
+<body>
+<script>
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+
+<nav class="topnav">
+  <a href="/">Hub</a>
+  <a href="/admin">Admin Foetus</a>
+  <a href="/admin/placenta">Admin Placentas</a>
+  <a href="/admin/lames" id="navLames" style="display:none">Lames</a>
+  <a href="/admin/settings" class="active">Paramètres</a>
+  <span class="spacer"></span>
+  <span class="nav-user" id="navUserInfo"></span>
+  <a href="/auth/logout">Déconnexion</a>
+</nav>
+<script>
+fetch('/auth/api/me').then(r=>r.json()).then(u=>{
+  document.getElementById('navUserInfo').textContent=`${u.display_name||u.username} (${u.role})`;
+  if (u.role === 'admin' || u.role === 'admin_centre') {
+    const el = document.getElementById('navLames');
+    if (el) el.style.display = '';
+  }
+}).catch(()=>{});
+</script>
+
+<div class="settings-wrap">
+    <h1 class="settings-title">Paramètres</h1>
+    <p class="settings-subtitle">Configuration globale de FoetoPath</p>
+
+    <!-- Theme -->
+    <div class="section">
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            Thème d'affichage
+        </div>
+        <div class="theme-picker" id="themePicker">
+            <label class="theme-option" data-theme="dark">
+                <div class="theme-preview" style="background:#0f1117;border-color:#7c6aef">
+                    <div style="background:#181a24;height:40%;border-bottom:1px solid rgba(255,255,255,0.1)"></div>
+                    <div style="padding:4px"><div style="background:#7c6aef;height:4px;width:60%;border-radius:2px;margin:2px 0"></div><div style="background:#e8e6e1;height:3px;width:80%;border-radius:2px;margin:2px 0;opacity:0.5"></div></div>
+                </div>
+                <span>Sombre</span>
+            </label>
+            <label class="theme-option" data-theme="light">
+                <div class="theme-preview" style="background:#f5f5f7;border-color:#5b4bc4">
+                    <div style="background:#fff;height:40%;border-bottom:1px solid rgba(0,0,0,0.1)"></div>
+                    <div style="padding:4px"><div style="background:#5b4bc4;height:4px;width:60%;border-radius:2px;margin:2px 0"></div><div style="background:#1d1d1f;height:3px;width:80%;border-radius:2px;margin:2px 0;opacity:0.3"></div></div>
+                </div>
+                <span>Clair</span>
+            </label>
+            <label class="theme-option" data-theme="highcontrast">
+                <div class="theme-preview" style="background:#000;border-color:#00ffff;border-width:2px">
+                    <div style="background:#0a0a0a;height:40%;border-bottom:2px solid rgba(255,255,255,0.3)"></div>
+                    <div style="padding:4px"><div style="background:#00ffff;height:4px;width:60%;margin:2px 0"></div><div style="background:#ffff00;height:3px;width:80%;margin:2px 0"></div></div>
+                </div>
+                <span>Malvoyant</span>
+            </label>
+            <label class="theme-option" data-theme="cli">
+                <div class="theme-preview" style="background:#0a0a0a;border-color:#33ff33">
+                    <div style="background:#0d0d0d;height:40%;border-bottom:1px dashed #33ff33"></div>
+                    <div style="padding:4px;font-family:monospace;color:#33ff33;font-size:7px;text-shadow:0 0 4px #33ff33">C:\>&nbsp;_</div>
+                </div>
+                <span>CLI</span>
+            </label>
+            <label class="theme-option" data-theme="win98">
+                <div class="theme-preview" style="background:#008080;border-color:#000080">
+                    <div style="background:linear-gradient(90deg,#000080,#1084d0);height:14px"></div>
+                    <div style="background:#c0c0c0;flex:1;padding:3px"><div style="background:#fff;height:10px;box-shadow:inset 1px 1px #808080"></div><div style="background:#c0c0c0;height:8px;margin-top:2px;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff"></div></div>
+                </div>
+                <span>Win 98</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Langue -->
+    <div class="section">
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            Langue
+        </div>
+        <div class="form-grid">
+            <div class="form-group full">
+                <label class="form-label">Langue de l'interface</label>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;" id="langPicker">
+                    <!-- Rempli dynamiquement par JS -->
+                </div>
+                <span class="path-hint" style="margin-top:6px;">Affecte l'ensemble de l'application (hub, PWA, comptes-rendus). Nécessite un rechargement.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paths -->
+    <div class="section">
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            Chemins par défaut
+        </div>
+        <div class="form-grid">
+            <div class="form-group full">
+                <label class="form-label">Dossier de sortie (cas, photos, JSON, bases de données)</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input class="form-input" id="s_data_root" placeholder="Par défaut : ~/Documents/FoetoPath" style="flex:1;">
+                    <button class="btn" onclick="testPath('s_data_root')" title="Vérifier le chemin" style="white-space:nowrap;padding:10px 14px;">Tester</button>
+                </div>
+                <span class="path-hint" id="hint_data_root">Ce dossier contiendra <b>Foetus/</b> et <b>Placentas/</b> (photos, JSON, DB). Si vide → <code>~/Documents/FoetoPath</code></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Port du viewer</label>
+                <input class="form-input" id="s_viewer_port" placeholder="5002" type="number">
+                <span class="path-hint">Port du viewer WSI Luminarium (défaut : 5002)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Magos (LLM) -->
+    <div class="section">
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v2h2a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V10a2 2 0 012-2h2V6a4 4 0 014-4zm0 2a2 2 0 00-2 2v2h4V6a2 2 0 00-2-2z"/></svg>
+            Magos (LLM local)
+        </div>
+        <div class="form-grid">
+            <div class="form-group full">
+                <label class="form-label">URL du serveur Magos</label>
+                <input class="form-input" id="s_magos_url" placeholder="http://localhost:8200">
+                <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">
+                    Broker LLM local (llama.cpp). Dashboard : <a href="http://localhost:8200/dashboard" target="_blank" style="color:var(--accent)">localhost:8200/dashboard</a>
+                </span>
+            </div>
+        </div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:12px">
+            <button class="btn btn-sm" id="btnTestMagos" onclick="_testMagosConnection()" style="font-size:12px">
+                Tester la connexion
+            </button>
+            <span id="magosTestResult" style="font-size:11px"></span>
+        </div>
+        <div id="magosModelInfo" style="margin-top:12px;display:none">
+            <div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Modèle chargé</div>
+            <div id="magosModelName" style="font-size:13px;color:var(--text);font-family:var(--mono);background:var(--bg3);padding:6px 10px;border-radius:var(--radius);display:inline-block"></div>
+        </div>
+    </div>
+
+    <!-- Versions & Changelog -->
+    <div class="section">
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+            Versions & Changelog
+        </div>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:16px">Templates CR et futurs modèles LLM — traçabilité des versions.</p>
+
+        <div id="versionsContainer" style="font-size:13px;color:var(--text2)">Chargement...</div>
+    </div>
+
+    <!-- Sécurité — section 2FA visible uniquement pour admin / admin_centre -->
+    <div class="section" id="securitySection" style="display:none;">
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Sécurité
+        </div>
+        <div class="form-grid">
+            <div class="form-group full">
+                <label class="form-label">Double authentification (2FA TOTP)</label>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;">
+                        <input type="checkbox" id="s_totp_required" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;">
+                        <span>Exiger la double authentification pour tous les utilisateurs</span>
+                    </label>
+                </div>
+                <span style="font-size:11px;color:var(--text3);margin-top:6px;display:block;line-height:1.5;">
+                    Si activé, chaque utilisateur devra configurer une application d'authentification (Google Authenticator, Authy…) et saisir un code à 6 chiffres à chaque connexion.<br>
+                    Si désactivé, la connexion se fait uniquement par mot de passe. Les utilisateurs ayant déjà configuré la 2FA conservent leur configuration.
+                </span>
+            </div>
+            <div class="form-group full">
+                <label class="form-label">Validité du cookie 2FA</label>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <input type="range" id="s_totp_cookie_hours" min="1" max="12" value="4" step="1"
+                        style="flex:1;accent-color:var(--accent);"
+                        oninput="document.getElementById('totpCookieVal').textContent=this.value">
+                    <span id="totpCookieVal" style="font-size:18px;font-weight:700;min-width:30px;text-align:center;color:var(--accent);">4</span>
+                    <span style="font-size:13px;color:var(--text2);">heures</span>
+                </div>
+                <span style="font-size:11px;color:var(--text3);margin-top:4px;display:block;line-height:1.5;">
+                    Après validation du code 2FA, l'utilisateur peut se reconnecter sans re-saisir le code pendant cette durée.<br>
+                    Seule la saisie du mot de passe est requise. Minimum 1h, maximum 12h. Défaut : 4h.
+                </span>
+            </div>
+            <div class="form-group full">
+                <label class="form-label">Déconnexion automatique après inactivité</label>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <input type="range" id="s_idle_timeout" min="1" max="30" value="8" step="1"
+                        style="flex:1;accent-color:var(--accent);"
+                        oninput="document.getElementById('idleVal').textContent=this.value">
+                    <span id="idleVal" style="font-size:18px;font-weight:700;min-width:30px;text-align:center;color:var(--accent);">8</span>
+                    <span style="font-size:13px;color:var(--text2);">min</span>
+                </div>
+                <span style="font-size:11px;color:var(--text3);margin-top:4px;">Minimum 1 min, maximum 30 min. Défaut : 8 min.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bases de données -->
+    <div class="section" id="dbSection" style="display:none;">
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            Bases de donn&eacute;es
+        </div>
+        <div class="form-grid">
+            <div class="form-group full">
+                <label class="form-label">R&eacute;pertoire des fichiers .db</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input class="form-input" id="s_db_directory" placeholder="Chemin actuel" style="flex:1;">
+                    <button class="btn" onclick="testPath('s_db_directory')" title="V&eacute;rifier le chemin" style="white-space:nowrap;padding:10px 14px;">Tester</button>
+                    <button class="btn btn-primary" onclick="saveDbDirectory()" style="white-space:nowrap;padding:10px 14px;">Appliquer</button>
+                </div>
+                <span class="path-hint">Contient : foetopath.db, placenta.db, auth.db, audit.db. <b>Un red&eacute;marrage du service est n&eacute;cessaire</b> apr&egrave;s modification.</span>
+            </div>
+        </div>
+
+        <!-- Info fichiers DB actuels -->
+        <div id="dbFilesInfo" style="margin-top:16px;font-size:12px;"></div>
+    </div>
+
+    <!-- Save -->
+    <div class="save-bar">
+        <a href="/" class="btn">Retour au Hub</a>
+        <button class="btn btn-primary" onclick="saveSettings()">Enregistrer</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Toast ─────────────────────────────────
+function toast(msg, type) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast visible ' + (type || '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('visible'), 3000);
+}
+
+// ── Theme ─────────────────────────────────
+function setTheme(name) {
+    document.documentElement.setAttribute('data-theme', name);
+    localStorage.setItem('foetopath-theme', name);
+    document.querySelectorAll('.theme-option').forEach(el => {
+        el.classList.toggle('active', el.dataset.theme === name);
+    });
+}
+
+// Init theme picker active state
+(function() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    document.querySelectorAll('.theme-option').forEach(el => {
+        el.classList.toggle('active', el.dataset.theme === current);
+    });
+})();
+
+document.getElementById('themePicker').addEventListener('click', e => {
+    const option = e.target.closest('.theme-option');
+    if (option && option.dataset.theme) setTheme(option.dataset.theme);
+});
+
+// ── Load settings ─────────────────────────
+let _isSecurityAdmin = false;
+
+async function loadSettings() {
+    try {
+        const r = await fetch('/admin/api/settings');
+        const s = await r.json();
+        document.getElementById('s_data_root').value = s.data_root || '';
+        document.getElementById('s_viewer_port').value = s.viewer_port || '5002';
+        document.getElementById('s_magos_url').value = s.magos_url || 'http://localhost:8200';
+        const idle = parseInt(s.idle_timeout_min) || 8;
+        document.getElementById('s_idle_timeout').value = idle;
+        document.getElementById('idleVal').textContent = idle;
+        // 2FA — remplir même si la section est masquée (sera affichée ensuite si admin)
+        document.getElementById('s_totp_required').checked = (s.totp_required !== '0');
+        const cookieH = parseInt(s.totp_cookie_hours) || 4;
+        document.getElementById('s_totp_cookie_hours').value = cookieH;
+        document.getElementById('totpCookieVal').textContent = cookieH;
+        // Langue — charger et construire le picker
+        _currentLang = s.language || 'fr';
+        await loadLanguagePicker(_currentLang);
+    } catch (e) {
+        toast('Erreur chargement paramètres', 'error');
+    }
+
+    // Afficher la section sécurité uniquement pour admin / admin_centre
+    try {
+        const mr = await fetch('/auth/api/me');
+        const me = await mr.json();
+        if (me.role === 'admin' || me.role === 'admin_centre') {
+            document.getElementById('securitySection').style.display = '';
+            _isSecurityAdmin = true;
+        }
+    } catch (e) { /* pas admin → section cachée */ }
+}
+
+// ── Language picker ──────────────────────
+let _currentLang = 'fr';
+const _langFlags = { fr: '🇫🇷', en: '🇬🇧', de: '🇩🇪', es: '🇪🇸', it: '🇮🇹', pt: '🇵🇹', nl: '🇳🇱' };
+
+async function loadLanguagePicker(currentLang) {
+    const picker = document.getElementById('langPicker');
+    if (!picker) return;
+    try {
+        // Lister les locales disponibles depuis le dossier locales/
+        const langs = [
+            { code: 'fr', name: 'Français' },
+            { code: 'en', name: 'English' }
+        ];
+        // Tenter de charger dynamiquement les langues disponibles
+        try {
+            const r = await fetch('/api/i18n/current.json');
+            if (r.ok) {
+                // On charge aussi les autres langues si elles existent
+                for (const lang of ['de', 'es', 'it', 'pt', 'nl']) {
+                    try {
+                        const lr = await fetch(`/api/i18n/${lang}.json`);
+                        if (lr.ok) {
+                            const ld = await lr.json();
+                            if (ld.meta) langs.push({ code: ld.meta.code, name: ld.meta.name });
+                        }
+                    } catch(e) {}
+                }
+            }
+        } catch(e) {}
+
+        picker.innerHTML = '';
+        for (const lang of langs) {
+            const flag = _langFlags[lang.code] || '🌐';
+            const active = lang.code === currentLang;
+            const btn = document.createElement('button');
+            btn.className = 'btn' + (active ? '' : ' btn-secondary');
+            btn.style.cssText = 'padding:8px 16px;font-size:14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;' +
+                (active ? 'background:var(--accent);color:#fff;border:2px solid var(--accent);' : 'border:2px solid var(--border);');
+            btn.innerHTML = `<span style="font-size:18px">${flag}</span> ${esc(lang.name)}`;
+            btn.onclick = () => selectLanguage(lang.code);
+            picker.appendChild(btn);
+        }
+    } catch(e) {}
+}
+
+function selectLanguage(code) {
+    _currentLang = code;
+    loadLanguagePicker(code);
+}
+
+// ── Save settings ─────────────────────────
+async function saveSettings() {
+    const data = {
+        data_root: document.getElementById('s_data_root').value.trim(),
+        viewer_port: document.getElementById('s_viewer_port').value.trim() || '5002',
+        magos_url: document.getElementById('s_magos_url').value.trim(),
+        idle_timeout_min: document.getElementById('s_idle_timeout').value || '8',
+        language: _currentLang || 'fr',
+    };
+    // Inclure les settings 2FA seulement si admin/admin_centre
+    if (_isSecurityAdmin) {
+        data.totp_required = document.getElementById('s_totp_required').checked ? '1' : '0';
+        data.totp_cookie_hours = document.getElementById('s_totp_cookie_hours').value || '4';
+    }
+    try {
+        const r = await fetch('/admin/api/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        toast('Paramètres enregistrés', 'success');
+    } catch (e) {
+        toast('Erreur: ' + e.message, 'error');
+    }
+}
+
+// ── Versions & Changelog ──────────────────
+function renderTemplateSection(title, data) {
+    let html = `<div style="font-weight:600;font-size:14px;margin-bottom:12px;color:var(--text)">${esc(title)}</div>`;
+    for (const [tplId, info] of Object.entries(data)) {
+        html += `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px">`;
+        html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">`;
+        html += `<span style="font-weight:600;color:var(--text)">${esc(info.label)}</span>`;
+        html += `<span style="background:var(--accent-bg);color:var(--accent);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">v${esc(info.current_version)}</span>`;
+        html += `</div>`;
+
+        const changelog = info.changelog || [];
+        if (changelog.length) {
+            html += `<details style="margin-top:4px"><summary style="cursor:pointer;font-size:12px;color:var(--text3);user-select:none">Changelog (${changelog.length} version${changelog.length > 1 ? 's' : ''})</summary>`;
+            html += `<div style="margin-top:8px;padding-left:8px;border-left:2px solid var(--border)">`;
+            changelog.forEach(entry => {
+                html += `<div style="margin-bottom:10px">`;
+                html += `<div style="font-weight:600;font-size:12px;color:var(--accent)">v${esc(entry.version)} <span style="font-weight:400;color:var(--text3)">— ${esc(entry.date)}</span></div>`;
+                html += `<ul style="margin:4px 0 0 16px;padding:0;font-size:12px;color:var(--text2)">`;
+                (entry.changes || []).forEach(c => {
+                    html += `<li style="margin-bottom:2px">${esc(c)}</li>`;
+                });
+                html += `</ul></div>`;
+            });
+            html += `</div></details>`;
+        }
+        html += `</div>`;
+    }
+    return html;
+}
+
+async function loadVersions() {
+    const container = document.getElementById('versionsContainer');
+    try {
+        // Fetch foetus + placenta template versions in parallel
+        const [rFoet, rPlac] = await Promise.all([
+            fetch('/admin/api/cr/templates/versions'),
+            fetch('/placenta/api/cr/templates/versions'),
+        ]);
+        const dataFoet = await rFoet.json();
+        const dataPlac = await rPlac.json();
+
+        let html = '';
+
+        // ── Templates CR Foetus ──
+        html += renderTemplateSection('Templates CR — Foetus', dataFoet);
+
+        // ── Templates CR Placenta ──
+        html += `<div style="margin-top:20px"></div>`;
+        html += renderTemplateSection('Templates CR — Placenta', dataPlac);
+
+        // ── Placeholder modèles LLM ──
+        html += `<div style="font-weight:600;font-size:14px;margin:20px 0 12px;color:var(--text)">Modèles LLM (Magos)</div>`;
+        html += `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px;color:var(--text3);font-size:12px;font-style:italic">`;
+        html += `Le versioning des prompts et modèles LLM sera disponible prochainement. Les paramètres envoyés au LLM (prompt système, température, tokens max) seront versionnés ici.`;
+        html += `</div>`;
+
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = `<span style="color:var(--danger)">Erreur chargement versions: ${esc(e.message)}</span>`;
+    }
+}
+
+function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s || '';
+    return d.innerHTML;
+}
+
+// ── Test path ────────────────────────────
+async function testPath(inputId) {
+    const input = document.getElementById(inputId);
+    const val = input.value.trim();
+    if (!val) {
+        toast('Chemin vide — le défaut ~/Documents/FoetoPath sera utilisé', 'success');
+        return;
+    }
+    try {
+        const r = await fetch('/admin/api/settings/test-path', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: val }),
+        });
+        const res = await r.json();
+        if (res.exists && res.writable) {
+            toast('✓ Dossier accessible en écriture', 'success');
+        } else if (res.exists && !res.writable) {
+            toast('⚠ Dossier existe mais pas en écriture', 'error');
+        } else {
+            toast('⚠ Dossier introuvable — il sera créé automatiquement', '');
+        }
+    } catch (e) {
+        toast('Erreur: ' + e.message, 'error');
+    }
+}
+
+// ── DB Directory (admin / admin_centre only) ──
+async function loadDbDirectory() {
+    try {
+        const r = await fetch('/admin/api/settings/db-directory');
+        if (r.status === 403 || r.status === 401) {
+            // Pas admin/admin_centre : masquer la section
+            return;
+        }
+        const data = await r.json();
+
+        // Afficher la section
+        document.getElementById('dbSection').style.display = '';
+
+        // Pré-remplir
+        document.getElementById('s_db_directory').value = data.current_directory || '';
+        document.getElementById('s_db_directory').placeholder = data.current_directory || '~/Documents/FoetoPath';
+
+        // Afficher les fichiers DB
+        const container = document.getElementById('dbFilesInfo');
+        let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+        for (const [name, info] of Object.entries(data.db_files || {})) {
+            const status = info.exists
+                ? `<span style="color:var(--success)">${info.size_mb} Mo</span>`
+                : '<span style="color:var(--text3)">absent</span>';
+            html += `<div style="background:var(--bg3);padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">`;
+            html += `<span style="font-family:var(--mono);color:var(--text2)">${esc(name)}</span>${status}`;
+            html += `</div>`;
+        }
+        html += '</div>';
+        if (data.persisted_directory && data.persisted_directory !== data.current_directory) {
+            html += `<div style="margin-top:8px;padding:8px;background:var(--warning-bg);border-radius:var(--radius);color:var(--warning);font-size:11px;">`;
+            html += `Un nouveau chemin est configur&eacute; (<code>${esc(data.persisted_directory)}</code>) mais n'est pas encore actif. Red&eacute;marrez le service.`;
+            html += `</div>`;
+        }
+        html += `<div style="margin-top:6px;font-size:11px;color:var(--text3);">Config : <code>${esc(data.config_file)}</code></div>`;
+        container.innerHTML = html;
+    } catch (e) {
+        // Silencieux si erreur (probablement pas admin)
+    }
+}
+
+async function saveDbDirectory() {
+    const newDir = document.getElementById('s_db_directory').value.trim();
+    if (!newDir) {
+        toast('Chemin vide', 'error');
+        return;
+    }
+    try {
+        const r = await fetch('/admin/api/settings/db-directory', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ db_directory: newDir }),
+        });
+        const res = await r.json();
+        if (!r.ok) {
+            toast(res.error || 'Erreur', 'error');
+            return;
+        }
+        toast(res.message, 'success');
+        loadDbDirectory(); // Recharger pour afficher le warning restart
+    } catch (e) {
+        toast('Erreur: ' + e.message, 'error');
+    }
+}
+
+// ── Test connexion Magos ──
+async function _testMagosConnection() {
+    const btn = document.getElementById('btnTestMagos');
+    const result = document.getElementById('magosTestResult');
+    const modelInfo = document.getElementById('magosModelInfo');
+    const modelName = document.getElementById('magosModelName');
+    const urlVal = document.getElementById('s_magos_url').value.trim();
+
+    btn.disabled = true;
+    btn.textContent = 'Test...';
+    result.textContent = '';
+    modelInfo.style.display = 'none';
+
+    try {
+        const res = await fetch('/admin/api/llm/status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: urlVal }),
+        });
+        const data = await res.json();
+        if (data.running) {
+            const models = data.models || [];
+            const active = data.active_model || (models.length ? models[0] : '');
+            result.textContent = '✓ Connecté — ' + models.length + ' modèle(s)';
+            result.style.color = 'var(--success)';
+            if (active) {
+                modelName.textContent = active;
+                modelInfo.style.display = '';
+            }
+        } else {
+            result.textContent = '✗ ' + (data.error || 'Non joignable');
+            result.style.color = 'var(--danger)';
+        }
+    } catch (e) {
+        result.textContent = '✗ Erreur : ' + e.message;
+        result.style.color = 'var(--danger)';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Tester la connexion';
+    }
+}
+
+loadSettings();
+loadVersions();
+loadDbDirectory();
+</script>
+<script src="/static/idle-timeout.js"></script>
+</body>
+</html>

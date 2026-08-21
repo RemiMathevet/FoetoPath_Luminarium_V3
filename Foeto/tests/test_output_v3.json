@@ -1,0 +1,734 @@
+{
+  "_meta": {
+    "case_id": 1,
+    "numero_dossier": "Remi",
+    "generated_at": "2026-08-21T09:09:18.425874+00:00",
+    "version": "3.1.0",
+    "schema": "foetopath_llm_export_v3.1"
+  },
+  "brief": {
+    "_usage": "PASSE 1 — orientation syndromique",
+    "identite": {
+      "sexe": "M",
+      "terme_sa": 34,
+      "indication_examen": "Hypertrophie musculaire généralisée",
+      "etat_conservation": "Frais",
+      "maceration_maroun": 0
+    },
+    "antecedents_maternels": {
+      "fdr_negatifs": [
+        "HTA",
+        "Diabète",
+        "Tabac",
+        "Alcool",
+        "Consanguinité"
+      ]
+    },
+    "alertes": [
+      "Masse : -5.6 DS (significativement diminué)",
+      "Cœur : +6.2 DS (significativement augmenté)",
+      "Poumons (D+G) : +2.6 DS (significativement augmenté)",
+      "LBWR très élevé (0.1267 > 0.035) — compatible avec séquence CHAOS si atrésie laryngée associée",
+      "Reins (D+G) : -3.4 DS (significativement diminué)",
+      "Poumon droit : +3.2 DS (significativement augmenté)",
+      "Rein droit : -3.8 DS (significativement diminué)",
+      "Séquence CHAOS probable : LBWR très élevé + atrésie laryngée",
+      "Discordance staturale : Hadlock très inférieur au terme (27.6 vs 34 SA) — RCIU sévère probable ; Adalian concordant (36.0 SA)",
+      "Asymétrie costale : 12D / 11G",
+      "Cœur / Masse corporelle = 0.0778 — Cardiomégalie",
+      "Reins (D+G) / Masse corporelle = 0.0267 — Néphromégalie",
+      "Rein D / Rein G = 0.5 — Asymétrie rénale (rein D plus petit)",
+      "Rein D / Surrénale D = 1.3333 — Surrénale D volumineuse ou rein D hypoplasique",
+      "Surrénales (D+G) / Masse corporelle = 0.0133 — Hyperplasie surrénalienne",
+      "Thymus / Masse corporelle = 0.0756 — Thymomégalie"
+    ],
+    "zscores_anormaux": [
+      {
+        "organe": "coeur",
+        "zscore": 6.18,
+        "interpretation": "significativement augmenté"
+      },
+      {
+        "organe": "poumons",
+        "zscore": 2.6,
+        "interpretation": "significativement augmenté"
+      },
+      {
+        "organe": "reins",
+        "zscore": -3.38,
+        "interpretation": "significativement diminué"
+      },
+      {
+        "organe": "poumon_d",
+        "zscore": 3.23,
+        "interpretation": "significativement augmenté"
+      },
+      {
+        "organe": "rein_d",
+        "zscore": -3.83,
+        "interpretation": "significativement diminué"
+      },
+      {
+        "organe": "masse",
+        "zscore": -5.57,
+        "interpretation": "significativement diminué"
+      }
+    ],
+    "ratios_anormaux": [
+      {
+        "ratio": "LBWR (Poumons / Masse corporelle)",
+        "resultat": 0.1267,
+        "interpretation": "Hyperplasie pulmonaire"
+      },
+      {
+        "ratio": "Cœur / Masse corporelle",
+        "resultat": 0.0778,
+        "interpretation": "Cardiomégalie",
+        "hpo": "HP:0001640"
+      },
+      {
+        "ratio": "Reins (D+G) / Masse corporelle",
+        "resultat": 0.0267,
+        "interpretation": "Néphromégalie",
+        "hpo": "HP:0000105"
+      },
+      {
+        "ratio": "Rein D / Rein G",
+        "resultat": 0.5,
+        "interpretation": "Asymétrie rénale (rein D plus petit)"
+      },
+      {
+        "ratio": "Rein D / Surrénale D",
+        "resultat": 1.3333,
+        "interpretation": "Surrénale D volumineuse ou rein D hypoplasique"
+      },
+      {
+        "ratio": "Surrénales (D+G) / Masse corporelle",
+        "resultat": 0.0133,
+        "interpretation": "Hyperplasie surrénalienne",
+        "hpo": "HP:0010475"
+      },
+      {
+        "ratio": "Thymus / Masse corporelle",
+        "resultat": 0.0756,
+        "interpretation": "Thymomégalie"
+      }
+    ],
+    "radio_anomalies": [
+      "Discordance staturale: Hadlock très inférieur au terme (27.6 vs 34 SA) — RCIU sévère probable ; Adalian concordant (36.0 SA)",
+      "Asymétrie costale: 12D / 11G",
+      "Hemivertebres"
+    ],
+    "hpo_summary": {
+      "total_count": 15,
+      "codes": [
+        {
+          "code": "HP:0000062",
+          "label": "Ambiguous genitalia"
+        },
+        {
+          "code": "HP:0000028",
+          "label": "Cryptorchidism"
+        },
+        {
+          "code": "HP:0002937",
+          "label": "Hemivertebrae"
+        },
+        {
+          "code": "HP:0002757",
+          "label": "Recurrent fractures"
+        },
+        {
+          "code": "HP:0006487",
+          "label": "Bowed long bones"
+        },
+        {
+          "code": "HP:0008750",
+          "label": "Laryngeal atresia"
+        },
+        {
+          "code": "HP:0001680",
+          "label": "Coarctation of aorta"
+        },
+        {
+          "code": "HP:0004387",
+          "label": "Hypoplastic aortic arch"
+        },
+        {
+          "code": "HP:0001640",
+          "label": "Cardiomegaly"
+        },
+        {
+          "code": "HP:0000003",
+          "label": "Multicystic kidney dysplasia"
+        },
+        {
+          "code": "HP:0000105",
+          "label": "Enlarged kidney"
+        },
+        {
+          "code": "HP:0010475",
+          "label": "Adrenal hyperplasia"
+        },
+        {
+          "code": "HP:0002536",
+          "label": "Abnormal cortical gyration"
+        },
+        {
+          "code": "HP:0002119",
+          "label": "Ventriculomegaly"
+        },
+        {
+          "code": "HP:0007165",
+          "label": "Periventricular nodular heterotopia"
+        }
+      ]
+    },
+    "semiologie_litteraire": [
+      "Atrésie laryngée + LBWR 0.127 + cardiomégalie → séquence CHAOS",
+      "Fractures + os incurvés MAIS fémur de longueur normale et thorax normal → pas d'OI classique, pas de dysplasie à thorax étroit",
+      "Ambiguïté génitale + cryptorchidie + surrénales augmentées → axe génito-surrénalien",
+      "Hétérotopie nodulaire + gyration anormale + ventriculomégalie → trouble de migration neuronale",
+      "Hémivertèbres + asymétrie costale → trouble de segmentation vertébrale"
+    ],
+    "contradictions": [
+      {
+        "probleme": "HPO 'HP:0000105' (augmentation) + z-score reins -3.4 DS (diminué)",
+        "reconciliation": "Organe kystique/pathologique : volume augmenté (aspect gros) mais masse faible (parenchyme détruit remplacé par liquide)"
+      },
+      {
+        "probleme": "Thymus : masse fixée 34.0g utilisée (pas de masse fraîche)",
+        "reconciliation": "La fixation augmente la masse de ~10-20%. Les ratios calculés sur cette masse sont surestimés. Interpréter avec prudence."
+      },
+      {
+        "probleme": "Cardiomégalie extrême (z-score +6.2 DS)",
+        "reconciliation": "Vérifier : artefact de pesée (péricarde inclus ?), rhabdomyome, épanchement péricardique non drainé. Si confirmé → cardiopathie majeure ou tumeur cardiaque."
+      }
+    ]
+  },
+  "dossier_complet": {
+    "examen_externe": {
+      "organes_genitaux_externes": [
+        {
+          "constatation": "Ambigus",
+          "hpo": "HP:0000062",
+          "hpo_label": "Ambiguous genitalia"
+        },
+        {
+          "constatation": "Cryptorchidie bilatérale",
+          "hpo": "HP:0000028",
+          "hpo_label": "Cryptorchidism"
+        },
+        {
+          "constatation": "Ambiguïté génitale",
+          "hpo": "HP:0000062",
+          "hpo_label": "Ambiguous genitalia"
+        }
+      ]
+    },
+    "biometries_fraiches": {
+      "terme_reference_sa": 34,
+      "classe_gc": "33-34",
+      "mesures": [
+        {
+          "parametre": "masse",
+          "valeur": 450.0,
+          "unite": "g",
+          "moyenne_ref": 2080.2,
+          "sd_ref": 292.9,
+          "zscore": -5.57,
+          "interpretation": "significativement diminué",
+          "reference": "Guihard-Costa 2002"
+        },
+        {
+          "parametre": "pied",
+          "valeur": 67.0,
+          "unite": "mm",
+          "moyenne_ref": 67,
+          "sd_ref": 4.4,
+          "zscore": 0.0,
+          "interpretation": "normal",
+          "reference": "Guihard-Costa 2002"
+        }
+      ],
+      "biometries_brutes_complementaires": {
+        "bip": 82.0,
+        "fo": 102.0,
+        "dici": 18.0,
+        "fpg": 18.0,
+        "fpd": 18.0
+      },
+      "concordance_terme": {
+        "terme_clinique_sa": 34,
+        "terme_pied_concordant": true
+      }
+    },
+    "radiologie": {
+      "terme_reference_sa": 34,
+      "squelette_axial": {
+        "rachis": [
+          {
+            "constatation": "Hemivertebres",
+            "hpo": "HP:0002937",
+            "hpo_label": "Hemivertebrae"
+          }
+        ],
+        "cotes": {
+          "droite": 12,
+          "gauche": 11,
+          "asymetrie": true
+        },
+        "thorax_forme": "Normal"
+      },
+      "squelette_appendiculaire": {
+        "aspect_os": [
+          {
+            "constatation": "Fractures",
+            "hpo": "HP:0002757",
+            "hpo_label": "Recurrent fractures"
+          },
+          {
+            "constatation": "Incurves",
+            "hpo": "HP:0006487",
+            "hpo_label": "Bowed long bones"
+          }
+        ],
+        "os_longs": [
+          {
+            "os": "Femur",
+            "cote": "droite",
+            "longueur_mm": 67.0,
+            "zscore_chitty": 0.7,
+            "interpretation": "normal"
+          }
+        ]
+      },
+      "scores_staturaux": {
+        "hadlock_sa": 27.6,
+        "adalian_sa": 36.0,
+        "terme_clinique_sa": 34,
+        "discordance": "Hadlock très inférieur au terme (27.6 vs 34 SA) — RCIU sévère probable ; Adalian concordant (36.0 SA)"
+      },
+      "biometries_radio": {
+        "bip_osseux_mm": 55.0,
+        "pc_radio_mm": 230.0
+      }
+    },
+    "ouverture_cavites": {
+      "diaphragme": "Intègre",
+      "aucun_epanchement": true
+    },
+    "examen_in_situ": {
+      "voies_aeriennes": [
+        {
+          "constatation": "Atrésie laryngée",
+          "hpo": "HP:0008750",
+          "hpo_label": "Laryngeal atresia"
+        }
+      ],
+      "thorax": {
+        "pericarde": "Normal",
+        "gros_vaisseaux": [
+          {
+            "constatation": "Coarctation de l'aorte",
+            "hpo": "HP:0001680",
+            "hpo_label": "Coarctation of aorta"
+          },
+          {
+            "constatation": "isthme Hypoplasique",
+            "hpo": "HP:0004387",
+            "hpo_label": "Hypoplastic aortic arch"
+          }
+        ]
+      }
+    },
+    "organes_fixes": {
+      "organes": [
+        {
+          "organe": "coeur",
+          "label": "Cœur",
+          "masse_g": 35.0,
+          "zscore": 6.18,
+          "interpretation": "significativement augmenté",
+          "reference": "Guihard-Costa 2002",
+          "hpo": "HP:0001640",
+          "hpo_label": "Cardiomegaly",
+          "ratio_masse_corporelle_pct": 7.78
+        },
+        {
+          "organe": "poumons",
+          "label": "Poumons (D+G)",
+          "masse_g": 57.0,
+          "zscore": 2.6,
+          "interpretation": "significativement augmenté",
+          "reference": "Guihard-Costa 2002",
+          "ratio_masse_corporelle_pct": 12.67,
+          "lbwr": 0.1267,
+          "lbwr_alerte": "LBWR très élevé (0.1267 > 0.035) — compatible avec séquence CHAOS si atrésie laryngée associée"
+        },
+        {
+          "organe": "surrenales",
+          "label": "Surrénales (D+G)",
+          "masse_g": 6.0,
+          "zscore": 0.08,
+          "interpretation": "normal",
+          "reference": "Guihard-Costa 2002",
+          "ratio_masse_corporelle_pct": 1.33
+        },
+        {
+          "organe": "reins",
+          "label": "Reins (D+G)",
+          "masse_g": 12.0,
+          "zscore": -3.38,
+          "interpretation": "significativement diminué",
+          "reference": "Guihard-Costa 2002",
+          "ratio_masse_corporelle_pct": 2.67
+        },
+        {
+          "organe": "poumon_d",
+          "label": "Poumon droit",
+          "masse_g": 34.0,
+          "zscore": 3.23,
+          "interpretation": "significativement augmenté",
+          "reference": "Guihard-Costa 2002 (dérivé)"
+        },
+        {
+          "organe": "poumon_g",
+          "label": "Poumon gauche",
+          "masse_g": 23.0,
+          "zscore": 0.46,
+          "interpretation": "normal",
+          "reference": "Guihard-Costa 2002 (dérivé)"
+        },
+        {
+          "organe": "rein_d",
+          "label": "Rein droit",
+          "masse_g": 4.0,
+          "zscore": -3.83,
+          "interpretation": "significativement diminué",
+          "reference": "Guihard-Costa 2002 (dérivé)",
+          "lesions_macroscopiques": [
+            {
+              "constatation": "Kystes — dysplasie multikystique",
+              "hpo": "HP:0000003",
+              "hpo_label": "Multicystic kidney dysplasia"
+            },
+            {
+              "constatation": "Gros reins bilatéraux",
+              "hpo": "HP:0000105",
+              "hpo_label": "Enlarged kidney"
+            }
+          ]
+        },
+        {
+          "organe": "rein_g",
+          "label": "Rein gauche",
+          "masse_g": 8.0,
+          "zscore": -0.95,
+          "interpretation": "normal",
+          "reference": "Guihard-Costa 2002 (dérivé)"
+        },
+        {
+          "organe": "surrenale_d",
+          "label": "Surrénale droite",
+          "masse_g": 3.0,
+          "zscore": 0.05,
+          "interpretation": "normal",
+          "reference": "Guihard-Costa 2002 (dérivé)"
+        },
+        {
+          "organe": "surrenale_g",
+          "label": "Surrénale gauche",
+          "masse_g": 3.0,
+          "zscore": 0.05,
+          "interpretation": "normal",
+          "reference": "Guihard-Costa 2002 (dérivé)"
+        },
+        {
+          "organe": "thymus",
+          "label": "Thymus",
+          "masse_fixee_g": 34.0,
+          "ratio_masse_corporelle_pct": 7.56
+        }
+      ]
+    },
+    "neuropathologie": {
+      "terme_reference_sa": 34,
+      "encephale": {
+        "meninges": "Normal",
+        "gyration": {
+          "status": "Anormal",
+          "hpo": "HP:0002536",
+          "hpo_label": "Abnormal cortical gyration"
+        }
+      },
+      "coupes_hemispheres": {
+        "droit": [
+          {
+            "tranche": 1,
+            "constatations": [
+              {
+                "constatation": "Dilatation ventriculaire",
+                "hpo": "HP:0002119",
+                "hpo_label": "Ventriculomegaly"
+              }
+            ]
+          },
+          {
+            "tranche": 2,
+            "constatations": [
+              {
+                "constatation": "Heterotopie nodulaire",
+                "hpo": "HP:0007165",
+                "hpo_label": "Periventricular nodular heterotopia"
+              },
+              {
+                "constatation": "Dilatation ventriculaire",
+                "hpo": "HP:0002119",
+                "hpo_label": "Ventriculomegaly"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "ratios_diagnostiques_complets": [
+      {
+        "ratio": "Index céphalique (BIP / FO)",
+        "numerateur": {
+          "parametre": "BIP (mm)",
+          "valeur": 82.0
+        },
+        "denominateur": {
+          "parametre": "FO (mm)",
+          "valeur": 102.0
+        },
+        "resultat": 0.8039,
+        "seuils": {
+          "bas": 0.74,
+          "haut": 0.83
+        },
+        "interpretation": "normal",
+        "note": "Seuils valables > 28 SA ; tête plus dolichocéphale en début de grossesse"
+      },
+      {
+        "ratio": "DICI / FP moyenne",
+        "numerateur": {
+          "parametre": "DICI (mm)",
+          "valeur": 18.0
+        },
+        "denominateur": {
+          "parametre": "FP moyenne (mm)",
+          "valeur": 18.0
+        },
+        "resultat": 1.0,
+        "seuils": {
+          "bas": 0.85,
+          "haut": 1.15
+        },
+        "interpretation": "normal"
+      },
+      {
+        "ratio": "Fémur / Pied",
+        "numerateur": {
+          "parametre": "Fémur (mm)",
+          "valeur": 67.0
+        },
+        "denominateur": {
+          "parametre": "Pied (mm)",
+          "valeur": 67.0
+        },
+        "resultat": 1.0,
+        "seuils": {
+          "bas": 0.85,
+          "haut": 1.1
+        },
+        "interpretation": "normal"
+      },
+      {
+        "ratio": "LBWR (Poumons / Masse corporelle)",
+        "numerateur": {
+          "parametre": "Poumons D+G (g)",
+          "valeur": 57.0
+        },
+        "denominateur": {
+          "parametre": "Masse corporelle (g)",
+          "valeur": 450.0
+        },
+        "resultat": 0.1267,
+        "seuils": {
+          "bas": 0.018,
+          "haut": 0.035
+        },
+        "interpretation": "anormal_haut",
+        "signification_clinique": "Hyperplasie pulmonaire",
+        "note": "Seuil 0.012 = hypoplasie létale (De Paepe 2005). Corréler au RAC."
+      },
+      {
+        "ratio": "Poumon D / Poumon G",
+        "numerateur": {
+          "parametre": "Poumon D (g)",
+          "valeur": 34.0
+        },
+        "denominateur": {
+          "parametre": "Poumon G (g)",
+          "valeur": 23.0
+        },
+        "resultat": 1.4783,
+        "seuils": {
+          "bas": 1.0,
+          "haut": 1.8
+        },
+        "interpretation": "normal"
+      },
+      {
+        "ratio": "Cœur / Masse corporelle",
+        "numerateur": {
+          "parametre": "Cœur (g)",
+          "valeur": 35.0
+        },
+        "denominateur": {
+          "parametre": "Masse corporelle (g)",
+          "valeur": 450.0
+        },
+        "resultat": 0.0778,
+        "seuils": {
+          "bas": 0.005,
+          "haut": 0.015
+        },
+        "interpretation": "anormal_haut",
+        "signification_clinique": "Cardiomégalie",
+        "hpo": "HP:0001640",
+        "hpo_label": "Cardiomegaly"
+      },
+      {
+        "ratio": "Reins (D+G) / Masse corporelle",
+        "numerateur": {
+          "parametre": "Reins D+G (g)",
+          "valeur": 12.0
+        },
+        "denominateur": {
+          "parametre": "Masse corporelle (g)",
+          "valeur": 450.0
+        },
+        "resultat": 0.0267,
+        "seuils": {
+          "bas": 0.005,
+          "haut": 0.015
+        },
+        "interpretation": "anormal_haut",
+        "signification_clinique": "Néphromégalie",
+        "hpo": "HP:0000105",
+        "hpo_label": "Enlarged kidney"
+      },
+      {
+        "ratio": "Rein D / Rein G",
+        "numerateur": {
+          "parametre": "Rein D (g)",
+          "valeur": 4.0
+        },
+        "denominateur": {
+          "parametre": "Rein G (g)",
+          "valeur": 8.0
+        },
+        "resultat": 0.5,
+        "seuils": {
+          "bas": 0.7,
+          "haut": 1.4
+        },
+        "interpretation": "anormal_bas",
+        "signification_clinique": "Asymétrie rénale (rein D plus petit)"
+      },
+      {
+        "ratio": "Rein D / Surrénale D",
+        "numerateur": {
+          "parametre": "Rein D (g)",
+          "valeur": 4.0
+        },
+        "denominateur": {
+          "parametre": "Surrénale D (g)",
+          "valeur": 3.0
+        },
+        "resultat": 1.3333,
+        "seuils": {
+          "bas": 2.0,
+          "haut": 6.0
+        },
+        "interpretation": "anormal_bas",
+        "signification_clinique": "Surrénale D volumineuse ou rein D hypoplasique"
+      },
+      {
+        "ratio": "Rein G / Surrénale G",
+        "numerateur": {
+          "parametre": "Rein G (g)",
+          "valeur": 8.0
+        },
+        "denominateur": {
+          "parametre": "Surrénale G (g)",
+          "valeur": 3.0
+        },
+        "resultat": 2.6667,
+        "seuils": {
+          "bas": 2.0,
+          "haut": 6.0
+        },
+        "interpretation": "normal"
+      },
+      {
+        "ratio": "Surrénales (D+G) / Masse corporelle",
+        "numerateur": {
+          "parametre": "Surrénales D+G (g)",
+          "valeur": 6.0
+        },
+        "denominateur": {
+          "parametre": "Masse corporelle (g)",
+          "valeur": 450.0
+        },
+        "resultat": 0.0133,
+        "seuils": {
+          "bas": 0.002,
+          "haut": 0.008
+        },
+        "interpretation": "anormal_haut",
+        "signification_clinique": "Hyperplasie surrénalienne",
+        "hpo": "HP:0010475",
+        "hpo_label": "Adrenal hyperplasia"
+      },
+      {
+        "ratio": "Thymus / Masse corporelle",
+        "numerateur": {
+          "parametre": "Thymus (g)",
+          "valeur": 34.0
+        },
+        "denominateur": {
+          "parametre": "Masse corporelle (g)",
+          "valeur": 450.0
+        },
+        "resultat": 0.0756,
+        "seuils": {
+          "bas": 0.001,
+          "haut": 0.01
+        },
+        "interpretation": "anormal_haut",
+        "signification_clinique": "Thymomégalie"
+      },
+      {
+        "ratio": "Côtes D - G (différence)",
+        "numerateur": {
+          "parametre": "Côtes D",
+          "valeur": 12.0
+        },
+        "denominateur": {
+          "parametre": "Côtes G",
+          "valeur": 11.0
+        },
+        "resultat": 1.0,
+        "seuils": {
+          "anomalie": 2
+        },
+        "interpretation": "variante_mineure"
+      }
+    ],
+    "_usage": "PASSE 2 — génération du compte-rendu"
+  }
+}

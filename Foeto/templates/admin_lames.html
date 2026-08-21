@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Gestion des lames</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #0f1117; --bg2: #181a24; --bg3: #1e2030; --bg4: #262940;
+    --text: #e8e6e1; --text2: #a0a0a0; --text3: #6a6a6a;
+    --accent: #7c6aef; --accent-dim: #5a4ec0; --accent-bg: rgba(124,106,239,0.1);
+    --success: #2ecc71; --success-bg: rgba(46,204,113,0.1);
+    --warning: #f39c12; --warning-bg: rgba(243,156,18,0.1);
+    --danger: #e74c3c; --danger-bg: rgba(231,76,60,0.1);
+    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+    --radius: 8px; --radius-lg: 12px;
+    --font: 'DM Sans', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.topnav {
+    height: 40px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 16px; gap: 4px; font-size: 13px;
+}
+.topnav a { color: var(--text2); text-decoration: none; padding: 4px 10px; border-radius: 6px; }
+.topnav a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+.topnav a.active { color: var(--accent); background: var(--accent-bg); }
+.topnav .spacer { flex: 1; }
+.topnav .nav-user { color: var(--text3); font-size: 12px; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+
+.stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.stat-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 16px 20px; min-width: 140px; flex: 1;
+}
+.stat-val { font-size: 28px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+.toolbar {
+    display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;
+}
+.search-input {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 8px 12px; color: var(--text); font-size: 13px; font-family: var(--font);
+    outline: none; width: 260px;
+}
+.search-input:focus { border-color: var(--accent); }
+.filter-chip {
+    padding: 5px 12px; border-radius: 16px; border: 1px solid var(--border);
+    background: var(--bg3); color: var(--text2); font-size: 12px; cursor: pointer;
+    transition: all 0.15s;
+}
+.filter-chip:hover { border-color: var(--border2); color: var(--text); }
+.filter-chip.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.count-badge {
+    font-size: 11px; color: var(--text3); margin-left: auto;
+}
+
+.table-wrap {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead { background: var(--bg3); }
+th {
+    text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600;
+    color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border); cursor: pointer; user-select: none;
+}
+th:hover { color: var(--text2); }
+td { padding: 8px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+tr:last-child td { border-bottom: none; }
+
+.badge {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600;
+}
+.badge-hot { background: var(--success-bg); color: var(--success); }
+.badge-cold { background: rgba(52,152,219,0.15); color: #3498db; }
+.badge-yes { background: var(--success-bg); color: var(--success); }
+.badge-no { color: var(--text3); }
+.badge-tissue {
+    background: rgba(155,89,182,0.15); color: #bb6bd9; padding: 2px 8px;
+    border-radius: 10px; font-size: 10px;
+}
+
+.db-info {
+    font-size: 11px; color: var(--text3); margin-top: 16px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+}
+.db-info code {
+    font-family: var(--mono); font-size: 11px; color: var(--text2);
+    background: var(--bg3); padding: 1px 5px; border-radius: 3px;
+}
+
+.empty-msg {
+    text-align: center; padding: 48px; color: var(--text3); font-size: 14px;
+}
+</style>
+<link rel="stylesheet" href="/static/themes.css">
+</head>
+<body>
+<script>
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+
+<nav class="topnav">
+  <a href="/">Hub</a>
+  <a href="/admin">Admin Foetus</a>
+  <a href="/admin/placenta">Admin Placentas</a>
+  <a href="/admin/lames" class="active">Lames</a>
+  <a href="/admin/settings">Paramètres</a>
+  <span class="spacer"></span>
+  <span class="nav-user" id="navUserInfo"></span>
+  <a href="/auth/logout">Déconnexion</a>
+</nav>
+<script>
+fetch('/auth/api/me').then(r=>r.json()).then(u=>{
+  document.getElementById('navUserInfo').textContent=`${u.display_name||u.username} (${u.role})`;
+}).catch(()=>{});
+</script>
+
+<div class="wrap">
+    <h1 class="page-title">Gestion des lames</h1>
+    <p class="page-sub">Vue d'ensemble des lames histologiques (lames.db + viewer.db)</p>
+
+    <div class="stats-row" id="statsRow">
+        <div class="stat-card"><div class="stat-val" id="stTotal">-</div><div class="stat-label">Lames</div></div>
+        <div class="stat-card"><div class="stat-val" id="stCases">-</div><div class="stat-label">Cas</div></div>
+        <div class="stat-card"><div class="stat-val" id="stViewer">-</div><div class="stat-label">Dans viewer</div></div>
+        <div class="stat-card"><div class="stat-val" id="stAnnot">-</div><div class="stat-label">Annotées</div></div>
+        <div class="stat-card"><div class="stat-val" id="stEmbed">-</div><div class="stat-label">Embeddées</div></div>
+        <div class="stat-card"><div class="stat-val" id="stDiag">-</div><div class="stat-label">Diagnostiquées</div></div>
+    </div>
+
+    <div class="toolbar">
+        <input class="search-input" id="searchInput" placeholder="Rechercher (nom de lame, cas...)" oninput="_applyFilters()">
+        <span class="filter-chip active" data-filter="all" onclick="_setFilter('all')">Toutes</span>
+        <span class="filter-chip" data-filter="viewer" onclick="_setFilter('viewer')">Dans viewer</span>
+        <span class="filter-chip" data-filter="annotated" onclick="_setFilter('annotated')">Annotées</span>
+        <span class="filter-chip" data-filter="diagnosed" onclick="_setFilter('diagnosed')">Diagnostiquées</span>
+        <span class="filter-chip" data-filter="orphan" onclick="_setFilter('orphan')">Hors viewer</span>
+        <span class="count-badge" id="countBadge"></span>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="_sort('nom_lame')">Lame</th>
+                    <th onclick="_sort('case')">Cas</th>
+                    <th onclick="_sort('tissue_type')">Tissu</th>
+                    <th onclick="_sort('taille_mo')">Taille</th>
+                    <th onclick="_sort('storage')">Storage</th>
+                    <th onclick="_sort('in_viewer')">Viewer</th>
+                    <th onclick="_sort('annot_count')">Annot.</th>
+                    <th onclick="_sort('diag_count')">Diag.</th>
+                    <th onclick="_sort('embed_count')">Embed.</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="empty-msg">Chargement...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="db-info" id="dbInfo"></div>
+</div>
+
+<script>
+let _allSlides = [];
+let _filtered = [];
+let _activeFilter = 'all';
+let _sortKey = 'nom_lame';
+let _sortAsc = true;
+
+function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s || '';
+    return d.innerHTML;
+}
+
+async function _loadDashboard() {
+    try {
+        const r = await fetch('/admin/api/lames/dashboard');
+        const data = await r.json();
+
+        const s = data.stats;
+        document.getElementById('stTotal').textContent = s.total;
+        document.getElementById('stCases').textContent = s.cases;
+        document.getElementById('stViewer').textContent = s.in_viewer;
+        document.getElementById('stAnnot').textContent = s.annotated;
+        document.getElementById('stEmbed').textContent = s.embedded;
+        document.getElementById('stDiag').textContent = s.diagnosed;
+
+        _allSlides = data.slides || [];
+
+        let dbHtml = '';
+        if (data.lames_db) dbHtml += `<span>lames.db : <code>${esc(data.lames_db)}</code></span>`;
+        if (data.viewer_db) dbHtml += `<span>viewer.db : <code>${esc(data.viewer_db)}</code></span>`;
+        document.getElementById('dbInfo').innerHTML = dbHtml;
+
+        _applyFilters();
+    } catch (e) {
+        document.getElementById('tableBody').innerHTML =
+            `<tr><td colspan="9" class="empty-msg" style="color:var(--danger)">Erreur : ${esc(e.message)}</td></tr>`;
+    }
+}
+
+function _setFilter(f) {
+    _activeFilter = f;
+    document.querySelectorAll('.filter-chip').forEach(el => {
+        el.classList.toggle('active', el.dataset.filter === f);
+    });
+    _applyFilters();
+}
+
+function _applyFilters() {
+    const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+    _filtered = _allSlides.filter(sl => {
+        if (q && !sl.nom_lame.toLowerCase().includes(q) && !sl.case.toLowerCase().includes(q)) return false;
+        if (_activeFilter === 'viewer') return sl.in_viewer;
+        if (_activeFilter === 'annotated') return sl.annot_count > 0;
+        if (_activeFilter === 'diagnosed') return sl.diag_count > 0;
+        if (_activeFilter === 'orphan') return !sl.in_viewer;
+        return true;
+    });
+    _doSort();
+    _render();
+}
+
+function _sort(key) {
+    if (_sortKey === key) {
+        _sortAsc = !_sortAsc;
+    } else {
+        _sortKey = key;
+        _sortAsc = true;
+    }
+    _doSort();
+    _render();
+}
+
+function _doSort() {
+    _filtered.sort((a, b) => {
+        let va = a[_sortKey], vb = b[_sortKey];
+        if (va == null) va = '';
+        if (vb == null) vb = '';
+        if (typeof va === 'number' && typeof vb === 'number') return _sortAsc ? va - vb : vb - va;
+        if (typeof va === 'boolean') { va = va ? 1 : 0; vb = vb ? 1 : 0; return _sortAsc ? va - vb : vb - va; }
+        va = String(va).toLowerCase(); vb = String(vb).toLowerCase();
+        return _sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    });
+}
+
+function _render() {
+    const tbody = document.getElementById('tableBody');
+    document.getElementById('countBadge').textContent = _filtered.length + ' / ' + _allSlides.length;
+
+    if (!_filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="9" class="empty-msg">Aucune lame correspondante</td></tr>';
+        return;
+    }
+
+    let html = '';
+    _filtered.forEach(sl => {
+        const storageBadge = sl.storage === 'cold'
+            ? '<span class="badge badge-cold">cold</span>'
+            : '<span class="badge badge-hot">hot</span>';
+        const viewerBadge = sl.in_viewer
+            ? '<span class="badge badge-yes">oui</span>'
+            : '<span class="badge badge-no">-</span>';
+        const tissueBadge = sl.tissue_type
+            ? `<span class="badge badge-tissue">${esc(sl.tissue_type)}</span>`
+            : '<span class="badge badge-no">-</span>';
+        const size = sl.taille_mo ? sl.taille_mo.toFixed(0) + ' Mo' : '-';
+
+        html += `<tr>
+            <td style="font-family:var(--mono);font-size:12px">${esc(sl.nom_lame)}</td>
+            <td><strong>${esc(sl.case)}</strong></td>
+            <td>${tissueBadge}</td>
+            <td style="text-align:right">${size}</td>
+            <td>${storageBadge}</td>
+            <td>${viewerBadge}</td>
+            <td style="text-align:center">${sl.annot_count || '-'}</td>
+            <td style="text-align:center">${sl.diag_count || '-'}</td>
+            <td style="text-align:center">${sl.embed_count || '-'}</td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+}
+
+_loadDashboard();
+</script>
+<script src="/static/idle-timeout.js"></script>
+</body>
+</html>

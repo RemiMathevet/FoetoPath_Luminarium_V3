@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>FoetoPath — Néonat</title>
+<link rel="manifest" href="/pwa/neonat/manifest.json">
+<link rel="stylesheet" href="/pwa/foet/style.css">
+<style>
+.home-screen {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:32px;
+}
+.home-screen h2 { font-size:1.4rem; margin-bottom:4px; }
+.home-screen .subtitle { color:var(--text-muted); font-size:.85rem; margin-bottom:28px; }
+.dossier-input-wrap { width:100%; max-width:320px; }
+.dossier-input-wrap input {
+  width:100%; background:var(--surface); border:2px solid var(--border);
+  border-radius:var(--radius); padding:14px 16px; color:var(--text);
+  font-size:1.2rem; font-weight:600; text-align:center;
+  letter-spacing:.05em; outline:none; font-family:var(--font);
+}
+.dossier-input-wrap input:focus { border-color:var(--orange); }
+.dossier-input-wrap input::placeholder { color:var(--text-muted); font-weight:400; font-size:1rem; }
+.dossier-status { margin-top:12px; font-size:.82rem; color:var(--text-muted); min-height:2em; text-align:center; }
+.btn-row { width:100%; max-width:320px; display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+.dossier-btn {
+  width:100%; padding:14px; border:none; border-radius:var(--radius);
+  font-size:1rem; font-weight:600; cursor:pointer; font-family:var(--font);
+}
+.dossier-btn:active { transform:scale(.98); }
+.btn-go { background:var(--orange); color:#0e1117; }
+.conn-badge {
+  position:fixed; top:12px; left:12px;
+  padding:4px 10px; border-radius:12px; font-size:.7rem; font-weight:600;
+}
+.conn-badge.online { background:var(--success-dim); color:var(--success); }
+.conn-badge.offline { background:var(--warning-dim); color:var(--warning); }
+.version-tag { position:absolute; bottom:16px; font-size:.65rem; color:var(--text-muted); opacity:.5; }
+
+/* ── Detail form ── */
+.detail-screen { display:none; min-height:100vh; }
+.detail-screen.active { display:block; }
+.home-screen.hidden { display:none; }
+
+.save-toast {
+  position:fixed; bottom:80px; left:50%; transform:translateX(-50%);
+  background:var(--success); color:#0e1117; padding:8px 20px;
+  border-radius:20px; font-size:.85rem; font-weight:600;
+  opacity:0; transition:opacity .3s; pointer-events:none; z-index:200;
+}
+.save-toast.show { opacity:1; }
+
+/* ── Description fields ── */
+.desc-field { margin-bottom:10px; }
+.desc-field label { display:block; font-size:.72rem; font-weight:600; color:var(--text-muted); margin-bottom:3px; text-transform:uppercase; letter-spacing:.04em; }
+.desc-field select {
+  width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px;
+  padding:10px 12px; color:var(--text); font-size:.9rem; font-family:var(--font); outline:none;
+  -webkit-appearance:none; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b95a5' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center;
+}
+.desc-field select:focus { border-color:var(--border-focus); }
+.desc-field textarea {
+  width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px;
+  padding:10px 12px; color:var(--text); font-size:.9rem; font-family:var(--font);
+  outline:none; resize:vertical; min-height:50px;
+}
+.desc-field textarea:focus { border-color:var(--border-focus); }
+.desc-status { display:inline-block; font-size:.6rem; font-weight:700; padding:1px 6px; border-radius:8px; margin-left:6px; }
+.desc-status.filled { background:var(--success-dim); color:var(--success); }
+.desc-status.empty { background:var(--border); color:var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="conn-badge" id="conn-badge">●</div>
+
+<!-- ═══ HOME: saisie numéro dossier ═══ -->
+<div class="home-screen" id="home">
+  <h2>Néonat / Pédia</h2>
+  <p class="subtitle">Données périnatales et décès</p>
+
+  <div class="dossier-input-wrap">
+    <input type="text" id="dossier-input" placeholder="N° dossier (ex : 25P1234)" autocomplete="off" inputmode="text">
+  </div>
+  <div class="dossier-status" id="dossier-status"></div>
+  <div class="btn-row" id="btn-row"></div>
+  <div class="version-tag">Néonat v1.0 — Molina 2019</div>
+</div>
+
+<!-- ═══ DETAIL: formulaire néonat ═══ -->
+<div class="detail-screen" id="detail">
+
+  <div class="header">
+    <div class="header-top">
+      <h1 id="detail-title">—</h1>
+      <span class="dossier-badge blue" id="detail-badge">—</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Naissance -->
+    <div class="acc-section sec-bio open" id="sec-naissance">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span class="acc-icon">👶</span>
+        <span class="acc-title">Naissance</span>
+        <span class="acc-chevron">▼</span>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">
+        <div class="field-row">
+          <div class="field"><label>Date naissance</label><input type="date" data-key="date_naissance"></div>
+          <div class="field"><label>Heure</label><input type="time" data-key="heure_naissance"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Terme (SA)</label><input type="number" data-key="terme_naissance_sa" min="22" max="44" inputmode="numeric"></div>
+          <div class="field"><label>+ jours</label><input type="number" data-key="terme_naissance_jours" min="0" max="6" inputmode="numeric"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Mode accouchement</label>
+            <div class="chip-group" data-key="mode_accouchement">
+              <div class="chip" data-val="voie_basse">Voie basse</div>
+              <div class="chip" data-val="cesarienne">Césarienne</div>
+              <div class="chip" data-val="instrumentale">Instrumentale</div>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Poids naissance (g)</label><input type="number" data-key="poids_naissance_g" inputmode="decimal"></div>
+          <div class="field"><label>Taille (cm)</label><input type="number" data-key="taille_naissance_cm" step="0.1" inputmode="decimal"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>PC naissance (mm)</label><input type="number" data-key="pc_naissance_mm" step="0.1" inputmode="decimal"></div>
+        </div>
+        <div class="sub-title">Apgar</div>
+        <div class="field-row">
+          <div class="field"><label>1 min</label><input type="number" data-key="apgar_1" min="0" max="10" inputmode="numeric"></div>
+          <div class="field"><label>5 min</label><input type="number" data-key="apgar_5" min="0" max="10" inputmode="numeric"></div>
+          <div class="field"><label>10 min</label><input type="number" data-key="apgar_10" min="0" max="10" inputmode="numeric"></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- Décès -->
+    <div class="acc-section sec-mac open" id="sec-deces">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span class="acc-icon">🕊️</span>
+        <span class="acc-title">Décès</span>
+        <span class="acc-chevron">▼</span>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">
+        <div class="field-row">
+          <div class="field"><label>Date décès</label><input type="date" data-key="date_deces"></div>
+          <div class="field"><label>Heure</label><input type="time" data-key="heure_deces"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Âge décès (jours)</label><input type="number" data-key="age_deces_jours" min="0" inputmode="numeric"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Lieu décès</label><input type="text" data-key="lieu_deces" placeholder="Réanimation, domicile…"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Cause principale</label>
+            <textarea data-key="cause_deces_principale" rows="2" placeholder="Cause principale du décès"></textarea>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Contexte</label>
+            <textarea data-key="contexte_deces" rows="2" placeholder="Contexte clinique, antécédents…"></textarea>
+          </div>
+        </div>
+
+        <div class="yn-row">
+          <span class="yn-label">Réanimation</span>
+          <div class="yn-toggle" data-key="reanimation">
+            <button data-val="true" onclick="setYN(this)">Oui</button>
+            <button data-val="false" onclick="setYN(this)">Non</button>
+          </div>
+        </div>
+
+        <div class="sub-title">Mensurations au décès</div>
+        <div class="field-row">
+          <div class="field"><label>Poids (g)</label><input type="number" data-key="poids_deces_g" inputmode="decimal"></div>
+          <div class="field"><label>Taille (cm)</label><input type="number" data-key="taille_deces_cm" step="0.1" inputmode="decimal"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>PC (mm)</label><input type="number" data-key="pc_deces_mm" step="0.1" inputmode="decimal"></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- Autopsie -->
+    <div class="acc-section sec-prelev" id="sec-autopsie">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span class="acc-icon">🔬</span>
+        <span class="acc-title">Autopsie</span>
+        <span class="acc-chevron">▼</span>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">
+        <div class="yn-row">
+          <span class="yn-label">Consentement</span>
+          <div class="yn-toggle" data-key="autopsie_consentement">
+            <button data-val="true" onclick="setYN(this)">Oui</button>
+            <button data-val="false" onclick="setYN(this)">Non</button>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:10px">
+          <div class="field"><label>Type d'autopsie</label>
+            <div class="chip-group" data-key="autopsie_type">
+              <div class="chip" data-val="complete">Complète</div>
+              <div class="chip" data-val="limitee">Limitée</div>
+              <div class="chip" data-val="refusee">Refusée</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- Descriptions par organe (généré dynamiquement) -->
+    <div id="desc-container"></div>
+
+    <!-- Masses d'organes -->
+    <div class="acc-section sec-ouv" id="sec-masses">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span class="acc-icon">⚖️</span>
+        <span class="acc-title">Masses d'organes (g)</span>
+        <span class="acc-chevron">▼</span>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">
+        <div class="field-row">
+          <div class="field"><label>Cerveau</label><input type="number" data-organ="masse_cerveau" step="0.1" inputmode="decimal"></div>
+          <div class="field"><label>Cœur</label><input type="number" data-organ="masse_coeur" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Foie</label><input type="number" data-organ="masse_foie" step="0.1" inputmode="decimal"></div>
+          <div class="field"><label>Rate</label><input type="number" data-organ="masse_rate" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Poumon D</label><input type="number" data-organ="masse_poumon_d" step="0.01" inputmode="decimal"></div>
+          <div class="field"><label>Poumon G</label><input type="number" data-organ="masse_poumon_g" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Rein D</label><input type="number" data-organ="masse_rein_d" step="0.01" inputmode="decimal"></div>
+          <div class="field"><label>Rein G</label><input type="number" data-organ="masse_rein_g" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Thymus</label><input type="number" data-organ="masse_thymus" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Surrénale D</label><input type="number" data-organ="masse_surrenale_d" step="0.01" inputmode="decimal"></div>
+          <div class="field"><label>Surrénale G</label><input type="number" data-organ="masse_surrenale_g" step="0.01" inputmode="decimal"></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- Biométries (résultat Molina) -->
+    <div class="acc-section sec-bio" id="sec-bio" style="display:none;">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span class="acc-icon">📊</span>
+        <span class="acc-title">Biométries Molina 2019</span>
+        <span class="acc-chevron">▼</span>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">
+        <div id="bio-results"></div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bottom-bar">
+    <button class="btn btn-secondary" onclick="goHome()">← Retour</button>
+    <button class="btn btn-primary" style="background:var(--orange);color:#0e1117" onclick="saveAll()">Enregistrer</button>
+  </div>
+</div>
+
+<div class="save-toast" id="toast">Enregistré ✓</div>
+
+<script>
+const API = '/pediatrique';
+let currentCaseId = null;
+let currentDossier = '';
+
+// ═══ PWA ═══
+if ('serviceWorker' in navigator)
+  navigator.serviceWorker.register('/pwa/neonat/sw.js').catch(()=>{});
+
+// ═══ Connectivity ═══
+function updateConn(){
+  const b=document.getElementById('conn-badge');
+  if(navigator.onLine){b.className='conn-badge online';b.textContent='● En ligne';}
+  else{b.className='conn-badge offline';b.textContent='● Hors-ligne';}
+}
+window.addEventListener('online',updateConn);
+window.addEventListener('offline',updateConn);
+updateConn();
+
+// ═══ Accordion ═══
+function toggleAcc(hdr){hdr.closest('.acc-section').classList.toggle('open');}
+
+// ═══ YN toggles ═══
+function setYN(btn){
+  const wrap=btn.closest('.yn-toggle');
+  wrap.querySelectorAll('button').forEach(b=>{b.className='';});
+  btn.className=btn.dataset.val==='true'?'sel-y':'sel-n';
+  wrap.dataset.selected=btn.dataset.val;
+}
+
+// ═══ Chips ═══
+document.querySelectorAll('.chip-group .chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    const grp=chip.closest('.chip-group');
+    grp.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+    chip.classList.add('selected');
+    grp.dataset.selected=chip.dataset.val;
+  });
+});
+
+// ═══ Description systems (from minihub organ_systems.py) ═══
+const SYSTEMS=[
+  {id:"externe",label:"Examen externe",icon:"👁️",cls:"sec-morpho",fields:[
+    {id:"aspect_general",label:"Aspect général",type:"select",options:["normal","macéré","momifié","autolytique"]},
+    {id:"coloration_cutanee",label:"Coloration cutanée",type:"select",options:["normale","pâle","ictère","cyanose","rouge vif"]},
+    {id:"oedeme",label:"Œdème",type:"select",options:["absent","localisé","généralisé (hydrops)"]},
+    {id:"morpho_cranio_faciale",label:"Morphologie cranio-faciale",type:"select",options:["normale","anormale"]},
+    {id:"detail_cranio_facial",label:"Détail anomalies cranio-faciales",type:"textarea"},
+    {id:"morpho_membres",label:"Morphologie des membres",type:"select",options:["normale","anormale"]},
+    {id:"detail_membres",label:"Détail anomalies des membres",type:"textarea"},
+    {id:"organes_genitaux",label:"Organes génitaux externes",type:"select",options:["masculins normaux","féminins normaux","ambigus","non évaluables"]},
+    {id:"texte_libre",label:"Commentaire libre",type:"textarea"},
+  ]},
+  {id:"snc",label:"Système nerveux central",icon:"🧠",cls:"sec-neuro",fields:[
+    {id:"aspect_macro",label:"Aspect macroscopique",type:"select",options:["normal","anormal"]},
+    {id:"gyration",label:"Gyration",type:"select",options:["normale pour le terme","lissencéphalie","polymicrogyrie","pachygyrie","autre"]},
+    {id:"corps_calleux",label:"Corps calleux",type:"select",options:["présent complet","agénésie complète","agénésie partielle","hypoplasique"]},
+    {id:"ventricules",label:"Ventricules",type:"select",options:["normaux","dilatés (ventriculomégalie)","asymétriques"]},
+    {id:"cervelet",label:"Cervelet",type:"select",options:["normal","hypoplasique","Dandy-Walker","agénésie vermienne","autre"]},
+    {id:"tronc_cerebral",label:"Tronc cérébral",type:"select",options:["normal","anormal"]},
+    {id:"hemorrhagie",label:"Hémorragie",type:"select",options:["absente","sous-arachnoïdienne","intraventriculaire","intraparenchymateuse"]},
+    {id:"texte_libre",label:"Commentaire libre",type:"textarea"},
+  ]},
+  {id:"coeur",label:"Cœur et gros vaisseaux",icon:"❤️",cls:"sec-coeur",fields:[
+    {id:"aspect_macro",label:"Aspect macroscopique",type:"select",options:["normal","anormal"]},
+    {id:"cardiomegalie",label:"Cardiomégalie",type:"select",options:["absente","présente"]},
+    {id:"situs",label:"Situs",type:"select",options:["solitus","inversus","ambiguus"]},
+    {id:"septum_iv",label:"Septum IV",type:"select",options:["intact","CIV"]},
+    {id:"septum_ia",label:"Septum IA",type:"select",options:["normal (FO perméable)","CIA"]},
+    {id:"gros_vaisseaux",label:"Gros vaisseaux",type:"select",options:["normaux","transposition","truncus arteriosus","coarctation aortique","autre"]},
+    {id:"canal_av",label:"Canal AV",type:"select",options:["absent","CAV complet","CAV partiel"]},
+    {id:"texte_libre",label:"Commentaire libre",type:"textarea"},
+  ]},
+  {id:"respiratoire",label:"Appareil respiratoire",icon:"🫁",cls:"sec-poumon",fields:[
+    {id:"aspect_poumons",label:"Aspect des poumons",type:"select",options:["normaux","hypoplasiques","anormaux"]},
+    {id:"lobulation",label:"Lobulation",type:"select",options:["normale (3D/2G)","anomalie de lobulation"]},
+    {id:"voies_aeriennes",label:"Voies aériennes sup.",type:"select",options:["normales","atrésie laryngée","atrésie trachéale","fistule trachéo-œsophagienne"]},
+    {id:"hernie_diaphragmatique",label:"Hernie diaphragmatique",type:"select",options:["absente","gauche","droite","bilatérale"]},
+    {id:"texte_libre",label:"Commentaire libre",type:"textarea"},
+  ]},
+  {id:"digestif",label:"Appareil digestif",icon:"🟤",cls:"sec-dig",fields:[
+    {id:"oesophage",label:"Œsophage",type:"select",options:["normal","atrésie","fistule"]},
+    {id:"intestin_grele",label:"Intestin grêle",type:"select",options:["normal","atrésie","sténose","volvulus","malrotation"]},
+    {id:"colon",label:"Côlon",type:"select",options:["normal","atrésie","mégacôlon"]},
+    {id:"anus",label:"Anus",type:"select",options:["normal","imperforé"]},
+    {id:"foie_macro",label:"Foie (aspect)",type:"select",options:["normal","hépatomégalie","fibrose","stéatose"]},
+    {id:"rate_macro",label:"Rate (aspect)",type:"select",options:["normale","asplénie","polysplenie","splénomégalie"]},
+    {id:"texte_libre",label:"Commentaire libre",type:"textarea"},
+  ]},
+  {id:"urogenital",label:"Appareil uro-génital",icon:"🫘",cls:"sec-retro",fields:[
+    {id:"reins",label:"Reins",type:"select",options:["normaux","agénésie unilatérale","agénésie bilatérale","dysplasie multikystique","hydronéphrose","rein en fer à cheval","ectopique"]},
+    {id:"ureteres",label:"Uretères",type:"select",options:["normaux","méga-uretère","duplicité","sténose"]},
+    {id:"vessie",label:"Vessie",type:"select",options:["normale","mégavessie","extrophie"]},
+    {id:"gonades",label:"Gonades",type:"select",options:["normales","cryptorchidie","anorchidie","dysgénétiques"]},
+    {id:"texte_libre",label:"Commentaire libre",type:"textarea"},
+  ]},
+  {id:"squelette",label:"Squelette et membres",icon:"🦴",cls:"sec-morpho",fields:[
+    {id:"aspect_general",label:"Aspect général",type:"select",options:["normal","membres courts (micromélie)","thorax étroit","anomalie de minéralisation"]},
+    {id:"mains",label:"Mains",type:"select",options:["normales","polydactylie","syndactylie","brachydactylie","clinodactylie"]},
+    {id:"pieds",label:"Pieds",type:"select",options:["normaux","pied bot varus équin","polydactylie","syndactylie","rocker-bottom"]},
+    {id:"colonne",label:"Colonne vertébrale",type:"select",options:["normale","scoliose","hémivertèbre","spina bifida"]},
+    {id:"crane",label:"Crâne",type:"select",options:["normal","craniosynostose","microcéphalie","macrocéphalie"]},
+    {id:"texte_libre",label:"Commentaire libre",type:"textarea"},
+  ]},
+  {id:"autres",label:"Autres (thymus, surrénales, cavités)",icon:"📋",cls:"sec-comment",fields:[
+    {id:"thymus",label:"Thymus",type:"select",options:["normal","hypoplasique","aplasique","ectopique"]},
+    {id:"surrenales",label:"Surrénales",type:"select",options:["normales","hypoplasiques","hyperplasiques","hémorragiques"]},
+    {id:"cavites_sereuses",label:"Cavités séreuses",type:"select",options:["libres","épanchement pleural","ascite","épanchement péricardique","anasarque"]},
+    {id:"texte_libre",label:"Commentaire libre",type:"textarea"},
+  ]},
+];
+
+let descData={}; // {system_id: {field_id: value}}
+
+function buildDescSections(){
+  const c=document.getElementById('desc-container');
+  c.innerHTML='';
+  for(const sys of SYSTEMS){
+    const sec=document.createElement('div');
+    sec.className=`acc-section ${sys.cls||''}`;
+    sec.id=`sec-desc-${sys.id}`;
+    let fieldsHtml='';
+    for(const f of sys.fields){
+      if(f.type==='select'){
+        const opts=f.options.map(o=>`<option value="${o}">${o}</option>`).join('');
+        fieldsHtml+=`<div class="desc-field"><label>${f.label}</label><select data-sys="${sys.id}" data-fid="${f.id}"><option value="">—</option>${opts}</select></div>`;
+      } else {
+        fieldsHtml+=`<div class="desc-field"><label>${f.label}</label><textarea data-sys="${sys.id}" data-fid="${f.id}" rows="2"></textarea></div>`;
+      }
+    }
+    sec.innerHTML=`
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span class="acc-icon">${sys.icon||'📝'}</span>
+        <span class="acc-title">${sys.label}<span class="desc-status empty" id="ds-${sys.id}"></span></span>
+        <span class="acc-chevron">▼</span>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">${fieldsHtml}</div></div>`;
+    c.appendChild(sec);
+  }
+}
+
+function fillDescriptions(allDesc){
+  descData=allDesc||{};
+  for(const sys of SYSTEMS){
+    const saved=descData[sys.id]||{};
+    const badge=document.getElementById(`ds-${sys.id}`);
+    let filled=false;
+    for(const f of sys.fields){
+      const el=document.querySelector(`[data-sys="${sys.id}"][data-fid="${f.id}"]`);
+      if(!el)continue;
+      const v=saved[f.id]||'';
+      if(el.tagName==='SELECT')el.value=v;
+      else el.value=v;
+      if(v)filled=true;
+    }
+    if(badge){badge.className=filled?'desc-status filled':'desc-status empty';badge.textContent=filled?'✓':'';}
+  }
+}
+
+function collectDescriptions(){
+  const result={};
+  for(const sys of SYSTEMS){
+    const obj={};
+    let any=false;
+    for(const f of sys.fields){
+      const el=document.querySelector(`[data-sys="${sys.id}"][data-fid="${f.id}"]`);
+      if(!el)continue;
+      const v=el.value.trim();
+      if(v){obj[f.id]=v;any=true;}
+    }
+    if(any)result[sys.id]=obj;
+  }
+  return result;
+}
+
+buildDescSections();
+
+// ═══ Dossier input ═══
+const inp=document.getElementById('dossier-input');
+const statusEl=document.getElementById('dossier-status');
+const btnRow=document.getElementById('btn-row');
+let timer=null;
+
+function norm(v){return v.replace(/^(\d{2})p/i,'$1P');}
+function valid(v){return /^\d{2}P\d+$/.test(v);}
+
+inp.addEventListener('input',()=>{
+  const pos=inp.selectionStart, before=inp.value, after=norm(before);
+  if(before!==after){inp.value=after;inp.setSelectionRange(pos,pos);}
+  clearTimeout(timer);
+  const v=inp.value.trim();
+  if(!v){statusEl.innerHTML='';btnRow.innerHTML='';return;}
+  if(!valid(v)){statusEl.innerHTML='<span style="color:var(--danger)">Format : aaPnnnn</span>';btnRow.innerHTML='';return;}
+  statusEl.innerHTML='<span style="color:var(--text-muted)">Recherche…</span>';
+  timer=setTimeout(()=>lookup(v),300);
+});
+inp.addEventListener('keydown',e=>{if(e.key==='Enter')goDetail();});
+
+async function lookup(v){
+  try{
+    const r=await fetch(`${API}/api/cases?q=${encodeURIComponent(v)}`);
+    const d=await r.json();
+    const c=d.cases&&d.cases.find(x=>x.numero_dossier===v);
+    if(c){
+      currentCaseId=c.id; currentDossier=v;
+      statusEl.innerHTML='<span style="color:var(--success)">● Dossier trouvé</span>';
+      btnRow.innerHTML='<button class="dossier-btn btn-go" onclick="goDetail()">Ouvrir →</button>';
+    } else {
+      currentCaseId=null;
+      statusEl.innerHTML='<span style="color:var(--danger)">Dossier introuvable</span>';
+      btnRow.innerHTML='';
+    }
+  } catch(e) {
+    statusEl.innerHTML='<span style="color:var(--warning)">Hors-ligne</span>';
+  }
+}
+
+// ═══ Navigation ═══
+function goDetail(){
+  if(!currentCaseId)return;
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('detail').classList.add('active');
+  document.getElementById('detail-title').textContent='Néonat';
+  document.getElementById('detail-badge').textContent=currentDossier;
+  loadDetails();
+}
+function goHome(){
+  document.getElementById('detail').classList.remove('active');
+  document.getElementById('home').classList.remove('hidden');
+}
+
+// ═══ Load ═══
+async function loadDetails(){
+  try{
+    const [rPed, rMod, rDesc]=await Promise.all([
+      fetch(`${API}/api/cases/${currentCaseId}/pediatric-details`),
+      fetch(`${API}/api/cases/${currentCaseId}/modules/macro_autopsie`),
+      fetch(`${API}/api/cases/${currentCaseId}/modules/descriptions`)
+    ]);
+    const dPed=await rPed.json();
+    const dMod=await rMod.json();
+    const dDesc=await rDesc.json();
+    fillForm(dPed.details||{});
+    fillOrgans((dMod.data||{}).data||dMod.data||{});
+    fillDescriptions((dDesc.data||{}).data||dDesc.data||{});
+  }catch(e){console.error('load error',e);}
+}
+function fillOrgans(data){
+  document.querySelectorAll('#detail [data-organ]').forEach(el=>{
+    const v=data[el.dataset.organ];
+    el.value=v!=null?v:'';
+  });
+}
+
+function fillForm(data){
+  // Text/number/date inputs
+  document.querySelectorAll('#detail [data-key]').forEach(el=>{
+    const k=el.dataset.key;
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){
+      el.value=data[k]!=null?data[k]:'';
+    }
+    // Chip groups
+    else if(el.classList.contains('chip-group')){
+      el.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+      if(data[k]){
+        const hit=el.querySelector(`.chip[data-val="${data[k]}"]`);
+        if(hit){hit.classList.add('selected');el.dataset.selected=data[k];}
+      }
+    }
+    // YN toggles
+    else if(el.classList.contains('yn-toggle')){
+      el.querySelectorAll('button').forEach(b=>b.className='');
+      if(data[k]!=null){
+        const val=String(data[k]);
+        const btn=el.querySelector(`button[data-val="${val}"]`);
+        if(btn){btn.className=val==='true'||val==='1'?'sel-y':'sel-n';el.dataset.selected=val;}
+      }
+    }
+  });
+}
+
+// ═══ Save ═══
+async function saveAll(){
+  const payload={};
+  document.querySelectorAll('#detail [data-key]').forEach(el=>{
+    const k=el.dataset.key;
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){
+      const v=el.value.trim();
+      payload[k]=v===''?null:v;
+    } else if(el.classList.contains('chip-group')){
+      payload[k]=el.dataset.selected||null;
+    } else if(el.classList.contains('yn-toggle')){
+      const s=el.dataset.selected;
+      payload[k]=s==='true'?true:s==='false'?false:null;
+    }
+  });
+
+  // Organ masses → macro_autopsie module
+  const organs={};
+  document.querySelectorAll('#detail [data-organ]').forEach(el=>{
+    const v=el.value.trim();
+    organs[el.dataset.organ]=v===''?null:parseFloat(v);
+  });
+
+  // Descriptions
+  const desc=collectDescriptions();
+
+  try{
+    const [r1,r2,r3]=await Promise.all([
+      fetch(`${API}/api/cases/${currentCaseId}/pediatric-details`,{
+        method:'PUT', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      }),
+      fetch(`${API}/api/cases/${currentCaseId}/modules/macro_autopsie`,{
+        method:'PUT', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({data:organs})
+      }),
+      fetch(`${API}/api/cases/${currentCaseId}/modules/descriptions`,{
+        method:'PUT', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({data:desc})
+      })
+    ]);
+    if(r1.ok&&r2.ok&&r3.ok){
+      toast('Enregistré ✓');
+      computeBio();
+    } else toast('Erreur sauvegarde','var(--danger)');
+  }catch(e){toast('Hors-ligne — non sauvé','var(--warning)');}
+}
+
+// ═══ Compute biometrics ═══
+async function computeBio(){
+  try{
+    const r=await fetch(`${API}/api/cases/${currentCaseId}/compute-pediatric`,{method:'POST'});
+    const d=await r.json();
+    if(d.results) showBio(d.results);
+  }catch(e){}
+}
+
+function showBio(res){
+  const sec=document.getElementById('sec-bio');
+  const div=document.getElementById('bio-results');
+  const sections=res.par_age||res.par_taille;
+  if(!sections){sec.style.display='none';return;}
+  sec.style.display='';sec.classList.add('open');
+  let html='';
+
+  function renderSection(label,data){
+    if(!data||!data.organes)return '';
+    let h=`<div class="sub-title">${label}</div>`;
+    for(const[org,info] of Object.entries(data.organes)){
+      const ds=info.ds!=null?info.ds.toFixed(2):'—';
+      const cls=Math.abs(info.ds)>2?'alert':Math.abs(info.ds)>1?'ma':'gc';
+      h+=`<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:.85rem">
+        <span>${org}</span>
+        <span class="ds-tag ${cls}">${ds} DS</span>
+      </div>`;
+    }
+    if(data.alertes&&data.alertes.length){
+      h+='<div style="margin-top:8px">';
+      data.alertes.forEach(a=>h+=`<div class="info-box" style="background:var(--danger-dim);border-color:rgba(229,91,91,.3);color:var(--danger);margin-bottom:4px;font-size:.75rem">⚠ ${a}</div>`);
+      h+='</div>';
+    }
+    return h;
+  }
+
+  if(res.par_age) html+=renderSection('Par âge ('+( res.par_age.bracket||'—')+')',res.par_age);
+  if(res.par_taille) html+=renderSection('Par taille ('+(res.par_taille.bracket||'—')+')',res.par_taille);
+  if(res.ratios){
+    html+='<div class="sub-title">Ratios</div>';
+    for(const[k,v] of Object.entries(res.ratios)){
+      html+=`<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:.85rem">
+        <span>${k}</span><span style="font-family:monospace">${typeof v==='number'?v.toFixed(3):v}</span>
+      </div>`;
+    }
+  }
+  div.innerHTML=html||'<p style="color:var(--text-muted);font-size:.85rem">Pas de données suffisantes</p>';
+}
+
+// ═══ Toast ═══
+function toast(msg,bg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  if(bg)t.style.background=bg;else t.style.background='';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+</script>
+<script src="/static/i18n.js"></script>
+<script>if(typeof pwaI18nInit==='function')pwaI18nInit();</script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Administration</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/admin.css">
+<link rel="stylesheet" href="/static/themes.css">
+</head>
+<body>
+<script>
+// Appliquer le thème sauvegardé immédiatement (avant rendu)
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+<nav style="height:40px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:4px;font-size:13px;font-family:var(--font);">
+  <a href="/" style="color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Hub</a>
+  <a href="/admin" style="color:var(--accent);text-decoration:none;padding:4px 10px;border-radius:6px;background:rgba(124,106,239,0.1);">Admin Fœtus</a>
+  <a href="/admin/placenta" style="color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Admin Placentas</a>
+  <a href="/pediatrique" style="color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Pédiatrique</a>
+  <a href="/admin/lames" id="navLames" style="display:none;color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Lames</a>
+  <a href="/admin/settings" style="color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Paramètres</a>
+  <span style="flex:1"></span>
+  <span id="navUserInfo" style="color:var(--text3);font-size:12px;"></span>
+  <a href="/auth/logout" style="color:var(--text3);text-decoration:none;padding:4px 10px;border-radius:6px;font-size:12px;">Déconnexion</a>
+</nav>
+<script>
+fetch('/auth/api/me').then(r=>r.json()).then(u=>{
+  document.getElementById('navUserInfo').textContent=`${u.display_name||u.username} (${u.role})`;
+  if (u.role === 'admin' || u.role === 'admin_centre') {
+    const el = document.getElementById('navLames');
+    if (el) el.style.display = '';
+  }
+}).catch(()=>{});
+</script>
+<div class="app" style="height:calc(100vh - 40px);">
+
+<!-- ── Sidebar ───────────────────────────────── -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Foeto<span>Path</span>
+            <span style="font-size:11px;color:var(--text3);font-weight:400;margin-left:auto">Admin</span>
+        </div>
+        <div class="sidebar-search">
+            <input type="text" id="searchInput" placeholder="Rechercher (dossier, nom, ID)..." oninput="debouncedSearch()">
+        </div>
+    </div>
+    <div class="sidebar-actions">
+        <div class="pill active" data-filter="" onclick="setFilter(this,'')">Tous</div>
+        <div class="pill" data-filter="en_cours" onclick="setFilter(this,'en_cours')">En cours</div>
+        <div class="pill" data-filter="complet" onclick="setFilter(this,'complet')">Complets</div>
+        <div class="pill" data-filter="archive" onclick="setFilter(this,'archive')">Archives</div>
+    </div>
+    <div class="case-list" id="caseList">
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            <h3>Aucun cas</h3>
+            <p>Créez un nouveau cas ou scannez un dossier local</p>
+        </div>
+    </div>
+    <div class="sidebar-footer">
+        <button class="btn btn-primary" style="flex:1" onclick="openNewCaseModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14"/></svg>
+            Nouveau cas
+        </button>
+        <button class="btn" onclick="syncLocal()" id="btnSync" title="Scanner le dossier local (data_root)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2.5 11.5a10 10 0 0118.8-4.3L21.5 8M21.5 12.5a10 10 0 01-18.8 4.3L2.5 16"/></svg>
+        </button>
+        <a href="/admin/settings" class="btn" title="Paramètres" style="text-decoration:none;display:inline-flex;align-items:center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </a>
+    </div>
+</div>
+
+<!-- ── Main Content ─────────────────────────── -->
+<div class="main">
+    <div class="main-header" id="mainHeader">
+        <h2 id="mainTitle">Sélectionnez un cas</h2>
+        <div id="mainActions"></div>
+    </div>
+    <div class="main-body" id="mainBody">
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+            <h3>Bienvenue sur FoetoPath Admin</h3>
+            <p>Sélectionnez un cas dans la liste ou créez-en un nouveau.</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ── Modal: Nouveau Cas ────────────────────── -->
+<div class="modal-overlay" id="newCaseModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modalTitle">Nouveau cas</h3>
+            <button class="btn btn-icon" onclick="closeModal('newCaseModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Numéro de dossier *</label>
+                    <input class="form-input" id="f_numero" placeholder="Ex: FP-2026-001" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ID externe (labo)</label>
+                    <input class="form-input" id="f_id_ext" placeholder="Ex: A26-1234">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom mère</label>
+                    <input class="form-input" id="f_nom_mere">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prénom mère</label>
+                    <input class="form-input" id="f_prenom_mere">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom de naissance mère</label>
+                    <input class="form-input" id="f_nom_naiss">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">DDN mère</label>
+                    <input class="form-input" type="date" id="f_ddn_mere">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prénom fœtus</label>
+                    <input class="form-input" id="f_prenom_foetus">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sexe</label>
+                    <select class="form-select" id="f_sexe">
+                        <option value="">—</option>
+                        <option value="M">Masculin</option>
+                        <option value="F">Féminin</option>
+                        <option value="I">Indéterminé</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Terme issue (SA)</label>
+                    <input class="form-input" id="f_terme" placeholder="Ex: 24+3">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type d'issue</label>
+                    <select class="form-select" id="f_type_issue">
+                        <option value="">—</option>
+                        <option value="IMG">IMG</option>
+                        <option value="FCS">FCS</option>
+                        <option value="MFIU">MFIU</option>
+                        <option value="MPN">Mort per-natale</option>
+                        <option value="MNN">Mort néonatale</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date décès</label>
+                    <input class="form-input" type="date" id="f_date_deces">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date examen</label>
+                    <input class="form-input" type="date" id="f_date_examen">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Médecin référent</label>
+                    <input class="form-input" id="f_medecin">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service demandeur</label>
+                    <input class="form-input" id="f_service" placeholder="Ex: Gynécologie">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ville maternité</label>
+                    <input class="form-input" id="f_ville_maternite">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date réception</label>
+                    <input class="form-input" type="date" id="f_date_reception">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contexte clinique</label>
+                    <input class="form-input" id="f_contexte_clinique">
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">Indication d'examen</label>
+                    <textarea class="form-textarea" id="f_indication" rows="2" placeholder="Résumé de l'indication..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">IPP mère</label>
+                    <input class="form-input" id="f_ipp" placeholder="Identifiant permanent patient">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">IPP fœtus</label>
+                    <input class="form-input" id="f_ipp_fetus">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">INS</label>
+                    <input class="form-input" id="f_ins" placeholder="13 caractères" maxlength="13">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Consanguinité</label>
+                    <select class="form-select" id="f_consanguinite">
+                        <option value="">—</option>
+                        <option value="true">Oui</option>
+                        <option value="false">Non</option>
+                        <option value="UNK">Inconnu</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">Chemin dossier macro (photos)</label>
+                    <input class="form-input" id="f_macro_path" placeholder="Ex: D:\FoetoPath\foetus\FP-2026-001">
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">Chemin dossier lames</label>
+                    <input class="form-input" id="f_lames_path" placeholder="Ex: D:\Lames\2026\FP-2026-001 (laissez vide pour auto)">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal('newCaseModal')">Annuler</button>
+            <button class="btn btn-primary" id="btnSaveCase" onclick="saveCase()">Créer le cas</button>
+        </div>
+    </div>
+</div>
+
+<!-- Settings page: /admin/settings -->
+
+<div class="toast" id="toast"></div>
+
+<!-- ── Photo Lightbox ────────────────────────── -->
+<div class="lightbox-overlay" id="photoLightbox">
+    <div class="lightbox-topbar">
+        <span class="lightbox-title" id="lbTitle"></span>
+        <span class="lightbox-counter" id="lbCounter"></span>
+        <button class="lightbox-btn" onclick="closeLightbox()" title="Fermer" style="margin-left:12px">&#10005;</button>
+    </div>
+    <div class="lightbox-img-wrap" id="lbImgWrap">
+        <button class="lightbox-nav prev" onclick="lbNav(-1)">&#10094;</button>
+        <img id="lbImg" src="" alt="" draggable="false">
+        <button class="lightbox-nav next" onclick="lbNav(1)">&#10095;</button>
+    </div>
+    <div class="lightbox-toolbar">
+        <button class="lightbox-btn" onclick="lbZoom(-1)" title="Dé-zoomer">&#8722;</button>
+        <button class="lightbox-btn" onclick="lbZoomReset()" title="Reset zoom">1:1</button>
+        <button class="lightbox-btn" onclick="lbZoom(1)" title="Zoomer">&#43;</button>
+        <span style="width:12px"></span>
+        <button class="lightbox-btn" onclick="lbRotate(-90)" title="Rotation gauche">&#8634;</button>
+        <button class="lightbox-btn" onclick="lbRotate(90)" title="Rotation droite">&#8635;</button>
+        <span style="width:12px"></span>
+        <button class="lightbox-btn" onclick="lbFitToggle()" id="lbFitBtn" title="Adapter / taille réelle">&#9634;</button>
+        <span style="flex:1"></span>
+        <button class="lightbox-btn" onclick="window.open(lbState.photos[lbState.idx]?.full,'_blank')" title="Ouvrir dans un nouvel onglet">&#8599;</button>
+    </div>
+</div>
+
+<script src="/static/foekinator.js"></script>
+<script src="/pwa/foet/hpo_mapping.js" defer></script>
+
+<script src="/static/js/admin_core.js?v=2.8.0"></script>
+<script src="/static/js/slide_helpers.js?v=2.8.0"></script>
+<script src="/static/js/admin_render.js?v=2.8.0"></script>
+<script src="/static/js/admin_radio.js?v=2.8.0"></script>
+<script src="/static/js/admin_foekinator.js?v=2.8.0"></script>
+<script src="/static/js/admin_lightbox.js?v=2.8.0"></script>
+<script src="/static/js/admin_cr.js?v=2.8.5"></script>
+<script src="/static/idle-timeout.js"></script>
+
+</body>
+</html>

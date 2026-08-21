@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e1117">
+<title>Macro Placenta – Tranches de Section</title>
+<link rel="manifest" href="/pwa/placentas/manifest.json">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b22;
+    --surface-hover: #1c2230;
+    --border: #2a3140;
+    --border-focus: #4a90d9;
+    --text: #e2e8f0;
+    --text-muted: #8b95a5;
+    --accent: #4a90d9;
+    --accent-dim: rgba(74, 144, 217, 0.15);
+    --danger: #e55b5b;
+    --success: #3ddc84;
+    --success-dim: rgba(61, 220, 132, 0.15);
+    --photo-choriale: #5b9bd5;
+    --photo-sup: #9b6dd7;
+    --lesion: #e55b5b;
+    --lesion-dim: rgba(229, 91, 91, 0.15);
+    --radius: 10px;
+    --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
+  .dossier-badge {
+    background: var(--success-dim); color: var(--success);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.85rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Sections ── */
+  .content { padding: 12px 16px 100px; }
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .section-title {
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 12px 16px 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-title .section-icon { font-size: 0.9rem; }
+  .section-body { padding: 0 16px 16px; }
+
+  /* ── Photo slot ── */
+  .photo-slot {
+    position: relative;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    aspect-ratio: 4/3;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+  }
+  .photo-slot:active { background: var(--surface-hover); }
+  .photo-slot.has-photo { border-style: solid; }
+  .photo-slot.has-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; border-radius: calc(var(--radius) - 2px);
+  }
+  .photo-slot .label { font-size: 0.75rem; font-weight: 600; margin-top: 6px; }
+  .photo-slot .icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .photo-slot .overlay-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 20px 8px 6px;
+    font-size: 0.7rem; font-weight: 600; text-align: center;
+  }
+  .photo-slot .remove-btn {
+    position: absolute; top: 4px; right: 4px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); color: var(--danger);
+    border: none; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 2;
+  }
+
+  /* Wide photo slot (vue d'ensemble) */
+  .photo-slot-wide { aspect-ratio: 16/9; width: 100%; }
+  .photo-slot-wide .icon { background: rgba(91,155,213,0.2); color: var(--photo-choriale); }
+  .photo-slot-wide .label { color: var(--photo-choriale); }
+  .photo-slot-wide { border-color: var(--photo-choriale); }
+
+  /* ── Tranche group ── */
+  .tranche-group {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .tranche-group-header {
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .tranche-group-header .remove-group {
+    background: none; border: none; color: var(--danger);
+    font-size: 0.8rem; cursor: pointer; padding: 2px 8px;
+  }
+  .photo-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .photo-grid-3 .photo-slot {
+    aspect-ratio: 3/4;
+    font-size: 0.7rem;
+    border-color: var(--photo-choriale);
+  }
+  .photo-grid-3 .photo-slot .icon {
+    width: 26px; height: 26px; font-size: 0.9rem;
+    background: rgba(91,155,213,0.2); color: var(--photo-choriale);
+  }
+  .photo-grid-3 .photo-slot .label { color: var(--photo-choriale); }
+
+  /* ── Lesion card ── */
+  .lesion-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--lesion);
+    border-radius: var(--radius);
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .lesion-card-header {
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--lesion);
+    margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .lesion-card-header .remove-group {
+    background: none; border: none; color: var(--danger);
+    font-size: 0.8rem; cursor: pointer; padding: 2px 8px;
+  }
+  .lesion-photo-row {
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .lesion-photo-row .photo-slot {
+    width: 110px; min-width: 110px; aspect-ratio: 1;
+    border-color: var(--lesion);
+  }
+  .lesion-photo-row .photo-slot .icon {
+    background: var(--lesion-dim); color: var(--lesion);
+  }
+  .lesion-photo-row .photo-slot .label { color: var(--lesion); }
+  .lesion-info {
+    flex: 1; display: flex; flex-direction: column; gap: 8px;
+  }
+  .lesion-info label {
+    font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 2px; display: block;
+  }
+  .lesion-info input,
+  .lesion-info textarea {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px;
+    color: var(--text); font-size: 0.85rem;
+    font-family: var(--font); outline: none; width: 100%;
+  }
+  .lesion-info input:focus,
+  .lesion-info textarea:focus { border-color: var(--border-focus); }
+
+  /* ── Add buttons ── */
+  .btn-add {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface-hover); border: 1px dashed var(--border);
+    border-radius: var(--radius); color: var(--text-muted);
+    padding: 12px 16px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; width: 100%; justify-content: center;
+    transition: background 0.2s;
+  }
+  .btn-add:active { background: var(--border); }
+  .btn-add.btn-add-tranche { color: var(--photo-choriale); }
+  .btn-add.btn-add-lesion { color: var(--lesion); }
+
+  /* ── Bottom bar ── */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px; display: flex; gap: 10px; z-index: 100;
+  }
+  .btn {
+    flex: 1; padding: 14px; border: none; border-radius: var(--radius);
+    font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--success); color: #0e1117; }
+  .btn-secondary {
+    background: var(--surface-hover);
+    border: 1px solid var(--border); color: var(--text);
+  }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    background: var(--success); color: #0e1117;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.3s;
+    z-index: 200; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  .toast.error { background: var(--danger); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1 data-i18n="pwa.placenta.tranches_section">Tranches de section</h1>
+  <span class="dossier-badge" id="badge-dossier">—</span>
+</div>
+
+<div class="content">
+
+  <!-- ══════ VUE D'ENSEMBLE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🔎</span> Vue d'ensemble
+    </div>
+    <div class="section-body">
+      <div class="photo-slot photo-slot-wide" data-key="tranches_vue_ensemble" onclick="capturePhoto(this)">
+        <div class="icon">📷</div>
+        <div class="label">Photo de toutes les tranches</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ GROUPES DE 3 TRANCHES ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🔪</span> Tranches (par groupes de 3)
+    </div>
+    <div class="section-body">
+      <div id="tranches-groups"></div>
+      <button class="btn-add btn-add-tranche" onclick="addTrancheGroup()">
+        <span>＋</span> Ajouter un groupe de 3 tranches
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════ LÉSIONS ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🎯</span> Lésions (photos rapprochées)
+    </div>
+    <div class="section-body">
+      <div id="lesions-list"></div>
+      <button class="btn-add btn-add-lesion" onclick="addLesion()">
+        <span>＋</span> Ajouter une lésion
+      </button>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<div class="bottom-bar">
+  <button class="btn btn-secondary" onclick="goBack()" data-i18n="pwa.common.back_dossier">← Dossier</button>
+  <button class="btn btn-primary" style="flex:1.5;" onclick="saveAndExport()" data-i18n="pwa.common.save">Enregistrer ✓</button>
+</div>
+
+<!-- Hidden file input -->
+<input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none">
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════ HUB ═══════════
+const HUB = window.location.origin;
+
+// ═══════════ FORMAT DOSSIER (aaPnnnn) ═══════════
+function normalizeDossier(val) {
+  return val.replace(/^(\d{2})p/i, '$1P');
+}
+
+// ═══════════ INIT ═══════════
+const params = new URLSearchParams(window.location.search);
+const dossier = normalizeDossier(params.get('dossier') || '—');
+document.getElementById('badge-dossier').textContent = dossier;
+
+// ═══════════ STATE ═══════════
+let photos = {};
+let trancheGroupCount = 0;
+let lesionCount = 0;
+let currentPhotoSlot = null;
+
+// ═══════════ TOAST ═══════════
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+// ═══════════ NAVIGATION ═══════════
+function goBack() {
+  window.location.href = '/pwa/placentas/';
+}
+
+// ═══════════ PHOTOS ═══════════
+const fileInput = document.getElementById('photo-file-input');
+
+function capturePhoto(slot) {
+  currentPhotoSlot = slot;
+  fileInput.click();
+}
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file || !currentPhotoSlot) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const slot = currentPhotoSlot;
+    const key = slot.dataset.key;
+    const dataUrl = ev.target.result;
+    const label = slot.querySelector('.label')?.textContent || key;
+    photos[key] = { dataUrl, label, filename: file.name };
+    slot.classList.add('has-photo');
+    slot.innerHTML = `
+      <img src="${dataUrl}" alt="">
+      <button class="remove-btn" onclick="event.stopPropagation(); removePhoto('${key}')">✕</button>
+      <div class="overlay-label">${label}</div>
+    `;
+  };
+  reader.readAsDataURL(file);
+  fileInput.value = '';
+});
+
+function removePhoto(key) {
+  delete photos[key];
+  const slot = document.querySelector(`[data-key="${key}"]`);
+  if (!slot) return;
+  const label = slot.getAttribute('data-original-label') || key;
+  slot.classList.remove('has-photo');
+  slot.innerHTML = `<div class="icon">📷</div><div class="label">${label}</div>`;
+}
+
+// ═══════════ TRANCHE GROUPS ═══════════
+function addTrancheGroup() {
+  trancheGroupCount++;
+  const g = trancheGroupCount;
+  const t1 = (g - 1) * 3 + 1, t2 = t1 + 1, t3 = t1 + 2;
+
+  const div = document.createElement('div');
+  div.className = 'tranche-group';
+  div.id = `tg-${g}`;
+  div.innerHTML = `
+    <div class="tranche-group-header">
+      <span>Groupe ${g} — tranches ${t1}–${t3}</span>
+      <button class="remove-group" onclick="removeTrancheGroup(${g})">Supprimer</button>
+    </div>
+    <div class="photo-grid-3">
+      <div class="photo-slot" data-key="tr_g${g}_1" data-original-label="T${t1}" onclick="capturePhoto(this)">
+        <div class="icon">📷</div>
+        <div class="label">T${t1}</div>
+      </div>
+      <div class="photo-slot" data-key="tr_g${g}_2" data-original-label="T${t2}" onclick="capturePhoto(this)">
+        <div class="icon">📷</div>
+        <div class="label">T${t2}</div>
+      </div>
+      <div class="photo-slot" data-key="tr_g${g}_3" data-original-label="T${t3}" onclick="capturePhoto(this)">
+        <div class="icon">📷</div>
+        <div class="label">T${t3}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('tranches-groups').appendChild(div);
+}
+
+function removeTrancheGroup(g) {
+  [`tr_g${g}_1`, `tr_g${g}_2`, `tr_g${g}_3`].forEach(k => delete photos[k]);
+  document.getElementById(`tg-${g}`)?.remove();
+}
+
+// ═══════════ LÉSIONS ═══════════
+function addLesion() {
+  lesionCount++;
+  const n = lesionCount;
+
+  const div = document.createElement('div');
+  div.className = 'lesion-card';
+  div.id = `lesion-${n}`;
+  div.innerHTML = `
+    <div class="lesion-card-header">
+      <span>Lésion ${n}</span>
+      <button class="remove-group" onclick="removeLesion(${n})">Supprimer</button>
+    </div>
+    <div class="lesion-photo-row">
+      <div class="photo-slot" data-key="lesion_${n}" data-original-label="Photo" onclick="capturePhoto(this)">
+        <div class="icon">📷</div>
+        <div class="label">Photo</div>
+      </div>
+      <div class="lesion-info">
+        <div>
+          <label>N° cassette (si prélevée)</label>
+          <input type="text" id="lesion_cassette_${n}" placeholder="Ex : K1, K2…" inputmode="text">
+        </div>
+        <div>
+          <label>Description</label>
+          <textarea id="lesion_desc_${n}" rows="2" placeholder="Localisation, aspect…"></textarea>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('lesions-list').appendChild(div);
+}
+
+function removeLesion(n) {
+  delete photos[`lesion_${n}`];
+  document.getElementById(`lesion-${n}`)?.remove();
+}
+
+// ═══════════ COLLECT & EXPORT ═══════════
+function collectData() {
+  const groups = [];
+  document.querySelectorAll('.tranche-group').forEach(div => {
+    const gId = div.id.replace('tg-', '');
+    const keys = [`tr_g${gId}_1`, `tr_g${gId}_2`, `tr_g${gId}_3`];
+    groups.push({
+      group: parseInt(gId),
+      photos: keys.map(k => ({ key: k, captured: !!photos[k] }))
+    });
+  });
+
+  const lesions = [];
+  document.querySelectorAll('.lesion-card').forEach(div => {
+    const nId = div.id.replace('lesion-', '');
+    lesions.push({
+      lesion: parseInt(nId),
+      photo_key: `lesion_${nId}`,
+      photo_captured: !!photos[`lesion_${nId}`],
+      cassette: document.getElementById(`lesion_cassette_${nId}`)?.value.trim() || null,
+      description: document.getElementById(`lesion_desc_${nId}`)?.value.trim() || null
+    });
+  });
+
+  return {
+    dossier,
+    timestamp: new Date().toISOString(),
+    type: 'tranches_section',
+    vue_ensemble: {
+      photo_key: 'tranches_vue_ensemble',
+      captured: !!photos['tranches_vue_ensemble']
+    },
+    tranche_groups: groups,
+    lesions
+  };
+}
+
+function _dataUrlToBlob(dataUrl) {
+  const parts = dataUrl.split(',');
+  const mime = parts[0].match(/:(.*?);/)[1];
+  const b = atob(parts[1]);
+  const arr = new Uint8Array(b.length);
+  for (let j = 0; j < b.length; j++) arr[j] = b.charCodeAt(j);
+  return new Blob([arr], {type: mime});
+}
+
+async function saveAndExport() {
+  const data = collectData();
+
+  // Save local
+  try {
+    localStorage.setItem(`placenta_tranches_${dossier}`, JSON.stringify(data));
+  } catch (e) {}
+
+  // Sync to hub
+  try {
+    const formData = new FormData();
+    formData.append('json_data', JSON.stringify(data));
+    formData.append('dossier', dossier);
+    formData.append('module', 'tranches_section');
+    // Identifier l'utilisateur PWA
+    try { var pu = localStorage.getItem('placenta_pwa_user'); if (pu) formData.append('user', pu); } catch(e) {}
+
+    for (const [key, photo] of Object.entries(photos)) {
+      if (photo.dataUrl) {
+        try {
+          const blob = _dataUrlToBlob(photo.dataUrl);
+          const ext = blob.type.includes('png') ? '.png' : '.jpg';
+          formData.append('photo_' + key, blob, `${dossier}_${key}${ext}`);
+        } catch (e) {
+          formData.append('b64_' + key, photo.dataUrl);
+        }
+      }
+      // photo.serverUrl → déjà sur le serveur, on ne re-upload pas
+    }
+
+    const resp = await fetch(`${HUB}/placenta/api/cases/submit`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (resp.ok) {
+      pwaHideSessionBanner();
+      const result = await resp.json();
+      showToast('Enregistré et synchronisé ✓\nPhotos : ' + (result.photos_saved || 0));
+    } else {
+      await pwaHandleSubmitError(resp, showToast);
+    }
+  } catch (e) {
+    showToast('Sauvé localement (hors ligne)', true);
+  }
+}
+</script>
+<script>
+// ═══════════ LOAD FROM LOCALSTORAGE ═══════════
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(`placenta_tranches_${dossier}`);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data.type !== 'tranches_section') return false;
+
+    // Restaurer les groupes de tranches
+    if (data.tranche_groups) {
+      for (const g of data.tranche_groups) {
+        addTrancheGroup();
+      }
+    }
+    // Restaurer les lésions
+    if (data.lesions) {
+      for (const l of data.lesions) {
+        addLesion();
+        if (l.cassette) {
+          const inp = document.getElementById(`lesion_cassette_${lesionCount}`);
+          if (inp) inp.value = l.cassette;
+        }
+        if (l.description) {
+          const ta = document.getElementById(`lesion_desc_${lesionCount}`);
+          if (ta) ta.value = l.description;
+        }
+      }
+    }
+    return true;
+  } catch (e) { return false; }
+}
+
+// ═══════════ LOAD FROM SERVER ═══════════
+async function loadFromServer() {
+  if (dossier === '—') return;
+  try {
+    const checkResp = await fetch(`${HUB}/placenta/api/cases/check?numero=${encodeURIComponent(dossier)}`);
+    if (!checkResp.ok) return;
+    const checkData = await checkResp.json();
+    if (!checkData.exists || !checkData.case_id) return;
+    const caseId = checkData.case_id;
+
+    // Charger la structure du module si pas déjà en localStorage
+    const hadLocal = document.querySelectorAll('.tranche-group').length > 0 ||
+                     document.querySelectorAll('.lesion-card').length > 0;
+    if (!hadLocal) {
+      try {
+        const modResp = await fetch(`${HUB}/placenta/api/cases/${caseId}/modules/tranches_section`);
+        if (modResp.ok) {
+          const modResult = await modResp.json();
+          const data = modResult.data;
+          if (data) {
+            if (data.tranche_groups) {
+              for (const g of data.tranche_groups) addTrancheGroup();
+            }
+            if (data.lesions) {
+              for (const l of data.lesions) {
+                addLesion();
+                if (l.cassette) {
+                  const inp = document.getElementById(`lesion_cassette_${lesionCount}`);
+                  if (inp) inp.value = l.cassette;
+                }
+                if (l.description) {
+                  const ta = document.getElementById(`lesion_desc_${lesionCount}`);
+                  if (ta) ta.value = l.description;
+                }
+              }
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Charger les photos existantes
+    const photoResp = await fetch(`${HUB}/placenta/api/cases/${caseId}/photos?module=tranches_section`);
+    if (!photoResp.ok) return;
+    const photoData = await photoResp.json();
+    if (!photoData.photos || !photoData.photos.length) return;
+
+    for (const p of photoData.photos) {
+      const key = p.photo_key;
+      if (!key) continue;
+      if (photos[key] && photos[key].dataUrl) continue;
+
+      const photoUrl = `${HUB}/placenta/api/photo/serve?path=${encodeURIComponent(p.file_path)}`;
+      photos[key] = { serverUrl: photoUrl, label: p.label || key, filename: p.filename || '' };
+
+      const slot = document.querySelector(`[data-key="${key}"]`);
+      if (slot) {
+        const label = p.label || key.replace(/_/g, ' ');
+        slot.classList.add('has-photo');
+        slot.innerHTML = `
+          <img src="${photoUrl}" alt="">
+          <button class="remove-btn" onclick="event.stopPropagation(); removePhoto('${key}')">✕</button>
+          <div class="overlay-label">${label}</div>
+        `;
+      }
+    }
+  } catch (e) {
+    // Hors ligne — on se contente du localStorage
+  }
+}
+
+// ═══════════ INIT ═══════════
+loadLocal();
+loadFromServer();
+pwaCheckSession(HUB);
+</script>
+
+<script>
+// ═══════ PWA Registration ═══════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/placentas/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/pwa_sync.js"></script>
+<script src="/static/i18n.js"></script>
+<script>
+  i18nInit(window.location.origin).then(function() { i18nApply(); }).catch(function() {});
+</script>
+</body>
+</html>

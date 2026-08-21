@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>FœtoPath – Macro état frais</title>
+<link rel="manifest" href="/pwa/foet/manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+  <div class="header-top"><h1 data-i18n="pwa.foet.macro_frais">🔬 Macro frais</h1><span class="dossier-badge blue" id="badge-dossier">—</span></div>
+  <div class="nav-pills" id="navPills">
+    <a class="nav-pill active" onclick="scrollToSection('sec-terme')" data-nav="sec-terme"><span class="pill-dot" id="pdot-terme"></span><span data-i18n="pwa.foet.terme_id">Terme</span></a>
+    <a class="nav-pill" onclick="scrollToSection('sec-maceration')" data-nav="sec-maceration"><span class="pill-dot" id="pdot-maceration"></span><span data-i18n="pwa.foet.maroun_score">Macération</span></a>
+    <a class="nav-pill" onclick="scrollToSection('sec-genest')" data-nav="sec-genest"><span class="pill-dot" id="pdot-genest"></span><span data-i18n="pwa.foet.genest">Genest</span></a>
+    <a class="nav-pill" onclick="scrollToSection('sec-photos')" data-nav="sec-photos"><span class="pill-dot" id="pdot-photos"></span><span data-i18n="pwa.foet.photos_macro">Photos</span></a>
+    <a class="nav-pill" onclick="scrollToSection('sec-balance')" data-nav="sec-balance"><span class="pill-dot" id="pdot-balance"></span><span data-i18n="pwa.foet.balance">Balance</span></a>
+    <a class="nav-pill" onclick="scrollToSection('sec-caliper')" data-nav="sec-caliper"><span class="pill-dot" id="pdot-caliper"></span><span data-i18n="pwa.foet.pied_coulisse">Coulisse</span></a>
+    <a class="nav-pill" onclick="scrollToSection('sec-tape')" data-nav="sec-tape"><span class="pill-dot" id="pdot-tape"></span><span data-i18n="pwa.foet.metre_ruban">Ruban</span></a>
+    <a class="nav-pill" onclick="scrollToSection('sec-morpho')" data-nav="sec-morpho"><span class="pill-dot" id="pdot-morpho"></span><span data-i18n="pwa.foet.morpho_ext">Morpho</span></a>
+    <a class="nav-pill" onclick="scrollToSection('sec-comment')" data-nav="sec-comment"><span class="pill-dot" id="pdot-comment"></span><span data-i18n="pwa.foet.comment">Note</span></a>
+  </div>
+</div>
+<div class="content">
+
+<div class="summary-bar">
+  <div class="summary-item"><div class="sl">Maroun</div><div class="sv" id="sum-maroun" style="color:var(--success)">0</div></div>
+  <div class="summary-item"><div class="sl">Genest</div><div class="sv" id="sum-genest">0</div></div>
+  <div class="summary-item"><div class="sl">Rétention</div><div class="sv" id="sum-retention" style="font-size:0.7rem">—</div></div>
+  <div class="summary-item"><div class="sl">Photos</div><div class="sv" id="sum-photos" style="color:var(--purple)">0</div></div>
+</div>
+
+<div class="acc-section sec-terme open" id="sec-terme"><div class="acc-header" onclick="toggleAcc('sec-terme')"><span class="acc-icon">📅</span><span class="acc-title">Terme & Identification</span><span class="acc-status empty" id="ast-terme">Vide</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+  <div class="field-row"><div class="field"><label>SA</label><input type="number" id="terme_sa" step="1" min="10" max="45" inputmode="numeric" placeholder="—" oninput="onTermeChange()"><div class="unit">semaines</div></div><div class="field"><label>+ Jours</label><input type="number" id="terme_j" step="1" min="0" max="6" inputmode="numeric" placeholder="0"><div class="unit">jours</div></div></div>
+  <div class="field-row"><div class="field"><label>Sexe</label><div class="chip-group single" data-field="sexe"><div class="chip" onclick="selectChip(this)">M</div><div class="chip" onclick="selectChip(this)">F</div><div class="chip" onclick="selectChip(this)">Ind.</div></div></div><div class="field"><label>État</label><div class="chip-group single" data-field="etat_foetus"><div class="chip selected" onclick="selectChip(this)">Frais</div><div class="chip" onclick="selectChip(this)">Fixé</div></div></div></div>
+</div></div></div>
+
+<div class="acc-section sec-mac" id="sec-maceration"><div class="acc-header" onclick="toggleAcc('sec-maceration')"><span class="acc-icon">🫧</span><span class="acc-title">Score de Maroun</span><span class="acc-status done" id="ast-maceration">Grade 0</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+  <div class="maroun-chips"><div class="maroun-chip selected" data-s="0" onclick="selectMaroun(0)"><div class="score">0</div><div class="mlabel">Absence</div></div><div class="maroun-chip" data-s="1" onclick="selectMaroun(1)"><div class="score">1</div><div class="mlabel">Légère</div></div><div class="maroun-chip" data-s="2" onclick="selectMaroun(2)"><div class="score">2</div><div class="mlabel">Modérée</div></div><div class="maroun-chip" data-s="3" onclick="selectMaroun(3)"><div class="score">3</div><div class="mlabel">Avancée</div></div></div>
+</div></div></div>
+
+<div class="acc-section sec-mac" id="sec-genest"><div class="acc-header" onclick="toggleAcc('sec-genest')"><span class="acc-icon">⏱️</span><span class="acc-title">Critères de Genest</span><span class="acc-status empty" id="ast-genest">0/14</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+  <div class="section-hint">Cocher les signes présents — temps de rétention estimé</div><div id="genestList"></div>
+</div></div></div>
+
+<div class="acc-section sec-photo" id="sec-photos"><div class="acc-header" onclick="toggleAcc('sec-photos')"><span class="acc-icon">📸</span><span class="acc-title">Photos macro</span><span class="acc-status empty" id="ast-photos">0</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+  <div class="sub-title">Sur le dos</div>
+  <div class="photo-grid" id="photoGrid">
+    <div class="photo-slot grid-slot" data-key="p_dos_gen" data-original-label="Générale (dos)" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Générale</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_face" data-original-label="Tête face" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Tête face</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_oge" data-original-label="OGE" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">OGE</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_main_d_paume" data-original-label="Main D paume" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Main D paume</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_main_d_dos" data-original-label="Main D dos" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Main D dos</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_main_g_paume" data-original-label="Main G paume" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Main G paume</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_main_g_dos" data-original-label="Main G dos" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Main G dos</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_pied_d" data-original-label="Pied droit" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Pied D</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_pied_g" data-original-label="Pied gauche" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Pied G</div></div>
+    <div class="photo-slot grid-slot" data-key="p_dos_anus" data-original-label="Anus" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Anus</div></div>
+  </div>
+  <div class="sub-title">Côté droit</div>
+  <div class="photo-grid">
+    <div class="photo-slot grid-slot" data-key="p_droit_gen" data-original-label="Côté D général" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Général D</div></div>
+    <div class="photo-slot grid-slot" data-key="p_droit_profil" data-original-label="Profil D" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Profil D</div></div>
+  </div>
+  <div class="sub-title">Côté gauche</div>
+  <div class="photo-grid">
+    <div class="photo-slot grid-slot" data-key="p_gauche_gen" data-original-label="Côté G général" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Général G</div></div>
+    <div class="photo-slot grid-slot" data-key="p_gauche_profil" data-original-label="Profil G" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Profil G</div></div>
+  </div>
+  <div class="sub-title">Sur le ventre</div>
+  <div class="photo-grid">
+    <div class="photo-slot grid-slot" data-key="p_ventre_gen" data-original-label="Dos (sur ventre)" onclick="capturePhoto(this)"><div class="icon big">📷</div><div class="label big">Dos</div></div>
+  </div>
+  <div id="extraPhotosGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"></div>
+  <button class="btn-add-photo" onclick="addExtraPhoto()">＋ Photo supplémentaire</button>
+</div></div></div>
+
+<div class="acc-section sec-bio" id="sec-balance"><div class="acc-header" onclick="toggleAcc('sec-balance')"><span class="acc-icon">⚖️</span><span class="acc-title">Balance — Masse</span><span class="acc-status empty" id="ast-balance">Vide</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+  <div class="field"><label>Masse fœtale</label><input type="number" id="bio_masse" step="1" min="0" inputmode="numeric" placeholder="—" oninput="computeDS()"><div class="unit">g</div><div class="ds-inline" id="ds_masse"></div></div>
+</div></div></div>
+
+<div class="acc-section sec-bio" id="sec-caliper"><div class="acc-header" onclick="toggleAcc('sec-caliper')"><span class="acc-icon">📐</span><span class="acc-title">Pied à coulisse</span><span class="acc-status empty" id="ast-caliper">0/10</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner" id="caliperBody"></div></div></div>
+
+<div class="acc-section sec-bio" id="sec-tape"><div class="acc-header" onclick="toggleAcc('sec-tape')"><span class="acc-icon">📏</span><span class="acc-title">Mètre ruban</span><span class="acc-status empty" id="ast-tape">0/5</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner" id="tapeBody"></div></div></div>
+
+<div class="acc-section sec-morpho" id="sec-morpho"><div class="acc-header" onclick="toggleAcc('sec-morpho')"><span class="acc-icon">👁️</span><span class="acc-title">Morphologie externe</span><span class="acc-status empty" id="ast-morpho">0/24</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner" id="morphoBody"></div></div></div>
+
+<div class="acc-section sec-comment" id="sec-comment"><div class="acc-header" onclick="toggleAcc('sec-comment')"><span class="acc-icon">📝</span><span class="acc-title">Commentaire</span><span class="acc-status empty" id="ast-comment">Vide</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+  <div class="field"><textarea id="commentaire" rows="3" placeholder="Remarques générales, syndrome suspecté…" oninput="safeUpdateStatuses()"></textarea></div>
+</div></div></div>
+
+</div>
+<div class="bottom-bar">
+  <button class="btn btn-secondary" onclick="goBack()" data-i18n="pwa.common.back_dossier">← Dossier</button>
+  <button class="btn btn-primary" style="flex:1.5" onclick="saveAndExport()" data-i18n="pwa.common.save">Enregistrer ✓</button>
+</div>
+<input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none">
+
+<script src="references.js"></script>
+<script src="hpo_mapping.js"></script>
+<script src="helpers.js"></script>
+<script src="hpo_engine.js"></script>
+<script src="pwa_common.js"></script>
+<script>
+// ═══ PAGE STATE ═══
+var dossier = initDossierField();
+var marounScore = 0;
+var genestSelected = new Set();
+var extraPhotoCount = 0;
+
+// ═══ MAROUN ═══
+function selectMaroun(s) {
+  marounScore = s;
+  var chips = qsa('.maroun-chip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.toggle('selected', parseInt(chips[i].getAttribute('data-s')) === s);
+  safeUpdateStatuses();
+}
+
+// ═══ GENEST ═══
+function buildGenest() {
+  var el = gid('genestList'); if (!el) return;
+  for (var i = 0; i < GENEST.length; i++) {
+    var g = GENEST[i]; var d = document.createElement('div');
+    d.className = 'genest-item'; d.id = 'gi_' + g.id; d.setAttribute('data-gid', g.id);
+    var ql = g.q === 'bon' ? 'Bon' : g.q === 'inter' ? 'Moyen' : 'Faible';
+    d.innerHTML = '<div class="gi-check">✓</div><div style="flex:1"><div class="gi-text">' + g.t + '</div><div><span class="gi-time">' + g.time + '</span><span class="gi-qual ' + g.q + '">' + ql + '</span></div></div>';
+    d.onclick = function() { toggleGenest(parseInt(this.getAttribute('data-gid'))); };
+    el.appendChild(d);
+  }
+}
+function toggleGenest(id) {
+  if (genestSelected.has(id)) genestSelected.delete(id); else genestSelected.add(id);
+  var el = gid('gi_' + id); if (el) el.classList.toggle('on', genestSelected.has(id));
+  safeUpdateStatuses();
+}
+
+// ═══ BIO BUILDERS ═══
+function buildBioFields(fields, containerId) {
+  var c = gid(containerId); if (!c) return;
+  for (var i = 0; i < fields.length; i++) {
+    var f = fields[i]; var d = document.createElement('div');
+    d.className = 'field'; d.style.marginBottom = '10px';
+    d.innerHTML = '<label>' + f.l + '</label><input type="number" id="bio_' + f.id + '" step="0.1" min="0" inputmode="decimal" placeholder="—" oninput="computeDS()"><div class="unit">mm</div><div class="ds-inline" id="ds_' + f.id + '"></div>';
+    c.appendChild(d);
+  }
+}
+
+// ═══ MORPHO BUILDER ═══
+function buildMorpho() {
+  var c = gid('morphoBody'); if (!c) return;
+  for (var i = 0; i < MORPHO.length; i++) {
+    var m = MORPHO[i]; var ln = m.ln || 'Normal'; var la = m.la || 'Anormal';
+    var details = m.details || [];
+    var html = '<div class="morpho-row" id="mr_' + m.id + '"><div class="morpho-label">' + m.l + '</div><div class="morpho-toggle"><button onclick="setMorpho(\'' + m.id + '\',\'n\',this)">' + ln + '</button><button onclick="setMorpho(\'' + m.id + '\',\'a\',this)">' + la + '</button></div></div>';
+    html += '<div class="morpho-detail" id="md_' + m.id + '">';
+    if (details.length) {
+      html += '<div class="chip-group multi" data-field="mdet_' + m.id + '">';
+      for (var j = 0; j < details.length; j++) html += '<div class="chip" onclick="toggleChip(this)">' + details[j] + '</div>';
+      html += '</div>';
+    }
+    html += '<input type="text" id="mtxt_' + m.id + '" placeholder="Précisions…">';
+    html += '<div style="margin-top:8px"><button class="btn-add-photo" style="padding:8px 12px;font-size:0.75rem" onclick="captureAnomalyPhoto(\'' + m.id + '\')">📷 Photo anomalie</button><div id="mphoto_' + m.id + '" style="margin-top:6px"></div></div></div>';
+    c.insertAdjacentHTML('beforeend', html);
+  }
+}
+
+// ═══ EXTRA PHOTOS ═══
+function addExtraPhoto() {
+  extraPhotoCount++; var n = extraPhotoCount;
+  var grid = gid('extraPhotosGrid'); if (!grid) return;
+  var slot = document.createElement('div'); slot.className = 'photo-slot grid-slot';
+  slot.setAttribute('data-key', 'extra_' + n); slot.setAttribute('data-original-label', 'Suppl. ' + n);
+  slot.onclick = function() { capturePhoto(this); };
+  slot.innerHTML = '<div class="icon big">📷</div><div class="label big">Suppl. ' + n + '</div>';
+  grid.appendChild(slot);
+}
+function captureAnomalyPhoto(morphoId) {
+  var key = 'anomaly_' + morphoId + '_' + Date.now();
+  var container = gid('mphoto_' + morphoId); if (!container) return;
+  var slot = document.createElement('div'); slot.className = 'photo-slot small';
+  slot.setAttribute('data-key', key); slot.setAttribute('data-original-label', morphoId);
+  slot.onclick = function() { capturePhoto(this); };
+  slot.innerHTML = '<div class="icon">📷</div>';
+  container.appendChild(slot); capturePhoto(slot);
+}
+
+// ═══ DS CALCULATION ═══
+function computeDS() {
+  var sa = parseInt(gval('terme_sa'));
+  if (!sa || sa < 12 || sa > 43) { var dsEls = qsa('.ds-inline'); for (var i = 0; i < dsEls.length; i++) dsEls[i].innerHTML = ''; safeUpdateStatuses(); return; }
+  var gcP = getGCKey(sa); var maE = getMA(sa); var mbE = getMB(sa);
+  // Masse
+  var mv = parseFloat(gval('bio_masse')); var html = '';
+  if (gcP && GC[gcP] && GC[gcP].masse) html += dsTag(zs(mv, GC[gcP].masse.m, GC[gcP].masse.sd), 'gc');
+  if (maE) html += dsTag(zs(mv, maE.B.m, maE.B.sd), 'ma');
+  if (mbE && mbE.Fetus) html += dsTag(zs(mv, mbE.Fetus.m, mbE.Fetus.sd), 'mb');
+  var dsm = gid('ds_masse'); if (dsm) dsm.innerHTML = html;
+  // All bio fields
+  var allFields = [CAL_FIELDS, TAPE_FIELDS];
+  for (var fi = 0; fi < allFields.length; fi++) {
+    for (var j = 0; j < allFields[fi].length; j++) {
+      var f = allFields[fi][j];
+      var v = parseFloat(gval('bio_' + f.id)); var h = '';
+      if (f.gc && gcP && GC[gcP] && GC[gcP][f.gc]) h += dsTag(zs(v, GC[gcP][f.gc].m, GC[gcP][f.gc].sd), 'gc');
+      if (f.ma && maE && maE[f.ma]) h += dsTag(zs(v / (f.mad || 1), maE[f.ma].m, maE[f.ma].sd), 'ma');
+      if (f.mb && mbE && mbE[f.mb]) h += dsTag(zs(v / (f.mbd || 1), mbE[f.mb].m, mbE[f.mb].sd), 'mb');
+      var dsel = gid('ds_' + f.id); if (dsel) dsel.innerHTML = h;
+    }
+  }
+  safeUpdateStatuses();
+}
+function onTermeChange() { computeDS(); }
+
+// ═══ STATUS UPDATES ═══
+function safeUpdateStatuses() { try { updateStatuses(); } catch(e) {} }
+function updateStatuses() {
+  var sa = gval('terme_sa'); var sexe = getChips('sexe')[0];
+  setStatus('terme', sa ? (sexe ? 'done' : 'partial') : 'empty', sa ? (sexe ? 'OK' : 'SA ok') : 'Vide');
+  setStatus('maceration', 'done', 'Grade ' + marounScore);
+  var gc = genestSelected.size;
+  setStatus('genest', gc > 0 ? 'partial' : 'empty', gc + '/14');
+  var pc = Object.keys(photos).length;
+  setStatus('photos', pc > 0 ? (pc >= 4 ? 'done' : 'partial') : 'empty', pc + ' photo' + (pc > 1 ? 's' : ''));
+  setStatus('balance', gval('bio_masse') ? 'done' : 'empty', gval('bio_masse') ? gval('bio_masse') + 'g' : 'Vide');
+  var calFilled = 0;
+  for (var i = 0; i < CAL_FIELDS.length; i++) { if (gval('bio_' + CAL_FIELDS[i].id)) calFilled++; }
+  setStatus('caliper', calFilled > 0 ? (calFilled >= 5 ? 'done' : 'partial') : 'empty', calFilled + '/' + CAL_FIELDS.length);
+  var tapeFilled = 0;
+  for (var i = 0; i < TAPE_FIELDS.length; i++) { if (gval('bio_' + TAPE_FIELDS[i].id)) tapeFilled++; }
+  setStatus('tape', tapeFilled > 0 ? (tapeFilled >= 3 ? 'done' : 'partial') : 'empty', tapeFilled + '/' + TAPE_FIELDS.length);
+  var morphoFilled = 0;
+  for (var i = 0; i < MORPHO.length; i++) { var row = gid('mr_' + MORPHO[i].id); if (row) { var btn = row.querySelector('.sel-n,.sel-a'); if (btn) morphoFilled++; } }
+  setStatus('morpho', morphoFilled > 0 ? (morphoFilled >= 20 ? 'done' : 'partial') : 'empty', morphoFilled + '/' + MORPHO.length);
+  var comEl = gid('commentaire'); var comVal = (comEl && comEl.value) ? comEl.value.trim() : '';
+  setStatus('comment', comVal ? 'done' : 'empty', comVal ? 'Rédigé' : 'Vide');
+  // Summary bar
+  var sm = gid('sum-maroun'); if (sm) { sm.textContent = marounScore; sm.style.color = ['var(--success)','var(--warning)','var(--orange)','var(--danger)'][marounScore]; }
+  var sg = gid('sum-genest'); if (sg) sg.textContent = gc;
+  var sp = gid('sum-photos'); if (sp) sp.textContent = pc;
+  var maxIdx = -1;
+  genestSelected.forEach(function(id) { for (var j = 0; j < GENEST.length; j++) { if (GENEST[j].id === id) { var idx = TIME_ORDER.indexOf(GENEST[j].time); if (idx > maxIdx) maxIdx = idx; break; } } });
+  var sr = gid('sum-retention'); if (sr) sr.textContent = maxIdx >= 0 ? TIME_ORDER[maxIdx] : '—';
+}
+
+// ═══ COLLECT ═══
+function collectData() {
+  var bioFields = CAL_FIELDS.concat(TAPE_FIELDS);
+  var values = { masse: parseFloat(gval('bio_masse')) || null };
+  for (var i = 0; i < bioFields.length; i++) values[bioFields[i].id] = parseFloat(gval('bio_' + bioFields[i].id)) || null;
+  var morpho = {};
+  for (var i = 0; i < MORPHO.length; i++) {
+    var m = MORPHO[i]; var row = gid('mr_' + m.id);
+    var selBtn = row ? row.querySelector('.sel-n,.sel-a') : null;
+    var status = selBtn ? (selBtn.classList.contains('sel-n') ? 'normal' : 'anormal') : null;
+    var txtEl = gid('mtxt_' + m.id); var txtVal = (txtEl && txtEl.value) ? txtEl.value.trim() : '';
+    morpho[m.id] = { status: status, details: getChips('mdet_' + m.id), text: txtVal || null };
+  }
+  var comEl = gid('commentaire'); var comVal = (comEl && comEl.value) ? comEl.value.trim() : '';
+  return {
+    dossier: dossier, timestamp: new Date().toISOString(), type: 'macro_frais',
+    terme: { sa: parseInt(gval('terme_sa')) || null, jours: parseInt(gval('terme_j')) || 0 },
+    sexe: getChips('sexe')[0] || null, etat: getChips('etat_foetus')[0] || null,
+    maceration: { maroun_score: marounScore, genest: Array.from(genestSelected) },
+    biometries: values, morphologie: morpho, commentaire: comVal || null,
+    photos: Object.keys(photos).map(function(k) { return { key: k, label: photos[k].label }; }),
+    hpo: collectHPO()
+  };
+}
+
+// ═══ SAVE ═══
+function saveAndExport() {
+  try {
+    var data = collectData();
+    pwaSave('macro_frais', dossier, data);
+    saveHPOToLocalStorage(dossier, 'macro_frais');
+    pwaSubmit(dossier, 'macro_frais', data, photos);
+  } catch (e) { alert('Erreur: ' + e.message); }
+}
+
+// ═══ LOAD EXISTING ═══
+function loadExistingData() {
+  pwaLoadFromHub(dossier, 'macro_frais')
+    .then(function(res) {
+      if (res.found && res.data) {
+        restoreData(res.data, res.photos_on_disk || []);
+      } else {
+        var local = pwaLoad('macro_frais', dossier);
+        if (local) restoreData(local, []);
+      }
+    });
+}
+function restoreData(data, photosOnDisk) {
+  try {
+    if (data.terme) {
+      if (data.terme.sa) { var el = gid('terme_sa'); if (el) el.value = data.terme.sa; }
+      if (data.terme.jours) { var el = gid('terme_j'); if (el) el.value = data.terme.jours; }
+    }
+    if (data.sexe) selectChipByValue('sexe', data.sexe);
+    if (data.etat) selectChipByValue('etat_foetus', data.etat);
+    if (data.maceration && data.maceration.maroun_score != null) selectMaroun(data.maceration.maroun_score);
+    if (data.maceration && data.maceration.genest) {
+      for (var i = 0; i < data.maceration.genest.length; i++) {
+        var gv = data.maceration.genest[i]; genestSelected.add(gv);
+        var giEl = gid('gi_' + gv); if (giEl) giEl.classList.add('on');
+      }
+    }
+    if (data.biometries) {
+      if (data.biometries.masse) { var el = gid('bio_masse'); if (el) el.value = data.biometries.masse; }
+      var allBio = CAL_FIELDS.concat(TAPE_FIELDS);
+      for (var i = 0; i < allBio.length; i++) { if (data.biometries[allBio[i].id]) { var el = gid('bio_' + allBio[i].id); if (el) el.value = data.biometries[allBio[i].id]; } }
+    }
+    if (data.morphologie) {
+      for (var i = 0; i < MORPHO.length; i++) {
+        var m = MORPHO[i]; var mdata = data.morphologie[m.id];
+        if (!mdata || !mdata.status) continue;
+        var row = gid('mr_' + m.id);
+        if (row) {
+          var btns = row.querySelectorAll('.morpho-toggle button');
+          if (mdata.status === 'normal' && btns.length >= 1) btns[0].className = 'sel-n';
+          else if (mdata.status === 'anormal' && btns.length >= 2) { btns[1].className = 'sel-a'; var det = gid('md_' + m.id); if (det) det.classList.add('visible'); }
+        }
+        if (mdata.details && mdata.details.length > 0) {
+          var dc = qsa('[data-field="mdet_' + m.id + '"] .chip');
+          for (var j = 0; j < dc.length; j++) { for (var k = 0; k < mdata.details.length; k++) { if (mdata.details[k] === dc[j].textContent.trim()) { dc[j].classList.add('selected'); break; } } }
+        }
+        if (mdata.text) { var te = gid('mtxt_' + m.id); if (te) te.value = mdata.text; }
+      }
+    }
+    if (data.commentaire) { var ce = gid('commentaire'); if (ce) ce.value = data.commentaire; }
+    // Restaurer les photos depuis le serveur
+    if (data.photos && data.photos.length > 0) {
+      for (var i = 0; i < data.photos.length; i++) {
+        var p = data.photos[i];
+        var imgUrl = HUB + '/admin/api/pwa/photo?dossier=' + encodeURIComponent(dossier) + '&key=' + encodeURIComponent(p.key);
+
+        if (p.key.indexOf('extra_') === 0) {
+          var grid = gid('extraPhotosGrid');
+          if (grid) {
+            extraPhotoCount++;
+            var slot = document.createElement('div'); slot.className = 'photo-slot grid-slot has-photo';
+            slot.setAttribute('data-key', p.key); slot.setAttribute('data-original-label', p.label);
+            slot.setAttribute('onclick', 'capturePhoto(this)');
+            slot.innerHTML = '<img src="' + imgUrl + '"><button class="remove-btn" onclick="event.stopPropagation();removePhoto(\'' + p.key + '\')">✕</button><div class="overlay-label">' + p.label + '</div>';
+            grid.appendChild(slot);
+            photos[p.key] = { dataUrl: null, label: p.label, serverUrl: imgUrl };
+            continue;
+          }
+        }
+        photos[p.key] = { dataUrl: null, label: p.label, serverUrl: imgUrl };
+        var slot = qs('[data-key="' + p.key + '"]');
+        if (slot) { slot.classList.add('has-photo'); slot.innerHTML = '<img src="' + imgUrl + '"><button class="remove-btn" onclick="event.stopPropagation();removePhoto(\'' + p.key + '\')">✕</button><div class="overlay-label">' + (p.label || p.key) + '</div>'; }
+      }
+    }
+    computeDS(); safeUpdateStatuses();
+  } catch(e) {}
+}
+
+// ═══ INIT ═══
+applySettings();
+initPhotoInput();
+buildGenest();
+buildBioFields(CAL_FIELDS, 'caliperBody');
+buildBioFields(TAPE_FIELDS, 'tapeBody');
+buildMorpho();
+injectCollapseButtons(false);
+// Re-init HPO autocomplete after dynamic DOM (morpho inputs) is built
+setTimeout(function() { if (typeof initHPOEngine === 'function') initHPOEngine(); }, 200);
+safeUpdateStatuses();
+loadExistingData();
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>pwaI18nInit();</script>
+</body>
+</html>

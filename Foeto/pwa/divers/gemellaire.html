@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e1117">
+<title>Gémellaire – État Frais/Fixé</title>
+<link rel="manifest" href="/pwa/divers/manifest.json">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b22;
+    --surface-hover: #1c2230;
+    --border: #2a3140;
+    --border-focus: #9b6dd7;
+    --text: #e2e8f0;
+    --text-muted: #8b95a5;
+    --accent: #9b6dd7;
+    --accent-dim: rgba(155, 109, 215, 0.15);
+    --danger: #e55b5b;
+    --success: #3ddc84;
+    --success-dim: rgba(61, 220, 132, 0.15);
+    --warning: #f0a850;
+    --j1: #4a90d9;
+    --j1-dim: rgba(74, 144, 217, 0.15);
+    --j2: #3ddc84;
+    --j2-dim: rgba(61, 220, 132, 0.15);
+    --j3: #f0a850;
+    --j3-dim: rgba(240, 168, 80, 0.15);
+    --radius: 10px;
+    --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
+  .dossier-badge {
+    background: var(--accent-dim); color: var(--accent);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.85rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Sections ── */
+  .content { padding: 12px 16px 100px; }
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .section-title {
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 12px 16px 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-title .section-icon { font-size: 0.9rem; }
+  .section-body { padding: 0 16px 16px; }
+
+  /* ── Photos ── */
+  .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .photo-slot {
+    position: relative;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    aspect-ratio: 4/3;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+  }
+  .photo-slot:active { background: var(--surface-hover); }
+  .photo-slot.has-photo { border-style: solid; }
+  .photo-slot.has-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; border-radius: calc(var(--radius) - 2px);
+  }
+  .photo-slot .label { font-size: 0.75rem; font-weight: 600; margin-top: 6px; }
+  .photo-slot .icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .photo-slot[data-type="sup"] { border-color: var(--accent); }
+  .photo-slot[data-type="sup"] .icon { background: var(--accent-dim); color: var(--accent); }
+  .photo-slot[data-type="sup"] .label { color: var(--accent); }
+  .photo-slot .overlay-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 20px 8px 6px;
+    font-size: 0.7rem; font-weight: 600; text-align: center;
+  }
+  .photo-slot .remove-btn {
+    position: absolute; top: 4px; right: 4px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); color: var(--danger);
+    border: none; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 2;
+  }
+
+  .add-photo-row { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  #extra-photos-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 10px;
+  }
+  .btn-add-photo {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface-hover); border: 1px dashed var(--border);
+    border-radius: var(--radius); color: var(--accent);
+    padding: 10px 16px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; width: 100%; justify-content: center;
+    transition: background 0.2s;
+  }
+  .btn-add-photo:active { background: var(--border); }
+
+  /* ── Form fields ── */
+  .field-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .field-row:last-child { margin-bottom: 0; }
+  .field { flex: 1; display: flex; flex-direction: column; }
+  .field label {
+    font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+    margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .field input[type="number"],
+  .field input[type="text"],
+  .field input[type="date"],
+  .field select,
+  .field textarea {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    color: var(--text); font-size: 1rem;
+    font-family: var(--font); outline: none;
+    transition: border-color 0.2s; width: 100%;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--border-focus);
+  }
+  .field .unit {
+    font-size: 0.75rem; color: var(--text-muted);
+    margin-top: 2px; text-align: right;
+  }
+  .field textarea { min-height: 60px; resize: vertical; }
+
+  /* ── Chip selects ── */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .chip {
+    padding: 8px 16px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--text-muted); font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    user-select: none; -webkit-user-select: none;
+  }
+  .chip:active { transform: scale(0.96); }
+  .chip.selected {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── Validation badge ── */
+  .validation-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; background: var(--border);
+    vertical-align: middle; transition: background 0.3s;
+  }
+  .validation-dot.valid { background: var(--success); }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-block; padding: 4px 10px;
+    border-radius: 6px; font-size: 0.65rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .badge-dichorial { background: var(--j1-dim); color: var(--j1); }
+  .badge-monochorial { background: var(--j2-dim); color: var(--j2); }
+
+  /* ── Nomenclature display ── */
+  .noms-display {
+    margin-top: 10px; padding: 10px 12px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .noms-display .nom-badge {
+    display: inline-block;
+    background: var(--accent-dim); color: var(--accent);
+    padding: 4px 10px; border-radius: 6px;
+    font-weight: 600; margin-right: 6px; margin-bottom: 4px;
+  }
+
+  /* ── Galette sections ── */
+  .galette-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .galette-section.gal-j1 { border-left: 3px solid var(--j1); }
+  .galette-section.gal-j2 { border-left: 3px solid var(--j2); }
+  .galette-section.gal-j3 { border-left: 3px solid var(--j3); }
+
+  .galette-header {
+    background: var(--surface-hover);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .galette-name {
+    font-size: 0.95rem; font-weight: 600; color: var(--text);
+    flex: 1;
+  }
+
+  /* ── Mono panel ── */
+  .mono-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+    margin-top: 12px;
+  }
+  .mono-panel.hidden { display: none; }
+
+  /* ── Table ── */
+  .ana-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+  }
+  .ana-table th, .ana-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .ana-table th {
+    background: var(--surface-hover);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Territory row ── */
+  .terr-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 40px;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .terr-row:last-child { border-bottom: none; }
+  .terr-label { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  .terr-input {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 8px;
+    color: var(--text); font-size: 0.85rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .terr-input:focus { border-color: var(--border-focus); }
+  .terr-unit { text-align: right; font-size: 0.75rem; color: var(--text-muted); }
+  .terr-sum { padding: 8px 0; font-size: 0.85rem; font-weight: 600; text-align: right; }
+  .terr-sum.valid { color: var(--success); }
+  .terr-sum.invalid { color: var(--danger); }
+  .terr-sum.neutral { color: var(--text-muted); }
+
+  /* ── CR text ── */
+  .cr-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    color: var(--text);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: "Courier New", monospace;
+  }
+
+  /* ── Bottom bar ── */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px; display: flex; gap: 10px; z-index: 100;
+  }
+  .btn {
+    flex: 1; padding: 14px; border: none; border-radius: var(--radius);
+    font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary {
+    background: var(--surface-hover);
+    border: 1px solid var(--border); color: var(--text);
+  }
+
+  /* ── Toast notification ── */
+  .toast {
+    position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    background: var(--success); color: #0e1117;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.3s;
+    z-index: 200; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  .toast.error { background: var(--danger); color: #fff; }
+
+  /* ── Utility ── */
+  .hidden { display: none; }
+  input[type="file"] { display: none; }
+
+  @media (max-width: 768px) {
+    .photo-grid { grid-template-columns: 1fr; }
+    .terr-row { grid-template-columns: 1fr 70px 35px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Gémellaire — Macro</h1>
+  <span class="dossier-badge" id="badge-dossier">—</span>
+</div>
+
+<div class="content">
+
+  <!-- ══════ IDENTIFICATION ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📋</span> Identification
+      <span class="validation-dot" id="dot-ident"></span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Dossier</label>
+          <input type="text" id="dossier" placeholder="—" oninput="validate()">
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="date" oninput="validate()">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Terme (SA)</label>
+          <input type="number" id="terme_sa" step="1" min="10" max="45" placeholder="—" oninput="validate()">
+          <div class="unit">semaines</div>
+        </div>
+        <div class="field">
+          <label>+ Jours</label>
+          <input type="number" id="terme_jours" step="1" min="0" max="6" placeholder="0" oninput="validate()">
+          <div class="unit">jours</div>
+        </div>
+        <div class="field">
+          <label>État</label>
+          <div class="chip-group single" data-field="etat">
+            <div class="chip" onclick="selectChip(this)">Frais</div>
+            <div class="chip" onclick="selectChip(this)">Fixé</div>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Opérateur</label>
+          <input type="text" id="operateur" placeholder="—">
+        </div>
+        <div class="field">
+          <label>Indication</label>
+          <select id="indication">
+            <option value="">— Sélectionner —</option>
+            <option value="MFIU">MFIU</option>
+            <option value="IMG médicale">IMG médicale</option>
+            <option value="STT">STT</option>
+            <option value="TAPS">TAPS</option>
+            <option value="RCIU sélectif">RCIU sélectif</option>
+            <option value="Accouchement prématuré">Accouchement prématuré</option>
+            <option value="Pré-éclampsie">Pré-éclampsie</option>
+            <option value="Suivi grossesse multiple">Suivi grossesse multiple</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ CHORIONICITÉ ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">👥</span> Chorionicité
+      <span class="validation-dot" id="dot-chorio"></span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Type de placenta</label>
+          <select id="chorio" onchange="upChorio()">
+            <option value="">— Sélectionner —</option>
+            <option value="DCDA">DCDA</option>
+            <option value="DCMA">DCMA</option>
+            <option value="MCDA">MCDA</option>
+            <option value="MCMA">MCMA</option>
+            <option value="TC">TC</option>
+            <option value="MCTA">MCTA</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Nombre de fœtus</label>
+          <div class="chip-group single" data-field="nb_foetus">
+            <div class="chip" onclick="selectChip(this); upChorio()">2</div>
+            <div class="chip" onclick="selectChip(this); upChorio()">3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ REPÉRAGE CORDONS ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🪢</span> Repérage cordons
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Cordons repérés par clamp</label>
+          <div class="chip-group single" data-field="clamp">
+            <div class="chip" onclick="selectChip(this); upNom()">Oui</div>
+            <div class="chip" onclick="selectChip(this); upNom()">Non</div>
+          </div>
+        </div>
+        <div class="field" id="nb-clamps-field">
+          <label>Nombre de clamps</label>
+          <div class="chip-group single" data-field="nb_clamps">
+            <div class="chip" onclick="selectChip(this); upNom()">2</div>
+            <div class="chip" onclick="selectChip(this); upNom()">1</div>
+          </div>
+        </div>
+      </div>
+      <div class="noms-display" id="noms-display"></div>
+    </div>
+  </div>
+
+  <!-- ══════ GALETTES PLACENTAIRES ══════ -->
+  <div id="galettes-container"></div>
+
+  <!-- ══════ MONOCHORIALITÉ ══════ -->
+  <div class="section mono-panel hidden" id="mono-section">
+    <div class="section-title">
+      <span class="section-icon">⚡</span> Monochorialité
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Équateur vasculaire</label>
+          <div class="chip-group single" data-field="equateur">
+            <div class="chip" onclick="selectChip(this)">Bien défini</div>
+            <div class="chip" onclick="selectChip(this)">Difficile</div>
+            <div class="chip" onclick="selectChip(this)">Absent</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Injection des cordons</label>
+          <div class="chip-group single" data-field="injection">
+            <div class="chip" onclick="selectChip(this)">Non</div>
+            <div class="chip" onclick="selectChip(this)">Colorants différents</div>
+            <div class="chip" onclick="selectChip(this)">Colorant unique</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Qualité injection</label>
+          <div class="chip-group single" data-field="qualite_injection">
+            <div class="chip" onclick="selectChip(this)">N/A</div>
+            <div class="chip" onclick="selectChip(this)">Bonne</div>
+            <div class="chip" onclick="selectChip(this)">Partielle</div>
+            <div class="chip" onclick="selectChip(this)">Échec</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Territoires vasculaires (%)</div>
+        <div id="terr-container"></div>
+      </div>
+
+      <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Anastomoses</div>
+        <table class="ana-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Direction</th>
+              <th>Calibre</th>
+              <th style="width: 50px;"></th>
+            </tr>
+          </thead>
+          <tbody id="ana-table"></tbody>
+        </table>
+        <button class="btn-add-photo" style="margin-top: 10px;" onclick="addAna()">+ Ajouter anastomose</button>
+      </div>
+
+      <div class="field" style="margin-top: 12px;">
+        <label>Observations monochorialité</label>
+        <textarea id="obs_mono" placeholder="Texte libre…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PHOTOS ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📷</span> Photographies
+    </div>
+    <div class="section-body">
+      <div class="photo-grid">
+        <div class="photo-slot" data-type="sup" data-key="photo_1" onclick="capturePhoto(this)">
+          <div class="icon">📷</div>
+          <div class="label">Photo 1</div>
+        </div>
+        <div class="photo-slot" data-type="sup" data-key="photo_2" onclick="capturePhoto(this)">
+          <div class="icon">📷</div>
+          <div class="label">Photo 2</div>
+        </div>
+      </div>
+      <div id="extra-photos-grid"></div>
+      <div class="add-photo-row">
+        <button class="btn-add-photo" onclick="addExtraPhotoSlot()">
+          <span>+</span> Photo supplémentaire
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ OBSERVATIONS GÉNÉRALES ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📝</span> Observations générales
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <textarea id="obs_gen" placeholder="Notes macroscopiques…" style="min-height: 80px;"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ COMPTE-RENDU ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📄</span> Compte-rendu
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label style="margin-bottom: 10px;">Compte-rendu macroscopique</label>
+        <div class="cr-box" id="cr-text">Le compte-rendu s'affichera ici après génération…</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ── BOTTOM BAR ── -->
+<div class="bottom-bar">
+  <button class="btn btn-secondary" onclick="goBack()">← Retour</button>
+  <button class="btn btn-primary" onclick="saveAndExport()">Enregistrer ✓</button>
+</div>
+
+<!-- Hidden file input -->
+<input type="file" id="photo-file-input" accept="image/*" capture="environment">
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const HUB = window.location.origin;
+const params = new URLSearchParams(window.location.search);
+const dossier = params.get('dossier') || '—';
+document.getElementById('badge-dossier').textContent = dossier;
+
+let photos = {};
+let extraPhotoCount = 0;
+let currentPhotoSlot = null;
+let state = {
+  chorio: '',
+  nb_foetus: 2,
+  clamp: 'oui',
+  nb_clamps: '2',
+  noms: [],
+  ana_counter: 0
+};
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+function goBack() {
+  window.location.href = '/pwa/divers/';
+}
+
+const fileInput = document.getElementById('photo-file-input');
+
+function capturePhoto(slot) {
+  currentPhotoSlot = slot;
+  fileInput.click();
+}
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file || !currentPhotoSlot) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const slot = currentPhotoSlot;
+    const key = slot.dataset.key;
+    const dataUrl = ev.target.result;
+    const label = slot.querySelector('.label')?.textContent || key;
+    photos[key] = { dataUrl, label, filename: file.name };
+    slot.classList.add('has-photo');
+    slot.innerHTML = `<img src="${dataUrl}" alt=""><button class="remove-btn" onclick="event.stopPropagation(); removePhoto(this.parentElement, '${key}')">✕</button><div class="overlay-label">${label}</div>`;
+  };
+  reader.readAsDataURL(file);
+  fileInput.value = '';
+});
+
+function removePhoto(slot, key) {
+  delete photos[key];
+  const label = slot.querySelector('.label')?.textContent || key;
+  slot.classList.remove('has-photo');
+  slot.innerHTML = `<div class="icon">📷</div><div class="label">${label}</div>`;
+}
+
+function addExtraPhotoSlot() {
+  extraPhotoCount++;
+  const n = extraPhotoCount;
+  const grid = document.getElementById('extra-photos-grid');
+  const slot = document.createElement('div');
+  slot.className = 'photo-slot';
+  slot.dataset.type = 'sup';
+  slot.dataset.key = `extra_${n}`;
+  slot.onclick = function() { capturePhoto(this); };
+  slot.innerHTML = `<div class="icon">📷</div><div class="label">Photo ${n+2}</div>`;
+  grid.appendChild(slot);
+}
+
+function selectChip(chip) {
+  const group = chip.closest('.chip-group');
+  group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+  validate();
+}
+
+function upChorio() {
+  state.chorio = document.getElementById('chorio').value;
+  const nbSel = document.querySelector('[data-field="nb_foetus"] .chip.selected');
+  state.nb_foetus = nbSel ? parseInt(nbSel.textContent) : 2;
+
+  const isMono = ['MCDA', 'MCMA', 'TC', 'MCTA'].includes(state.chorio);
+  document.getElementById('mono-section').classList.toggle('hidden', !isMono);
+
+  const clampField = document.getElementById('nb-clamps-field');
+  const clampSel = document.querySelector('[data-field="clamp"] .chip.selected');
+  state.clamp = clampSel ? clampSel.textContent.trim().toLowerCase() === 'oui' ? 'oui' : 'non' : 'oui';
+  clampField.style.display = state.clamp === 'oui' ? 'block' : 'none';
+
+  upNom();
+  renderGalettes();
+  renderTerr();
+  validate();
+}
+
+function upNom() {
+  state.noms = [];
+  if (state.chorio === '') return;
+
+  const clampSel = document.querySelector('[data-field="clamp"] .chip.selected');
+  state.clamp = clampSel ? clampSel.textContent.trim().toLowerCase() === 'oui' ? 'oui' : 'non' : 'oui';
+
+  if (state.clamp === 'oui') {
+    const nbClampsSel = document.querySelector('[data-field="nb_clamps"] .chip.selected');
+    state.nb_clamps = nbClampsSel ? nbClampsSel.textContent.trim() : '2';
+
+    if (state.nb_foetus === 2) {
+      state.noms = state.nb_clamps === '2' ? ['J1C', 'J2C'] : ['JC', 'Jsans-C'];
+    } else if (state.nb_foetus === 3) {
+      state.noms = ['J1C', 'J2C', 'J3C'];
+    }
+  } else {
+    if (state.nb_foetus === 2) {
+      state.noms = ['JG', 'JP'];
+    } else if (state.nb_foetus === 3) {
+      state.noms = ['J1', 'J2', 'J3'];
+    }
+  }
+
+  const nomsDisplay = document.getElementById('noms-display');
+  if (state.noms.length > 0) {
+    nomsDisplay.innerHTML = '<strong>Nomenclature:</strong> ' + state.noms.map(n => `<span class="nom-badge">${n}</span>`).join('');
+  } else {
+    nomsDisplay.innerHTML = '';
+  }
+}
+
+function renderGalettes() {
+  const container = document.getElementById('galettes-container');
+  if (state.noms.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const isMono = ['MCDA', 'MCMA', 'TC', 'MCTA'].includes(state.chorio);
+  const badgeClass = isMono ? 'badge-monochorial' : 'badge-dichorial';
+  const badgeText = isMono ? 'MC' : 'DC';
+  const galColorClasses = ['gal-j1', 'gal-j2', 'gal-j3'];
+
+  container.innerHTML = state.noms.map((nom, i) => {
+    const galColorClass = galColorClasses[i] || 'gal-j1';
+
+    return `<div class="galette-section ${galColorClass}"><div class="galette-header"><div class="galette-name">${nom}</div><span class="badge ${badgeClass}">${badgeText}</span></div><div class="section-body"><div class="field-row"><div class="field"><label>Masse</label><input type="number" id="gal${i}_masse" class="gal-field" data-gal="${i}" data-key="masse" step="1" min="0"><div class="unit">g</div></div><div class="field"><label>Longueur</label><input type="number" id="gal${i}_long" class="gal-field" data-gal="${i}" data-key="long" step="0.1" min="0"><div class="unit">cm</div></div><div class="field"><label>Largeur</label><input type="number" id="gal${i}_larg" class="gal-field" data-gal="${i}" data-key="larg" step="0.1" min="0"><div class="unit">cm</div></div><div class="field"><label>Épaisseur</label><input type="number" id="gal${i}_epai" class="gal-field" data-gal="${i}" data-key="epai" step="0.1" min="0"><div class="unit">cm</div></div></div><div class="field" style="margin-top: 10px;"><label>Insertion cordonale</label><select id="gal${i}_insert" class="gal-field" data-gal="${i}" data-key="insert"><option value="">— Sélectionner —</option><option value="Centrale">Centrale</option><option value="Excentrée">Excentrée</option><option value="Marginale">Marginale</option><option value="Vélamenteuse">Vélamenteuse</option><option value="Furcata">Furcata</option></select></div><div class="field-row" style="margin-top: 10px;"><div class="field"><label>Distance au bord</label><input type="number" id="gal${i}_dist_bord" class="gal-field" data-gal="${i}" data-key="dist_bord" step="0.1" min="0"><div class="unit">cm</div></div><div class="field"><label>Distance inter-funiculaire</label><input type="number" id="gal${i}_dist_inter" class="gal-field" data-gal="${i}" data-key="dist_inter" step="0.1" min="0"><div class="unit">cm</div></div></div><div class="field" style="margin-top: 10px;"><label>Plaque choriale</label><textarea id="gal${i}_plaque" class="gal-field" data-gal="${i}" data-key="plaque" placeholder="Observations…"></textarea></div><div class="field" style="margin-top: 10px;"><label>Face basale</label><textarea id="gal${i}_basale" class="gal-field" data-gal="${i}" data-key="basale" placeholder="Observations…"></textarea></div><div class="field" style="margin-top: 10px;"><label>Coupe parenchymateuse</label><textarea id="gal${i}_coupe" class="gal-field" data-gal="${i}" data-key="coupe" placeholder="Observations…"></textarea></div><div class="field" style="margin-top: 10px;"><label>Membranes</label><textarea id="gal${i}_membr" class="gal-field" data-gal="${i}" data-key="membr" placeholder="Observations…"></textarea></div></div></div>`;
+  }).join('');
+}
+
+function galVal(i, key) {
+  const el = document.getElementById(`gal${i}_${key}`);
+  return el ? el.value : '';
+}
+
+function renderTerr() {
+  const container = document.getElementById('terr-container');
+  if (state.noms.length === 0 || !['MCDA', 'MCMA', 'TC', 'MCTA'].includes(state.chorio)) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = state.noms.map((nom, i) => {
+    const colors = ['var(--j1)', 'var(--j2)', 'var(--j3)'];
+    const color = colors[i] || 'var(--j1)';
+    return `<div class="terr-row"><div class="terr-label"><span style="color: ${color}; font-size: 1.2rem; margin-right: 4px;">●</span><strong>${nom}</strong></div><input type="number" id="terr${i}" class="terr-input" min="0" max="100" step="1" onchange="sumTerr()" placeholder="%"><div class="terr-unit">%</div></div>`;
+  }).join('');
+
+  const sumEl = document.createElement('div');
+  sumEl.id = 'terr-sum';
+  sumEl.className = 'terr-sum neutral';
+  sumEl.textContent = 'Total: —%';
+  container.appendChild(sumEl);
+}
+
+function sumTerr() {
+  let total = 0;
+  for (let i = 0; i < state.noms.length; i++) {
+    const v = parseInt(document.getElementById(`terr${i}`)?.value) || 0;
+    total += v;
+  }
+  const sumEl = document.getElementById('terr-sum');
+  if (sumEl) {
+    sumEl.className = 'terr-sum ' + (total === 100 ? 'valid' : (total > 0 ? 'invalid' : 'neutral'));
+    sumEl.textContent = `Total: ${total}%`;
+  }
+}
+
+function addAna() {
+  const tbody = document.getElementById('ana-table');
+  const id = state.ana_counter++;
+  const row = document.createElement('tr');
+  row.id = `ana-row-${id}`;
+  row.innerHTML = `<td><select id="ana${id}_type" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px 8px; color:var(--text); font-size:0.85rem;"><option value="">—</option><option value="AA">AA</option><option value="VV">VV</option><option value="AV">AV</option><option value="VA">VA</option></select></td><td><input type="text" id="ana${id}_dir" placeholder="J1C→J2C" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px 8px; color:var(--text); font-size:0.85rem;"></td><td><select id="ana${id}_cal" style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:6px 8px; color:var(--text); font-size:0.85rem;"><option value="">—</option><option value="Fine">&lt;1mm</option><option value="Moyenne">1-2mm</option><option value="Large">&gt;2mm</option></select></td><td><button class="btn btn-secondary" style="padding:6px 10px; font-size:0.75rem;" onclick="delAna(${id})">×</button></td>`;
+  tbody.appendChild(row);
+}
+
+function delAna(id) {
+  const row = document.getElementById(`ana-row-${id}`);
+  if (row) row.remove();
+}
+
+function getAnastomoses() {
+  const rows = document.querySelectorAll('#ana-table tr');
+  const anas = [];
+  rows.forEach(row => {
+    const type = row.querySelector('select[id*="-type"]')?.value || '';
+    const dir = row.querySelector('input[id*="-dir"]')?.value || '';
+    const cal = row.querySelector('select[id*="-cal"]')?.value || '';
+    if (type && dir && cal) {
+      anas.push({ type, dir, cal });
+    }
+  });
+  return anas;
+}
+
+function validate() {
+  const v = (id) => document.getElementById(id)?.value;
+  const dot = (id, ok) => document.getElementById(id)?.classList.toggle('valid', ok);
+  const sel = (f) => document.querySelector(`[data-field="${f}"] .chip.selected`);
+
+  dot('dot-ident', !!(v('dossier') && v('date')));
+  dot('dot-chorio', !!(v('chorio') && sel('nb_foetus')));
+}
+
+function getChips(field) {
+  const el = document.querySelector(`[data-field="${field}"] .chip.selected`);
+  return el ? el.textContent.trim() : null;
+}
+
+function collectData() {
+  const gals = [];
+  for (let i = 0; i < state.noms.length; i++) {
+    gals.push({
+      nom: state.noms[i],
+      masse: galVal(i, 'masse'),
+      long: galVal(i, 'long'),
+      larg: galVal(i, 'larg'),
+      epai: galVal(i, 'epai'),
+      insert: galVal(i, 'insert'),
+      dist_bord: galVal(i, 'dist_bord'),
+      dist_inter: galVal(i, 'dist_inter'),
+      plaque: galVal(i, 'plaque'),
+      basale: galVal(i, 'basale'),
+      coupe: galVal(i, 'coupe'),
+      membr: galVal(i, 'membr')
+    });
+  }
+
+  const terr = {};
+  for (let i = 0; i < state.noms.length; i++) {
+    terr[state.noms[i]] = document.getElementById(`terr${i}`)?.value || '';
+  }
+
+  return {
+    dossier: dossier,
+    timestamp: new Date().toISOString(),
+    type: 'divers_gemellaire',
+    identification: {
+      dossier: document.getElementById('dossier').value,
+      date: document.getElementById('date').value,
+      terme_sa: parseInt(document.getElementById('terme_sa').value) || null,
+      terme_jours: parseInt(document.getElementById('terme_jours').value) || 0,
+      etat: getChips('etat'),
+      operateur: document.getElementById('operateur').value,
+      indication: document.getElementById('indication').value
+    },
+    chorionicite: {
+      type: document.getElementById('chorio').value,
+      nb_foetus: state.nb_foetus,
+      clamp: state.clamp,
+      nb_clamps: state.nb_clamps,
+      noms: state.noms
+    },
+    galettes: gals,
+    monochorialite: {
+      equateur: getChips('equateur'),
+      injection: getChips('injection'),
+      qualite_injection: getChips('qualite_injection'),
+      territoires: terr,
+      anastomoses: getAnastomoses(),
+      observations: document.getElementById('obs_mono').value.trim() || null
+    },
+    observations_generales: document.getElementById('obs_gen').value.trim() || null,
+    photos: Object.keys(photos).map(k => ({ key: k, label: photos[k].label }))
+  };
+}
+
+function saveLocal() {
+  const data = collectData();
+  try {
+    localStorage.setItem(`divers_gemellaire_${dossier}`, JSON.stringify(data));
+  } catch (e) {
+    console.error('localStorage error:', e);
+  }
+}
+
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(`divers_gemellaire_${dossier}`);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.type !== 'divers_gemellaire') return;
+
+    if (data.identification) {
+      document.getElementById('dossier').value = data.identification.dossier || '';
+      document.getElementById('date').value = data.identification.date || '';
+      document.getElementById('terme_sa').value = data.identification.terme_sa || '';
+      document.getElementById('terme_jours').value = data.identification.terme_jours || 0;
+      document.getElementById('operateur').value = data.identification.operateur || '';
+      document.getElementById('indication').value = data.identification.indication || '';
+      if (data.identification.etat) {
+        const chip = Array.from(document.querySelectorAll('[data-field="etat"] .chip')).find(c => c.textContent.trim() === data.identification.etat);
+        if (chip) {
+          chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        }
+      }
+    }
+
+    if (data.chorionicite) {
+      document.getElementById('chorio').value = data.chorionicite.type || '';
+      const nbFoetusChip = Array.from(document.querySelectorAll('[data-field="nb_foetus"] .chip')).find(c => c.textContent.trim() === String(data.chorionicite.nb_foetus));
+      if (nbFoetusChip) {
+        nbFoetusChip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        nbFoetusChip.classList.add('selected');
+      }
+      const clampChip = Array.from(document.querySelectorAll('[data-field="clamp"] .chip')).find(c => c.textContent.trim().toLowerCase() === (data.chorionicite.clamp === 'oui' ? 'oui' : 'non'));
+      if (clampChip) {
+        clampChip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        clampChip.classList.add('selected');
+      }
+      const nbClampsChip = Array.from(document.querySelectorAll('[data-field="nb_clamps"] .chip')).find(c => c.textContent.trim() === data.chorionicite.nb_clamps);
+      if (nbClampsChip) {
+        nbClampsChip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        nbClampsChip.classList.add('selected');
+      }
+    }
+
+    upChorio();
+
+    if (data.galettes) {
+      data.galettes.forEach((gal, i) => {
+        const fields = ['masse', 'long', 'larg', 'epai', 'insert', 'dist_bord', 'dist_inter', 'plaque', 'basale', 'coupe', 'membr'];
+        fields.forEach(f => {
+          const el = document.getElementById(`gal${i}_${f}`);
+          if (el) el.value = gal[f] || '';
+        });
+      });
+    }
+
+    if (data.monochorialite) {
+      if (data.monochorialite.equateur) {
+        const chip = Array.from(document.querySelectorAll('[data-field="equateur"] .chip')).find(c => c.textContent.trim() === data.monochorialite.equateur);
+        if (chip) {
+          chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        }
+      }
+      if (data.monochorialite.injection) {
+        const chip = Array.from(document.querySelectorAll('[data-field="injection"] .chip')).find(c => c.textContent.trim() === data.monochorialite.injection);
+        if (chip) {
+          chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        }
+      }
+      if (data.monochorialite.qualite_injection) {
+        const chip = Array.from(document.querySelectorAll('[data-field="qualite_injection"] .chip')).find(c => c.textContent.trim() === data.monochorialite.qualite_injection);
+        if (chip) {
+          chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        }
+      }
+      if (data.monochorialite.territoires) {
+        Object.keys(data.monochorialite.territoires).forEach((nom, i) => {
+          const el = document.getElementById(`terr${i}`);
+          if (el) el.value = data.monochorialite.territoires[nom] || '';
+        });
+        sumTerr();
+      }
+      if (data.monochorialite.anastomoses) {
+        data.monochorialite.anastomoses.forEach(() => addAna());
+        const rows = document.querySelectorAll('#ana-table tr');
+        data.monochorialite.anastomoses.forEach((ana, i) => {
+          if (rows[i]) {
+            rows[i].querySelector('select[id*="-type"]').value = ana.type || '';
+            rows[i].querySelector('input[id*="-dir"]').value = ana.dir || '';
+            rows[i].querySelector('select[id*="-cal"]').value = ana.cal || '';
+          }
+        });
+      }
+      document.getElementById('obs_mono').value = data.monochorialite.observations || '';
+    }
+
+    document.getElementById('obs_gen').value = data.observations_generales || '';
+  } catch (e) {
+    console.error('loadLocal error:', e);
+  }
+}
+
+function generateCR() {
+  const data = collectData();
+  const { identification, chorionicite, galettes, monochorialite, observations_generales } = data;
+
+  let cr = `PLACENTA GÉMELLAIRE — EXAMEN MACROSCOPIQUE\n═════════════════════════════════════════════════════\n\n`;
+  cr += `Dossier: ${identification.dossier || '—'}\nDate: ${identification.date || '—'}\nTerme: ${identification.terme_sa || '—'}SA + ${identification.terme_jours || 0}j\nÉtat: ${identification.etat || '—'}\nOpérateur: ${identification.operateur || '—'}\nIndication: ${identification.indication || '—'}\n\n─────────────────────────────────────────────────────\n`;
+  cr += `Examen ${identification.etat || 'macroscopique'} d'un placenta ${chorionicite.type || '—'},\ndont les cordons sont repérés par ${chorionicite.clamp === 'oui' ? 'clamp' : 'nomenclature simple'}.\nNomenclature: ${chorionicite.noms.join(', ')}\n\n`;
+
+  galettes.forEach((gal, i) => {
+    cr += `GALETTE ${gal.nom}:\n──────────\n`;
+    if (gal.masse) cr += `  Masse: ${gal.masse}g\n`;
+    if (gal.long || gal.larg || gal.epai) {
+      cr += `  Dimensions: ${gal.long || '—'}cm × ${gal.larg || '—'}cm × ${gal.epai || '—'}cm\n`;
+    }
+    if (gal.insert) cr += `  Insertion: ${gal.insert}\n`;
+    if (gal.dist_bord) cr += `  Distance au bord: ${gal.dist_bord}cm\n`;
+    if (gal.plaque) cr += `  Plaque choriale: ${gal.plaque}\n`;
+    if (gal.basale) cr += `  Face basale: ${gal.basale}\n`;
+    if (gal.coupe) cr += `  Coupe: ${gal.coupe}\n`;
+    if (gal.membr) cr += `  Membranes: ${gal.membr}\n`;
+    cr += '\n';
+  });
+
+  if (['MCDA', 'MCMA', 'TC', 'MCTA'].includes(chorionicite.type)) {
+    cr += `DONNÉES MONOCHORIALES:\n─────────────────────\n`;
+    if (monochorialite.equateur) cr += `  Équateur: ${monochorialite.equateur}\n`;
+    if (monochorialite.injection) cr += `  Injection: ${monochorialite.injection}\n`;
+    if (monochorialite.qualite_injection && monochorialite.qualite_injection !== 'N/A') {
+      cr += `  Qualité: ${monochorialite.qualite_injection}\n`;
+    }
+    cr += `  Territoires:\n`;
+    Object.keys(monochorialite.territoires).forEach(nom => {
+      const pct = monochorialite.territoires[nom];
+      cr += `    ${nom}: ${pct || '—'}%\n`;
+    });
+    if (monochorialite.anastomoses && monochorialite.anastomoses.length > 0) {
+      cr += `  Anastomoses:\n`;
+      monochorialite.anastomoses.forEach(ana => {
+        cr += `    ${ana.type} (${ana.dir}) – ${ana.cal}\n`;
+      });
+    }
+    if (monochorialite.observations) cr += `  Observations: ${monochorialite.observations}\n`;
+    cr += '\n';
+  }
+
+  if (observations_generales) {
+    cr += `OBSERVATIONS GÉNÉRALES:\n──────────────────────\n${observations_generales}\n`;
+  }
+
+  document.getElementById('cr-text').textContent = cr;
+  showToast('Compte-rendu généré');
+}
+
+async function saveAndExport() {
+  saveLocal();
+  generateCR();
+
+  const data = collectData();
+  const formData = new FormData();
+  formData.append('data', JSON.stringify(data));
+
+  Object.keys(photos).forEach(key => {
+    if (photos[key].dataUrl) {
+      const blob = dataURLtoBlob(photos[key].dataUrl);
+      formData.append(`photo_${key}`, blob, photos[key].filename || `${key}.jpg`);
+    }
+  });
+
+  try {
+    const response = await fetch(`${HUB}/divers/api/save`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      showToast('Données sauvegardées');
+    } else {
+      showToast('Erreur lors de la sauvegarde', true);
+    }
+  } catch (e) {
+    console.error('Save error:', e);
+    showToast('Erreur de connexion', true);
+  }
+}
+
+function dataURLtoBlob(dataUrl) {
+  const arr = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  const n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    u8arr[i] = bstr.charCodeAt(i);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
+
+  loadLocal();
+  upNom();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/pwa/divers/sw.js').catch(() => {});
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    saveAndExport();
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+{{ t('cr.placenta_synthetic') }} — {{ numero }}
+=======================================
+
+{% if terme_sa %}{{ terme_sa }} SA{% if terme_j %} + {{ terme_j }}j{% endif %}, {% endif %}sexe {{ sexe or "?" }}.
+{% if masse_foetale_g %}Fœtus {{ masse_foetale_g }} g. {% endif %}Placenta {{ masse_paree_g or "#" }} g{% if grand_axe_cm %}, {{ grand_axe_cm }}×{{ petit_axe_cm }} cm{% endif %}, {{ forme|lower or "#" }}.
+{% if zscore and zscore.ratio_fp %}F/P : {{ zscore.ratio_fp }}{% if zscore.ratio_ds is not none %} ({{ zscore.ratio_ds }} DS){% endif %}.{% endif %}
+
+Choriale : {{ _plaque_short(plaque_choriale) }}. Basale : {{ _plaque_short(plaque_basale) }}.
+{% if cordon %}Cordon : {{ cordon.insertion or "?" }}, {{ cordon.longueur_cm or "?" }} cm, spir. {{ cordon.spiralisation or "?" }}.{% endif %}
+{% if membranes %}Membranes : {{ membranes.insertion or "?" }}, {{ membranes.aspect or "?" }}.{% endif %}
+{% if nb_tranches_groups > 0 %}{{ nb_tranches_groups }} groupes de tranches. {% endif %}{% if nb_tranches_groups > 0 or lesions %}{% if lesions %}{{ lesions|length }} lésion(s).{% else %}RAS.{% endif %}{% endif %}{% if tranches_commentaire %} {{ tranches_commentaire }}{% endif %}
+{% if zscore and zscore.masse_ds is not none %}DS : {{ zscore.masse_ds }} ({{ zscore.percentile }}, {{ zscore.trophicite }}).{% endif %}
+{% if labellisation_table %}
+Micro :
+{% for row in labellisation_table %}  {{ row.organe }} : {% for f in row.findings %}{{ f.text }}{% if f.nb_lames > 2 %} (diffus){% endif %}{% if not loop.last %} {% endif %}{% endfor %}
+{% endfor %}{% elif micro_text %}
+Micro : {{ micro_text }}{% endif %}{% if viewer_micro_text %}
+Annotations lames : {{ viewer_micro_text }}{% endif %}

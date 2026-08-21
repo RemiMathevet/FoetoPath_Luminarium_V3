@@ -1,0 +1,21 @@
+{{ t('cr.synthetic_report') }} — {{ numero }}
+========================================
+
+{{ type_issue or "IMG" }} à {{ terme_sa or "#" }} SA, sexe {{ "M" if sexe == "M" else "F" if sexe == "F" else "I" }}.
+Mère {{ nom_mere or "#" }} {{ prenom_mere or "#" }}{% if atcd_mat.gestite %}, G{{ atcd_mat.gestite }}P{{ atcd_mat.parite or "?" }}{% endif %}.
+{% if indication %}Indication : {{ indication }}{% endif %}
+
+Aspect externe : {{ etat|lower or "frais" }}{% if maceration and maceration.maroun_score is defined %}, macération Maroun {{ maceration.maroun_score }}{% endif %}.
+{% set anomalies_ext = [] %}{% for key, item in (morpho or {}).items() %}{% if item is mapping and item.status == "anormal" %}{% if anomalies_ext.append(key ~ ": " ~ (item.details|join(", ") if item.details else item.text or "anormal")) %}{% endif %}{% endif %}{% endfor %}
+{% if anomalies_ext %}Anomalies externes : {{ anomalies_ext|join(" ; ") }}.{% else %}Pas d'anomalie externe significative.{% endif %}
+
+Biométries : masse {{ _ds('masse') }}, VT {{ _ds('VT') }}, PC {{ _ds('PC') }}, pied {{ _ds('pied') }}.
+
+{% if calc_org %}Organes :{% for key, o in calc_org.items() %} {{ o.label }} {{ o.valeur }}g ({{ o.ds|round(1) }}DS){% if not loop.last %},{% endif %}{% endfor %}.{% endif %}
+{% if lbwr.valeur %}LBWR : {{ "%.4f"|format(lbwr.valeur) }}{% if lbwr.alerte %} ⚠{% endif %}.{% endif %}
+
+Conclusion : fœtus de {{ terme_sa or "#" }} SA, {% if maceration and maceration.maroun_score and maceration.maroun_score > 0 %}macéré{% else %}non macéré{% endif %}, {{ trophicite }}{% if all_anomalies %}, présentant :
+{% for a in all_anomalies %}  - {{ a }}
+{% endfor %}{% else %}. Pas d'anomalie significative.{% endif %}
+{% if commentaire_frais %}Note frais : {{ commentaire_frais }}{% endif %}
+{% if commentaire_autopsie %}Note autopsie : {{ commentaire_autopsie }}{% endif %}

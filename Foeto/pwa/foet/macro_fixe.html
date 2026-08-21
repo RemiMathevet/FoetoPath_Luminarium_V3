@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>FœtoPath – Macro fixé</title>
+<link rel="manifest" href="/pwa/foet/manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+<div class="header-top"><h1 data-i18n="pwa.foet.macro_fixe">🔬 Macro fixé</h1><span class="dossier-badge purple" id="badge-dossier">—</span></div>
+<div class="nav-pills" id="navPills"></div>
+</div>
+<div class="content" id="organsContent"></div>
+<div class="bottom-bar">
+<button class="btn btn-secondary" onclick="goBack()" data-i18n="pwa.common.back_dossier">← Dossier</button>
+<button class="btn btn-primary" style="flex:1.5" onclick="saveAndExport()" data-i18n="pwa.common.save">Enregistrer ✓</button>
+</div>
+<input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none">
+<script src="references.js"></script>
+<script src="hpo_mapping.js"></script>
+<script src="helpers.js"></script>
+<script src="hpo_engine.js"></script>
+<script src="pwa_common.js"></script>
+<script>
+// ═══ PAGE STATE ═══
+var dossier = initDossierField();
+
+// ═══ ORGANS DEFINITION ═══
+var ORGANS = [
+  { id: 'thymus', label: 'Thymus', icon: '🔶', paired: false },
+  { id: 'coeur', label: 'Cœur', icon: '❤️', paired: false },
+  { id: 'poumon_d', label: 'Poumon D', icon: '🫁', paired: false },
+  { id: 'poumon_g', label: 'Poumon G', icon: '🫁', paired: false },
+  { id: 'foie', label: 'Foie', icon: '🟤', paired: false },
+  { id: 'rate', label: 'Rate', icon: '🟣', paired: false },
+  { id: 'pancreas', label: 'Pancréas', icon: '🟡', paired: false },
+  { id: 'surr_d', label: 'Surrénale D', icon: '🟡', paired: false },
+  { id: 'surr_g', label: 'Surrénale G', icon: '🟡', paired: false },
+  { id: 'rein_d', label: 'Rein D', icon: '🟠', paired: false },
+  { id: 'rein_g', label: 'Rein G', icon: '🟠', paired: false },
+  { id: 'tube_dig', label: 'Tube digestif', icon: '🟢', paired: false },
+  { id: 'annexes', label: 'Annexes', icon: '🧪', paired: false }
+];
+
+var extraPhotoCounts = {};
+
+// ═══ BUILD UI ═══
+function buildOrgans() {
+  var nav = gid('navPills');
+  var content = gid('organsContent');
+  var navHtml = '';
+  var contentHtml = '';
+
+  for (var i = 0; i < ORGANS.length; i++) {
+    var o = ORGANS[i];
+    var secId = 'sec-' + o.id;
+    var open = i === 0 ? ' open' : '';
+    extraPhotoCounts[o.id] = 0;
+
+    // Nav pill
+    navHtml += '<a class="nav-pill' + (i === 0 ? ' active' : '') + '" onclick="scrollToSection(\'' + secId + '\')" data-nav="' + secId + '">' + o.icon + ' ' + o.label + '</a>';
+
+    // Section
+    contentHtml += '<div class="acc-section' + open + '" id="' + secId + '">';
+    contentHtml += '<div class="acc-header" onclick="toggleAcc(\'' + secId + '\')"><span class="acc-icon">' + o.icon + '</span><span class="acc-title">' + o.label + '</span><span class="acc-status empty" id="ast-' + o.id + '">—</span><span class="acc-chevron">▼</span></div>';
+    contentHtml += '<div class="acc-body"><div class="acc-body-inner">';
+
+    // Masse fixée
+    contentHtml += '<div class="field-row"><div class="field"><label>Masse fixée</label><input type="number" id="masse_' + o.id + '" step="0.01" min="0" inputmode="decimal" placeholder="—"><div class="unit">g</div></div></div>';
+
+    // Photo tranches de section
+    contentHtml += '<div class="sub-title">Tranches de section</div>';
+    contentHtml += '<div class="photo-row"><div class="photo-slot wide" data-key="p_tranche_' + o.id + '" data-original-label="Tranches ' + o.label + '" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Tranches ' + o.label + '</div></div></div>';
+
+    // Extra photos
+    contentHtml += '<div id="extraPhotos_' + o.id + '" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"></div>';
+    contentHtml += '<button class="btn-add-photo" onclick="addExtraPhoto(\'' + o.id + '\')">＋ Photo supplémentaire</button>';
+
+    // Cassettes
+    contentHtml += '<div class="sub-title">Mise en cassettes</div>';
+    contentHtml += '<div class="field"><input type="text" id="k7_' + o.id + '" placeholder="N° cassettes (ex: K1, K2-K3)…"></div>';
+
+    // Lésion
+    contentHtml += '<div class="sub-title">Lésion</div>';
+    contentHtml += '<div class="yn-row"><div class="yn-label">Lésion identifiée</div><div class="yn-toggle" data-id="lesion_' + o.id + '"><button onclick="setYN(this,\'y\')">Oui</button><button onclick="setYN(this,\'n\')">Non</button></div></div>';
+    contentHtml += '<div class="photo-row"><div class="photo-slot" data-key="p_lesion_' + o.id + '" data-original-label="Lésion ' + o.label + '" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Lésion</div></div></div>';
+    contentHtml += '<div class="field"><input type="text" id="lesion_desc_' + o.id + '" placeholder="Description lésion…"></div>';
+    contentHtml += '<div class="field"><input type="text" id="lesion_k7_' + o.id + '" placeholder="K7 lésion…"></div>';
+
+    // Mise en réserve
+    contentHtml += '<div class="sub-title">Conservation</div>';
+    contentHtml += '<div class="yn-row"><div class="yn-label">Mise en réserve</div><div class="yn-toggle" data-id="reserve_' + o.id + '"><button onclick="setYN(this,\'y\')">Oui</button><button onclick="setYN(this,\'n\')">Non</button></div></div>';
+
+    contentHtml += '</div></div></div>';
+  }
+
+  // Note section
+  contentHtml += '<div class="acc-section" id="sec-note"><div class="acc-header" onclick="toggleAcc(\'sec-note\')"><span class="acc-icon">📝</span><span class="acc-title">Commentaire</span><span class="acc-status empty" id="ast-note">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">';
+  contentHtml += '<div class="field"><textarea id="commentaire" rows="4" placeholder="Remarques, observations particulières…"></textarea></div>';
+  contentHtml += '</div></div></div>';
+
+  navHtml += '<a class="nav-pill" onclick="scrollToSection(\'sec-note\')" data-nav="sec-note">📝 Note</a>';
+
+  nav.innerHTML = navHtml;
+  content.innerHTML = contentHtml;
+}
+
+// ═══ EXTRA PHOTOS ═══
+function addExtraPhoto(section) {
+  if (!extraPhotoCounts[section]) extraPhotoCounts[section] = 0;
+  extraPhotoCounts[section]++;
+  var n = extraPhotoCounts[section];
+  var grid = gid('extraPhotos_' + section); if (!grid) return;
+  var slot = document.createElement('div'); slot.className = 'photo-slot grid-slot';
+  slot.setAttribute('data-key', 'xp_' + section + '_' + n);
+  slot.setAttribute('data-original-label', 'Suppl. ' + n);
+  slot.onclick = function() { capturePhoto(this); };
+  slot.innerHTML = '<div class="icon big">📷</div><div class="label big">Suppl. ' + n + '</div>';
+  grid.appendChild(slot);
+}
+
+// ═══ COLLECT ═══
+function collectData() {
+  var data = {
+    dossier: dossier, timestamp: new Date().toISOString(), type: 'macro_fixe',
+    organes: {},
+    toggles: collectYNs(),
+    commentaire: gval('commentaire') || null,
+    photos: Object.keys(photos).map(function(k) { return { key: k, label: photos[k].label }; }),
+    hpo: collectHPO()
+  };
+  for (var i = 0; i < ORGANS.length; i++) {
+    var o = ORGANS[i];
+    data.organes[o.id] = {
+      masse_fixee: parseFloat(gval('masse_' + o.id)) || null,
+      cassettes: gval('k7_' + o.id) || null,
+      lesion_desc: gval('lesion_desc_' + o.id) || null,
+      lesion_k7: gval('lesion_k7_' + o.id) || null
+    };
+  }
+  return data;
+}
+
+// ═══ SAVE ═══
+function saveAndExport() {
+  try {
+    var data = collectData();
+    pwaSave('macro_fixe', dossier, data);
+    saveHPOToLocalStorage(dossier, 'macro_fixe');
+    pwaSubmit(dossier, 'macro_fixe', data, photos);
+  } catch (e) { alert('Erreur: ' + e.message); }
+}
+
+// ═══ LOAD EXISTING ═══
+function loadExistingData() {
+  pwaLoadFromHub(dossier, 'macro_fixe')
+    .then(function(res) {
+      if (res.found && res.data) restoreFixeData(res.data);
+      else {
+        var local = pwaLoad('macro_fixe', dossier);
+        if (local) restoreFixeData(local);
+      }
+    });
+}
+function restoreFixeData(d) {
+  try {
+    if (d.organes) {
+      for (var i = 0; i < ORGANS.length; i++) {
+        var o = ORGANS[i]; var od = d.organes[o.id]; if (!od) continue;
+        setField('masse_' + o.id, od.masse_fixee);
+        setField('k7_' + o.id, od.cassettes);
+        setField('lesion_desc_' + o.id, od.lesion_desc);
+        setField('lesion_k7_' + o.id, od.lesion_k7);
+      }
+    }
+    if (d.toggles) {
+      var toggleIds = Object.keys(d.toggles);
+      for (var i = 0; i < toggleIds.length; i++) {
+        var tid = toggleIds[i]; var val = d.toggles[tid]; if (val === null) continue;
+        var toggle = qs('.yn-toggle[data-id="' + tid + '"]');
+        if (toggle) {
+          var btns = toggle.querySelectorAll('button');
+          for (var j = 0; j < btns.length; j++) btns[j].className = '';
+          if (val === true) { if (btns[0]) btns[0].className = 'sel-y'; }
+          else { if (btns[1]) btns[1].className = 'sel-n'; }
+        }
+      }
+    }
+    setField('commentaire', d.commentaire);
+    if (d.photos && d.photos.length > 0) {
+      for (var i = 0; i < d.photos.length; i++) {
+        var p = d.photos[i];
+        var imgUrl = HUB + '/admin/api/pwa/photo?dossier=' + encodeURIComponent(dossier) + '&key=' + encodeURIComponent(p.key);
+        if (p.key.indexOf('xp_') === 0) {
+          var parts = p.key.split('_'); var section = parts[1];
+          var grid = gid('extraPhotos_' + section);
+          if (grid) {
+            if (!extraPhotoCounts[section]) extraPhotoCounts[section] = 0;
+            extraPhotoCounts[section]++;
+            var slot = document.createElement('div'); slot.className = 'photo-slot grid-slot has-photo';
+            slot.setAttribute('data-key', p.key); slot.setAttribute('data-original-label', p.label);
+            slot.setAttribute('onclick', 'capturePhoto(this)');
+            slot.innerHTML = '<img src="' + imgUrl + '"><button class="remove-btn" onclick="event.stopPropagation();removePhoto(\'' + p.key + '\')">✕</button><div class="overlay-label">' + p.label + '</div>';
+            grid.appendChild(slot);
+            photos[p.key] = { dataUrl: null, label: p.label, serverUrl: imgUrl };
+            continue;
+          }
+        }
+        photos[p.key] = { dataUrl: null, label: p.label, serverUrl: imgUrl };
+        var slot = qs('[data-key="' + p.key + '"]');
+        if (slot) { slot.classList.add('has-photo');
+          slot.innerHTML = '<img src="' + imgUrl + '"><button class="remove-btn" onclick="event.stopPropagation();removePhoto(\'' + p.key + '\')">✕</button><div class="overlay-label">' + (p.label || p.key) + '</div>'; }
+      }
+    }
+  } catch(e) {}
+}
+
+function setField(id, val) { if (val === null || val === undefined || val === 0) return; var el = gid(id); if (el) el.value = val; }
+
+// ═══ INIT ═══
+applySettings();
+buildOrgans();
+initPhotoInput();
+injectCollapseButtons(false);
+// Re-init HPO autocomplete after dynamic DOM is built
+setTimeout(function() { if (typeof initHPOEngine === 'function') initHPOEngine(); }, 200);
+loadExistingData();
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>pwaI18nInit();</script>
+</body>
+</html>

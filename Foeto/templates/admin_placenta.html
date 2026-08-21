@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Admin Placentas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/admin.css?v=2.8.4">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181a23;
+  --surface2: #1e2130;
+  --surface3: #141620;
+  --hover: #262a3d;
+  --active: #2d3250;
+  --border: #2a2d3e;
+  --text: #e8eaf0;
+  --text2: #9498ab;
+  --muted: #5f6378;
+  --accent: #4a90d9;
+  --accent-dim: rgba(74,144,217,0.15);
+  --success: #4ade80;
+  --success-dim: rgba(74,222,128,0.12);
+  --warning: #fbbf24;
+  --warning-dim: rgba(251,191,36,0.12);
+  --danger: #f87171;
+  --danger-dim: rgba(248,113,113,0.12);
+  --radius: 8px;
+  --font: 'DM Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg); color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.topbar {
+  height: 52px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 20px; gap: 16px;
+}
+.topbar-brand { font-weight: 600; color: var(--accent); font-size: 15px; }
+.topbar-brand span { color: var(--muted); font-weight: 400; }
+.topbar-sep { width: 1px; height: 24px; background: var(--border); }
+.topbar-nav a {
+  color: var(--text2); text-decoration: none; font-size: 13px;
+  padding: 6px 12px; border-radius: var(--radius);
+}
+.topbar-nav a:hover { background: var(--hover); color: var(--text); }
+.topbar-nav a.active { background: var(--accent-dim); color: var(--accent); }
+
+.main { display: flex; flex-direction: row; height: calc(100vh - 52px); overflow: visible; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 300px; min-width: 300px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+}
+.sidebar-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.sidebar-header h3 {
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.search-input {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 8px 12px;
+  color: var(--text); font-size: 13px; outline: none; width: 100%;
+  font-family: var(--mono);
+}
+.search-input:focus { border-color: var(--accent); }
+.sidebar-filters {
+  display: flex; gap: 4px; padding: 6px 16px;
+  border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 3px 10px; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface2); color: var(--muted); font-size: 11px;
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.filter-chip:hover { background: var(--hover); color: var(--text); }
+.filter-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.sidebar-actions {
+  display: flex; gap: 8px; padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.btn-sm {
+  padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface2); color: var(--text2); font-size: 12px;
+  cursor: pointer; font-family: inherit;
+}
+.btn-sm:hover { background: var(--hover); color: var(--text); }
+.btn-sm.primary { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+.case-list { flex: 1; overflow-y: auto; padding: 4px 0; }
+.case-item {
+  padding: 10px 16px; cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.case-item:hover { background: var(--hover); }
+.case-item.active { background: var(--active); border-left: 3px solid var(--accent); }
+.case-item-num {
+  font-family: var(--mono);
+  font-size: 14px; font-weight: 600; color: var(--text);
+}
+.case-item-meta {
+  font-size: 11px; color: var(--text2); margin-top: 2px;
+  display: flex; gap: 8px; align-items: center;
+}
+.badge {
+  padding: 1px 6px; border-radius: 10px; font-size: 10px; font-weight: 600;
+}
+.badge-en_cours { background: var(--accent-dim); color: var(--accent); }
+.badge-attente_immuno { background: #3d2e00; color: #f0a500; }
+.badge-complet { background: var(--success-dim); color: var(--success); }
+.badge-archive { background: var(--danger-dim); color: var(--danger); }
+.dot.lames {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: #3498db;
+}
+
+.case-count {
+  padding: 8px 16px; font-size: 11px; color: var(--muted);
+  border-top: 1px solid var(--border); text-align: center;
+}
+
+/* ── Detail panel ── */
+.detail {
+  flex: 1; overflow-y: auto; padding: 0;
+  display: flex; flex-direction: column;
+}
+.detail-empty {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; color: var(--muted); font-size: 14px;
+}
+
+.detail-header {
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; align-items: center; gap: 12px;
+}
+.detail-header h2 {
+  font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+}
+.detail-header .actions { margin-left: auto; display: flex; gap: 8px; }
+
+/* ── Tabs ── */
+.tabs-bar {
+  display: flex; gap: 2px;
+  background: var(--surface); padding: 0 28px;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  padding: 10px 18px; font-size: 13px; font-weight: 500;
+  cursor: pointer; color: var(--text2); transition: all 0.15s;
+  border-bottom: 2px solid transparent; position: relative;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab .tab-badge {
+  font-size: 10px; padding: 1px 6px; border-radius: 8px;
+  background: var(--accent-dim); color: var(--accent);
+  margin-left: 6px; font-weight: 600;
+}
+
+.tab-panel { display: none; flex: 1; overflow-y: auto; padding: 24px 28px; }
+.tab-panel.active { display: block; }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 16px; overflow: hidden;
+}
+.card-header {
+  padding: 10px 16px; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text2); background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-body { padding: 14px 16px; }
+
+.field-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.field-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.field-value { font-size: 14px; margin-top: 2px; font-weight: 500; }
+.field-value.mono { font-family: var(--mono); font-size: 13px; }
+
+/* ── Macro sections (collapsible) ── */
+.macro-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 12px; overflow: hidden;
+}
+.macro-section-header {
+  padding: 12px 16px; cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface2); transition: background 0.15s;
+}
+.macro-section-header:hover { background: var(--hover); }
+.macro-section-icon { font-size: 16px; }
+.macro-section-title { font-size: 14px; font-weight: 600; flex: 1; }
+.macro-section-badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 8px; font-weight: 600;
+}
+.macro-section-badge.has-data { background: var(--success-dim); color: var(--success); }
+.macro-section-badge.no-data { background: var(--surface); color: var(--muted); }
+.macro-section-chevron {
+  font-size: 12px; color: var(--muted); transition: transform 0.2s;
+}
+.macro-section.open .macro-section-chevron { transform: rotate(180deg); }
+.macro-section-body {
+  display: none; padding: 16px;
+  border-top: 1px solid var(--border);
+}
+.macro-section.open .macro-section-body { display: block; }
+
+/* ── Photos grid ── */
+.photos-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.photo-thumb {
+  aspect-ratio: 4/3; border-radius: var(--radius);
+  overflow: hidden; cursor: pointer; position: relative;
+  border: 1px solid var(--border); transition: border-color 0.15s;
+}
+.photo-thumb:hover { border-color: var(--accent); }
+.photo-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo-thumb .photo-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  padding: 14px 6px 4px; font-size: 10px; font-weight: 600;
+  text-align: center;
+}
+
+/* ── Lesions ── */
+.lesion-list { display: flex; flex-direction: column; gap: 8px; }
+.lesion-item {
+  display: flex; gap: 10px; align-items: center;
+  padding: 8px 12px; background: var(--surface2);
+  border-radius: var(--radius); border-left: 3px solid var(--danger);
+}
+.lesion-item .lesion-num { font-weight: 700; color: var(--danger); min-width: 60px; font-size: 13px; }
+.lesion-item .lesion-desc { font-size: 13px; color: var(--text2); }
+
+/* ── Data toggle ── */
+.data-toggle {
+  padding: 8px 0; cursor: pointer; color: var(--accent);
+  font-size: 12px; font-weight: 600;
+}
+.data-toggle:hover { text-decoration: underline; }
+.data-collapsible { display: none; }
+.data-collapsible.open { display: block; }
+.json-view {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px;
+  font-family: var(--mono); font-size: 12px;
+  line-height: 1.6; white-space: pre-wrap; color: var(--text2);
+  max-height: 400px; overflow-y: auto;
+}
+
+/* ── Microscopy ── */
+.micro-layout {
+  display: grid; grid-template-columns: 1fr 360px;
+  gap: 16px; min-height: 500px;
+}
+.micro-main { display: flex; flex-direction: column; gap: 16px; }
+.micro-side { display: flex; flex-direction: column; gap: 12px; }
+
+.slide-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.slide-item {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 8px; cursor: pointer;
+  transition: all 0.15s; text-align: center;
+}
+.slide-item:hover { border-color: var(--accent); background: var(--hover); }
+.slide-item img {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover;
+  border-radius: 4px; margin-bottom: 6px;
+}
+.slide-item .slide-name {
+  font-size: 11px; font-family: var(--mono); color: var(--text2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.slide-item .slide-ext {
+  font-size: 10px; color: var(--muted); margin-top: 2px;
+}
+
+.pairing-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+.pairing-table th {
+  padding: 8px 12px; text-align: left;
+  background: var(--surface2); color: var(--text2);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+}
+.pairing-table td {
+  padding: 8px 12px; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.pairing-table .count-ok { color: var(--success); }
+.pairing-table .count-warn { color: var(--warning); }
+.pairing-table .count-zero { color: var(--muted); }
+
+/* ── Side viewer for lesion photos ── */
+.side-viewer {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.side-viewer-header {
+  padding: 8px 12px; background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px; font-weight: 600; color: var(--text2);
+}
+.side-viewer-body {
+  padding: 8px;
+}
+.side-viewer-photos {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.side-viewer-photos .sv-thumb {
+  aspect-ratio: 4/3; border-radius: 4px; overflow: hidden;
+  cursor: pointer; border: 1px solid var(--border);
+  transition: border-color 0.15s;
+}
+.side-viewer-photos .sv-thumb:hover { border-color: var(--accent); }
+.side-viewer-photos .sv-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+/* ── Buttons ── */
+.btn-row { display: flex; gap: 8px; margin-top: 12px; }
+.btn {
+  padding: 8px 16px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface2); color: var(--text); font-size: 13px;
+  font-weight: 500; cursor: pointer; font-family: inherit;
+}
+.btn:hover { background: var(--hover); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { opacity: 0.9; }
+.btn.danger { background: var(--danger-dim); border-color: var(--danger); color: var(--danger); }
+
+/* ── Module chips ── */
+.module-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.module-chip {
+  padding: 4px 12px; border-radius: 14px;
+  font-size: 12px; font-weight: 600;
+  background: var(--accent-dim); color: var(--accent);
+  cursor: pointer;
+}
+.module-chip:hover { background: var(--accent); color: #fff; }
+
+/* ── CR panel ── */
+.cr-panel {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  font-family: var(--mono); font-size: 12px;
+  line-height: 1.6; white-space: pre-wrap; color: var(--text2);
+  max-height: 500px; overflow-y: auto;
+}
+
+/* ── Photo Lightbox ── */
+.lightbox-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999;
+  display: none; align-items: center; justify-content: center; flex-direction: column;
+}
+.lightbox-overlay.visible { display: flex; }
+.lightbox-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 12px 20px; background: rgba(0,0,0,0.6);
+  color: #fff; font-size: 13px; z-index: 2;
+}
+.lightbox-title { font-weight: 600; }
+.lightbox-counter { font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,0.6); }
+.lightbox-img-wrap {
+  position: relative; flex: 1; display: flex; align-items: center; justify-content: center;
+  width: 100%; overflow: hidden; cursor: grab;
+}
+.lightbox-img-wrap.grabbing { cursor: grabbing; }
+.lightbox-img-wrap img {
+  max-width: 90vw; max-height: 80vh; object-fit: contain;
+  transition: transform 0.15s ease-out; user-select: none; -webkit-user-drag: none;
+}
+.lightbox-toolbar {
+  display: flex; gap: 6px; align-items: center;
+  padding: 12px 20px; background: rgba(0,0,0,0.6); z-index: 2;
+}
+.lightbox-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08); color: #fff; font-size: 18px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.lightbox-btn:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
+.lightbox-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  width: 48px; height: 48px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,0.12); color: #fff; font-size: 24px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; backdrop-filter: blur(4px);
+}
+.lightbox-nav:hover { background: rgba(255,255,255,0.25); }
+.lightbox-nav.prev { left: 16px; }
+.lightbox-nav.next { right: 16px; }
+
+
+/* ── Stat cards ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px; margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px; text-align: center;
+}
+.stat-card .stat-val { font-size: 22px; font-weight: 700; font-family: var(--mono); }
+.stat-card .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── Loading ── */
+.loading-inline {
+  display: flex; align-items: center; gap: 10px;
+  padding: 24px; color: var(--muted); font-size: 13px;
+}
+.spinner {
+  width: 18px; height: 18px; border: 2px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Micro Reading Grid ── */
+.micro-grid-container {
+  margin-top: 16px;
+}
+.micro-grid-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.micro-grid-header h3 {
+  font-size: 15px; font-weight: 700; color: var(--text);
+}
+.slide-selector {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 8px 12px;
+  color: var(--text); font-size: 13px; font-family: var(--mono);
+  outline: none; min-width: 200px;
+}
+.slide-selector:focus { border-color: var(--accent); }
+
+/* Tissue pills */
+.tissue-picker {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
+  padding: 12px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.tissue-picker-label {
+  font-size: 12px; color: var(--text2); font-weight: 600; width: 100%;
+  margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.tissue-pill {
+  padding: 6px 14px; border-radius: 16px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--text2);
+  transition: all 0.15s; user-select: none;
+}
+.tissue-pill:hover { border-color: var(--accent); color: var(--text); }
+.tissue-pill.active {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
+.tissue-pill-add {
+  padding: 6px 12px; border-radius: 16px; font-size: 12px;
+  cursor: pointer; border: 1px dashed var(--muted);
+  background: transparent; color: var(--muted);
+  transition: all 0.15s;
+}
+.tissue-pill-add:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Tissue sections with anomaly items */
+.tissue-section {
+  margin-bottom: 16px; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); border-left: 3px solid var(--accent);
+}
+.tissue-section-title {
+  font-size: 13px; font-weight: 700; color: var(--accent);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.anomaly-list { display: flex; flex-direction: column; gap: 4px; }
+
+.anomaly-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 6px;
+  background: var(--surface2); border: 1px solid transparent;
+  transition: all 0.15s; min-height: 36px;
+}
+.anomaly-row:hover { border-color: var(--border); }
+.anomaly-row.checked {
+  background: var(--accent-dim); border-color: var(--accent);
+}
+.anomaly-row input[type="checkbox"] {
+  accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer;
+  flex-shrink: 0;
+}
+.anomaly-label {
+  font-size: 12px; font-weight: 500; color: var(--text);
+  flex: 1; cursor: pointer; user-select: none;
+}
+.anomaly-row.checked .anomaly-label { color: var(--accent); font-weight: 600; }
+
+/* Normal item (green) */
+.anomaly-row.normal-item.checked {
+  background: var(--success-bg, rgba(46,204,113,0.12)); border-color: var(--success, #2ecc71);
+}
+.anomaly-row.normal-item.checked .anomaly-label {
+  color: var(--success, #2ecc71);
+}
+.anomaly-row.normal-item input[type="checkbox"] {
+  accent-color: var(--success, #2ecc71);
+}
+
+/* Radio-type anomaly */
+.radio-group {
+  display: flex; gap: 2px; background: var(--bg);
+  border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
+  margin: 4px 0;
+}
+.radio-group label {
+  padding: 5px 12px; font-size: 11px; font-weight: 600;
+  cursor: pointer; color: var(--text2); transition: all 0.15s;
+  border-right: 1px solid var(--border);
+}
+.radio-group label:last-child { border-right: none; }
+.radio-group input { display: none; }
+.radio-group input:checked + label {
+  background: var(--accent); color: #fff;
+}
+.radio-group input.anormal:checked + label {
+  background: var(--danger); color: #fff;
+}
+
+/* Severity slider */
+.severity-wrap {
+  display: none; align-items: center; gap: 8px;
+  margin-left: 24px; padding: 4px 0;
+}
+.anomaly-row.checked .severity-wrap { display: flex; }
+.severity-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 120px; height: 6px; border-radius: 3px;
+  background: var(--border); outline: none;
+}
+.severity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; border: 2px solid var(--surface);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.severity-slider::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; border: 2px solid var(--surface);
+}
+.severity-val {
+  font-family: var(--mono); font-size: 11px; color: var(--accent);
+  font-weight: 700; min-width: 28px; text-align: center;
+}
+.severity-labels {
+  display: flex; justify-content: space-between;
+  font-size: 9px; color: var(--muted); margin-top: -2px; padding: 0 2px;
+  width: 120px; margin-left: 24px;
+}
+
+/* Save bar */
+.micro-save-bar {
+  display: flex; gap: 8px; align-items: center;
+  padding: 12px 16px; margin-top: 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.micro-save-bar .save-status {
+  font-size: 12px; color: var(--muted); margin-left: auto;
+}
+</style>
+<link rel="stylesheet" href="/static/themes.css">
+</head>
+<body>
+<script>
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+
+<div class="topbar">
+  <span class="topbar-brand">FoetoPath <span>Placentas</span></span>
+  <div class="topbar-sep"></div>
+  <nav class="topbar-nav">
+    <a href="/">Hub</a>
+    <a href="/admin">Admin Foetus</a>
+    <a href="/admin/placenta" class="active">Admin Placentas</a>
+    <a href="/pediatrique">Pédiatrique</a>
+    <a href="/admin/lames" id="navLames" style="display:none">Lames</a>
+    <a href="/admin/settings">Paramètres</a>
+    <a href="/pwa/placentas/" target="_blank">PWA</a>
+  </nav>
+  <div style="flex:1"></div>
+  <span id="navUserInfo" style="color:var(--muted);font-size:12px;"></span>
+  <a href="/auth/logout" style="color:var(--muted);text-decoration:none;font-size:12px;padding:4px 10px;">Deconnexion</a>
+</div>
+<script>
+fetch('/auth/api/me').then(r=>r.json()).then(u=>{
+  document.getElementById('navUserInfo').textContent=`${u.display_name||u.username} (${u.role})`;
+  if (u.role === 'admin' || u.role === 'admin_centre') {
+    const el = document.getElementById('navLames');
+    if (el) el.style.display = '';
+  }
+}).catch(()=>{});
+</script>
+
+<div class="main">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h3>Dossiers Placenta</h3>
+      <input type="text" class="search-input" id="search" placeholder="Rechercher..." oninput="loadCases()">
+    </div>
+    <div class="sidebar-filters" id="sidebar-filters">
+      <button class="filter-chip active" data-filter="" onclick="setFilter(this)">Tous</button>
+      <button class="filter-chip" data-filter="en_cours" onclick="setFilter(this)">En cours</button>
+      <button class="filter-chip" data-filter="attente_immuno" onclick="setFilter(this)">Att. immuno</button>
+      <button class="filter-chip" data-filter="archive" onclick="setFilter(this)">Archivés</button>
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn-sm primary" onclick="syncLocal()">&#8635; Sync dossier</button>
+      <button class="btn-sm" onclick="loadCases()">Recharger</button>
+    </div>
+    <div class="case-list" id="case-list"></div>
+    <div class="case-count" id="case-count">&mdash;</div>
+  </div>
+
+  <!-- Detail panel -->
+  <div class="detail" id="detail">
+    <div class="detail-empty">Selectionnez un dossier placenta</div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="photoLightbox">
+  <div class="lightbox-topbar">
+    <span class="lightbox-title" id="lbTitle"></span>
+    <span class="lightbox-counter" id="lbCounter"></span>
+    <button class="lightbox-btn" onclick="closeLightbox()" title="Fermer" style="margin-left:12px">&#10005;</button>
+  </div>
+  <div class="lightbox-img-wrap" id="lbImgWrap">
+    <button class="lightbox-nav prev" onclick="lbNav(-1)">&#10094;</button>
+    <img id="lbImg" src="" alt="" draggable="false">
+    <button class="lightbox-nav next" onclick="lbNav(1)">&#10095;</button>
+  </div>
+  <div class="lightbox-toolbar">
+    <button class="lightbox-btn" onclick="lbZoom(-1)" title="Dezoomer">&#8722;</button>
+    <button class="lightbox-btn" onclick="lbZoomReset()" title="Reset zoom">1:1</button>
+    <button class="lightbox-btn" onclick="lbZoom(1)" title="Zoomer">&#43;</button>
+    <span style="width:12px"></span>
+    <button class="lightbox-btn" onclick="lbRotate(-90)" title="Rotation gauche">&#8634;</button>
+    <button class="lightbox-btn" onclick="lbRotate(90)" title="Rotation droite">&#8635;</button>
+    <span style="width:12px"></span>
+    <button class="lightbox-btn" onclick="lbFitToggle()" title="Adapter / taille reelle">&#9634;</button>
+    <span style="flex:1"></span>
+    <button class="lightbox-btn" onclick="window.open(lbState.photos[lbState.idx]?.full,'_blank')" title="Ouvrir dans un nouvel onglet">&#8599;</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/static/js/slide_helpers.js?v=2.8.0"></script>
+<script>window._crApiBase = '/placenta';</script>
+<script src="/static/js/admin_cr.js?v=2.8.5"></script>
+<script>
+const API = '/placenta/api';
+let currentCaseId = null;
+let currentCase = null;
+let _sectionPhotos = {};
+let _trancheData = null;
+let _viewerUrl = null;
+let _lameCounts = {};
+
+fetch('/admin/api/viewer-url').then(r => r.json()).then(d => { _viewerUrl = d.url; }).catch(() => {});
+
+// ═══════ TOAST ═══════
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast visible' + (type ? ' ' + type : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('visible'), 4000);
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function crFormatText(s) {
+  if (!s) return '';
+  let h = escHtml(s);
+  h = h.replace(/^[=\-]{3,}$/gm, '');
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/^([A-ZÉÈÊÀÂÎÏÔÙÛÇ ''\-]{4,})$/gm, '<span style="display:block;font-weight:700;font-size:13px;margin-top:14px;margin-bottom:2px;color:var(--primary, #7c6aef);text-transform:uppercase;letter-spacing:0.5px">$1</span>');
+  h = h.replace(/^(Conclusion|Microscopie|Renseignements cliniques|Description macroscopique|Description microscopique)$/gim, '<span style="display:block;font-weight:700;font-size:13px;margin-top:14px;margin-bottom:2px;color:var(--primary, #7c6aef);text-transform:uppercase;letter-spacing:0.5px">$1</span>');
+  h = h.replace(/\n{3,}/g, '\n\n');
+  h = h.replace(/\n\n/g, '<br><br>');
+  h = h.replace(/\n/g, '<br>');
+  return h;
+}
+
+// Escape path for safe embedding in onclick="fn('...')" — doubles backslashes
+function escPath(s) {
+  return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function openViewerLames(rootPath, slidePath, caseId) {
+  if (!_viewerUrl) { toast('URL viewer non configurée', true); return; }
+  let url = _viewerUrl + '/?';
+  if (rootPath) url += 'root=' + encodeURIComponent(rootPath);
+  if (slidePath) url += '&slide=' + encodeURIComponent(slidePath);
+  window.open(url, '_blank');
+}
+
+// ═══════ FILTERS ═══════
+let _activeFilter = '';
+
+function setFilter(btn) {
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _activeFilter = btn.dataset.filter;
+  renderCaseList(_allCases);
+}
+
+function _applyFilter(cases) {
+  if (!_activeFilter) return cases;
+  return cases.filter(c => c.statut === _activeFilter);
+}
+
+// ═══════ LOAD CASES ═══════
+let _allCases = [];
+
+async function loadCases() {
+  const q = document.getElementById('search').value.trim();
+  const url = q ? `${API}/cases?q=${encodeURIComponent(q)}` : `${API}/cases`;
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+    _allCases = data.cases || [];
+    renderCaseList(_allCases);
+    const numeros = _allCases.map(c => c.numero_dossier).filter(Boolean);
+    if (numeros.length) {
+      try {
+        const r = await fetch(`${API}/lumi-counts?numeros=${encodeURIComponent(numeros.join(','))}`);
+        _lameCounts = await r.json();
+        renderCaseList(_allCases);
+        if (currentCase) updateMicroBadge(currentCase);
+      } catch(_) {}
+    }
+  } catch (e) {
+    toast('Erreur chargement', true);
+  }
+}
+
+function renderCaseList(cases) {
+  const filtered = _applyFilter(cases);
+  const list = document.getElementById('case-list');
+  document.getElementById('case-count').textContent = `${filtered.length}/${cases.length} dossier(s)`;
+  if (!filtered.length) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Aucun dossier</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(c => {
+    const lameCount = (_lameCounts || {})[c.numero_dossier] || 0;
+    const statutLabel = {en_cours:'En cours', attente_immuno:'Att. immuno', complet:'Complet', archive:'Archivé'}[c.statut] || c.statut;
+    return `
+    <div class="case-item ${c.id === currentCaseId ? 'active' : ''}"
+         onclick="loadCase(${c.id})">
+      <div class="case-item-num">${escHtml(c.numero_dossier)}</div>
+      <div class="case-item-meta">
+        <span class="badge badge-${c.statut}">${statutLabel}</span>
+        ${c.terme_sa ? `<span>${c.terme_sa} SA</span>` : ''}
+        ${c.masse_paree_g ? `<span>${c.masse_paree_g}g</span>` : ''}
+        ${c.module_count ? `<span>${c.module_count} mod.</span>` : ''}
+        ${lameCount ? '<span class="dot lames" title="' + lameCount + ' lame(s) dans Lumi"></span>' : ''}
+        ${c.assigned_to ? '<span style="color:var(--accent);font-size:10px" title="Attribué à ' + escHtml(c.assigned_to) + '">&#128100; ' + escHtml(c.assigned_to) + '</span>' : ''}
+      </div>
+    </div>
+  `}).join('');
+}
+
+// ═══════ LOAD CASE DETAIL ═══════
+async function loadCase(caseId) {
+  currentCaseId = caseId;
+  try {
+    const resp = await fetch(`${API}/cases/${caseId}`);
+    currentCase = await resp.json();
+    renderDetail(currentCase);
+    loadCases();
+  } catch (e) {
+    toast('Erreur chargement cas', true);
+  }
+}
+
+// ═══════ TAB SYSTEM ═══════
+function switchTab(el, name) {
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+
+  // Lazy-load panels
+  if (name === 'macro' && currentCase) renderMacroPanel(currentCase);
+  if (name === 'micro' && currentCase) renderMicroPanel(currentCase);
+  if (name === 'cr' && currentCase) renderCRPanel(currentCase);
+}
+
+// ═══════ RENDER DETAIL ═══════
+function renderDetail(c) {
+  const d = document.getElementById('detail');
+  const modules = c.modules || {};
+  const photos = c.photos || [];
+  const photoCount = photos.length;
+  const moduleCount = Object.keys(modules).length;
+
+  d.innerHTML = `
+    <div class="detail-header">
+      <h2>
+        ${escHtml(c.numero_dossier)}
+        <span class="badge badge-${c.statut}" style="font-size:11px;padding:2px 10px;border-radius:10px;">${c.statut}</span>
+      </h2>
+      <div class="actions">
+        <button class="btn" onclick="toggleEditMode()">&#x270F; Modifier</button>
+        <button class="btn" onclick="exportJSON(${c.id})">Export JSON</button>
+        <button class="btn danger" onclick="deleteCase(${c.id})">Supprimer</button>
+      </div>
+    </div>
+
+    <div class="tabs-bar">
+      <div class="tab active" onclick="switchTab(this,'contexte')">Contexte & Biometries</div>
+      <div class="tab" onclick="switchTab(this,'macro')">Macroscopie${photoCount ? '<span class=tab-badge>'+photoCount+'</span>' : ''}</div>
+      <div class="tab" onclick="switchTab(this,'micro')">Microscopie <span id="micro-badge" style="display:none;background:#3498db;color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:4px"></span></div>
+      <div class="tab" onclick="switchTab(this,'modules')">Donnees${moduleCount ? '<span class=tab-badge>'+moduleCount+'</span>' : ''}</div>
+      <div class="tab" onclick="switchTab(this,'cr')">CR</div>
+    </div>
+
+    <div class="tab-panel active" id="panel-contexte"></div>
+    <div class="tab-panel" id="panel-macro"></div>
+    <div class="tab-panel" id="panel-micro"></div>
+    <div class="tab-panel" id="panel-modules"></div>
+    <div class="tab-panel" id="panel-cr"></div>
+  `;
+
+  renderContextePanel(c);
+  updateMicroBadge(c);
+}
+
+function updateMicroBadge(c) {
+  const lc = (_lameCounts || {})[c.numero_dossier] || 0;
+  const badge = document.getElementById('micro-badge');
+  if (badge) {
+    if (lc > 0) { badge.textContent = lc; badge.style.display = 'inline'; }
+    else { badge.style.display = 'none'; }
+  }
+}
+
+// ═══════ DONNEES DE REFERENCE (Redline) ═══════
+const donneesPlacenta = {
+  18:{moyenne:107,sd:23,P10:52,P50:89,P90:181,source:'Extrapol'},
+  19:{moyenne:113,sd:25,P10:56,P50:94,P90:196,source:'Extrapol'},
+  20:{moyenne:130,sd:26,P10:82,P50:110,P90:214,source:'Extrapol'},
+  21:{moyenne:150,sd:25,P10:95,P50:130,P90:230,source:'Extrapol'},
+  22:{moyenne:189,sd:89,P10:107,P50:166,P90:285,source:'Redline'},
+  23:{moyenne:190,sd:41,P10:127,P50:188,P90:262,source:'Redline'},
+  24:{moyenne:190,sd:42,P10:128,P50:192,P90:252,source:'Redline'},
+  25:{moyenne:197,sd:70,P10:128,P50:184,P90:299,source:'Redline'},
+  26:{moyenne:226,sd:100,P10:138,P50:200,P90:281,source:'Redline'},
+  27:{moyenne:240,sd:77,P10:130,P50:242,P90:332,source:'Redline'},
+  28:{moyenne:223,sd:66,P10:140,P50:214,P90:321,source:'Redline'},
+  29:{moyenne:269,sd:96,P10:161,P50:252,P90:352,source:'Redline'},
+  30:{moyenne:324,sd:88,P10:208,P50:316,P90:433,source:'Redline'},
+  31:{moyenne:314,sd:105,P10:175,P50:313,P90:417,source:'Redline'},
+  32:{moyenne:325,sd:77,P10:241,P50:318,P90:436,source:'Redline'},
+  33:{moyenne:351,sd:83,P10:252,P50:352,P90:446,source:'Redline'},
+  34:{moyenne:381,sd:84,P10:283,P50:382,P90:479,source:'Redline'},
+  35:{moyenne:411,sd:99,P10:291,P50:401,P90:544,source:'Redline'},
+  36:{moyenne:447,sd:110,P10:320,P50:440,P90:580,source:'Redline'},
+  37:{moyenne:467,sd:107,P10:349,P50:452,P90:607,source:'Redline'},
+  38:{moyenne:493,sd:103,P10:365,P50:484,P90:629,source:'Redline'},
+  39:{moyenne:500,sd:103,P10:379,P50:490,P90:635,source:'Redline'},
+  40:{moyenne:510,sd:100,P10:390,P50:501,P90:643,source:'Redline'},
+  41:{moyenne:524,sd:100,P10:403,P50:515,P90:655,source:'Redline'},
+  42:{moyenne:532,sd:99,P10:412,P50:525,P90:658,source:'Redline'}
+};
+const ratioFP = {
+  16:{moy:1.0,sd:null},17:{moy:1.19,sd:null},18:{moy:1.57,sd:null},19:{moy:1.94,sd:null},
+  20:{moy:2.29,sd:null},21:{moy:2.64,sd:0.8},22:{moy:2.97,sd:0.8},23:{moy:3.3,sd:0.7},
+  24:{moy:3.4,sd:1.0},25:{moy:4.0,sd:1.4},26:{moy:4.1,sd:1.2},27:{moy:4.5,sd:1.1},
+  28:{moy:4.8,sd:1.0},29:{moy:5.2,sd:1.4},30:{moy:5.2,sd:1.1},31:{moy:5.5,sd:1.1},
+  32:{moy:5.9,sd:1.2},33:{moy:6.0,sd:1.1},34:{moy:6.2,sd:1.0},35:{moy:6.4,sd:1.2},
+  36:{moy:6.6,sd:1.1},37:{moy:6.8,sd:1.1},38:{moy:6.9,sd:1.1},39:{moy:7.1,sd:1.1},
+  40:{moy:7.2,sd:1.1},41:{moy:7.2,sd:1.1},42:{moy:7.1,sd:1.1}
+};
+
+function computeZscore(terme, masse, masseF) {
+  const res = { masseDS: null, massePercentile: null, ratioFP: null, ratioDS: null, ref: null, extrapolated: false };
+  if (!terme || !masse) return res;
+  const ref = donneesPlacenta[terme];
+  if (!ref) return res;
+  res.ref = ref;
+  res.masseDS = ((masse - ref.moyenne) / ref.sd).toFixed(2);
+  // Percentile approximation from Z
+  const z = parseFloat(res.masseDS);
+  if (masse <= ref.P10) res.massePercentile = '< P10';
+  else if (masse <= ref.P50) res.massePercentile = 'P10-P50';
+  else if (masse <= ref.P90) res.massePercentile = 'P50-P90';
+  else res.massePercentile = '> P90';
+  res.extrapolated = ref.source === 'Extrapol';
+  // Ratio F/P
+  if (masseF && masse > 0) {
+    res.ratioFP = (masseF / masse).toFixed(2);
+    const rr = ratioFP[terme];
+    if (rr && rr.sd !== null) {
+      res.ratioDS = ((res.ratioFP - rr.moy) / rr.sd).toFixed(2);
+    }
+  }
+  return res;
+}
+
+// ═══════ CONTEXTE & BIOMETRIES PANEL ═══════
+function renderContextePanel(c) {
+  const el = document.getElementById('panel-contexte');
+  const cordon = typeof c.cordon === 'string' ? JSON.parse(c.cordon || '{}') : (c.cordon || {});
+  const membranes = typeof c.membranes === 'string' ? JSON.parse(c.membranes || '{}') : (c.membranes || {});
+  const choriale = typeof c.plaque_choriale === 'string' ? JSON.parse(c.plaque_choriale || '{}') : (c.plaque_choriale || {});
+  const basale = typeof c.plaque_basale === 'string' ? JSON.parse(c.plaque_basale || '{}') : (c.plaque_basale || {});
+  const completude = typeof c.completude === 'string' ? JSON.parse(c.completude || '[]') : (c.completude || []);
+
+  // Z-score
+  const zs = computeZscore(c.terme_sa, c.masse_paree_g, c.masse_foetale_g);
+  let zsHtml = '';
+  if (zs.masseDS !== null) {
+    const absZ = Math.abs(parseFloat(zs.masseDS));
+    let zColor = 'var(--success)';
+    if (absZ > 2) zColor = 'var(--danger)';
+    else if (absZ > 1.5) zColor = 'var(--warning)';
+    zsHtml = `<div class="card" style="border-left:3px solid ${zColor};">
+      <div class="card-header">&#x1F4CA; Z-score & Percentiles (Redline)</div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div><div class="field-label">Masse paree</div><div class="field-value mono" style="color:${zColor};font-size:16px;font-weight:700;">${zs.masseDS} DS</div></div>
+          <div><div class="field-label">Percentile</div><div class="field-value mono" style="font-size:16px;font-weight:700;">${zs.massePercentile}</div></div>
+          <div><div class="field-label">Trophicite</div><div class="field-value" style="font-weight:600;">${parseFloat(zs.masseDS) < -1.67 ? '<span style="color:var(--danger)">Hypotrophe</span>' : '<span style="color:var(--success)">Eutrophe</span>'}</div></div>
+          <div><div class="field-label">Ref. ${c.terme_sa} SA</div><div class="field-value mono">${zs.ref.moyenne}g (&plusmn;${zs.ref.sd})</div></div>
+          <div><div class="field-label">P10 / P50 / P90</div><div class="field-value mono">${zs.ref.P10} / ${zs.ref.P50} / ${zs.ref.P90} g</div></div>
+          <div><div class="field-label">Source</div><div class="field-value">${zs.extrapolated ? '<span style="color:var(--warning)">Extrapole</span>' : 'Redline'}</div></div>
+        </div>
+        ${zs.ratioFP ? `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+          <div class="field-grid">
+            <div><div class="field-label">Ratio F/P</div><div class="field-value mono" style="font-size:16px;font-weight:700;">${zs.ratioFP}</div></div>
+            ${zs.ratioDS ? `<div><div class="field-label">Ratio Z-score</div><div class="field-value mono" style="color:${Math.abs(parseFloat(zs.ratioDS))>2?'var(--danger)':Math.abs(parseFloat(zs.ratioDS))>1?'var(--warning)':'var(--success)'};font-size:16px;font-weight:700;">${zs.ratioDS} DS</div></div>` : ''}
+            <div><div class="field-label">Ref. ratio</div><div class="field-value mono">${ratioFP[c.terme_sa]?.moy || '?'}${ratioFP[c.terme_sa]?.sd ? ' (&plusmn;'+ratioFP[c.terme_sa].sd+')' : ''}</div></div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  el.innerHTML = `
+    ${zsHtml}
+
+    <!-- Biometrie -->
+    <div class="card">
+      <div class="card-header">&#x1F4D0; Biometrie galette</div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div><div class="field-label">Terme</div><div class="field-value">${c.terme_sa || '&mdash;'} SA${c.terme_jours ? ' + ' + c.terme_jours + 'j' : ''}</div></div>
+          <div><div class="field-label">Source terme</div><div class="field-value">${c.terme_source || '&mdash;'}</div></div>
+          <div><div class="field-label">Sexe</div><div class="field-value">${c.sexe || '&mdash;'}</div></div>
+          <div><div class="field-label">Masse foetale</div><div class="field-value mono">${c.masse_foetale_g ? c.masse_foetale_g + ' g' : '&mdash;'}</div></div>
+          <div><div class="field-label">Indication</div><div class="field-value">${c.indication_terme || '&mdash;'}</div></div>
+          <div><div class="field-label">Masse paree</div><div class="field-value mono">${c.masse_paree_g ? c.masse_paree_g + ' g' : '&mdash;'}</div></div>
+          <div><div class="field-label">Grand axe</div><div class="field-value mono">${c.grand_axe_cm ? c.grand_axe_cm + ' cm' : '&mdash;'}</div></div>
+          <div><div class="field-label">Petit axe</div><div class="field-value mono">${c.petit_axe_cm ? c.petit_axe_cm + ' cm' : '&mdash;'}</div></div>
+          <div><div class="field-label">Epaisseur</div><div class="field-value mono">${c.epaisseur_cm ? c.epaisseur_cm + ' cm' : '&mdash;'}</div></div>
+          <div><div class="field-label">Forme</div><div class="field-value">${c.forme || '&mdash;'}</div></div>
+          <div><div class="field-label">Completude</div><div class="field-value">${completude.length ? completude.join(', ') : '&mdash;'}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plaques & Annexes -->
+    <div class="card">
+      <div class="card-header">&#x1F52C; Plaques & Annexes</div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div><div class="field-label">Pl. choriale</div><div class="field-value">${formatEtats(choriale)}</div></div>
+          <div><div class="field-label">Pl. basale</div><div class="field-value">${formatEtats(basale)}</div></div>
+          <div><div class="field-label">Cordon insertion</div><div class="field-value">${cordon.insertion || '&mdash;'}</div></div>
+          <div><div class="field-label">Cordon longueur</div><div class="field-value mono">${cordon.longueur_cm ? cordon.longueur_cm + ' cm' : '&mdash;'}</div></div>
+          <div><div class="field-label">Spiralisation</div><div class="field-value">${cordon.spiralisation || '&mdash;'}</div></div>
+          <div><div class="field-label">Vaisseaux</div><div class="field-value">${cordon.vaisseaux || '&mdash;'}</div></div>
+          <div><div class="field-label">Membranes insertion</div><div class="field-value">${membranes.insertion || '&mdash;'}</div></div>
+          <div><div class="field-label">Membranes aspect</div><div class="field-value">${membranes.aspect || '&mdash;'}</div></div>
+        </div>
+        ${cordon.remarques ? `<div style="margin-top:10px;font-size:12px;color:var(--text2)"><strong>Cordon :</strong> ${escHtml(cordon.remarques)}</div>` : ''}
+        ${membranes.remarques ? `<div style="margin-top:4px;font-size:12px;color:var(--text2)"><strong>Membranes :</strong> ${escHtml(membranes.remarques)}</div>` : ''}
+      </div>
+    </div>
+
+    ${c.notes ? `
+    <div class="card">
+      <div class="card-header">&#x1F4DD; Notes</div>
+      <div class="card-body"><div style="font-size:13px;color:var(--text2);white-space:pre-wrap;">${escHtml(c.notes)}</div></div>
+    </div>` : ''}
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--text2);margin-top:16px;align-items:center">
+        <span>Créé : ${c.created_at ? new Date(c.created_at).toLocaleString('fr-FR') : '—'}${c.created_by ? ' par <b style="color:var(--text)">' + escHtml(c.created_by) + '</b>' : ''}</span>
+        <span>·</span>
+        <span>Mis à jour : ${c.updated_at ? new Date(c.updated_at).toLocaleString('fr-FR') : '—'}${c.modified_by ? ' par <b style="color:var(--text)">' + escHtml(c.modified_by) + '</b>' : ''}</span>
+        <span>·</span>
+        <span>Statut : <select id="statutSelect" style="display:inline;width:auto;padding:2px 6px;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;"
+            onchange="updateCaseField('statut', this.value)">
+            <option value="en_cours" ${c.statut==='en_cours'?'selected':''}>En cours</option>
+            <option value="attente_immuno" ${c.statut==='attente_immuno'?'selected':''}>Attente immuno</option>
+            <option value="complet" ${c.statut==='complet'?'selected':''}>Complet</option>
+            <option value="archive" ${c.statut==='archive'?'selected':''}>Archivé</option>
+        </select></span>
+        <span>·</span>
+        <span>Attribué à : <select id="assignedToSelect" style="display:inline;width:auto;padding:2px 6px;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;"
+            onchange="assignCase(this.value)">
+            <option value="">— Non attribué —</option>
+        </select></span>
+    </div>
+  `;
+
+  // Charger la liste des utilisateurs dans le dropdown "Attribué à"
+  loadAssignedToDropdown(c.assigned_to || '');
+}
+
+function formatEtats(obj) {
+  if (!obj) return '&mdash;';
+  const etats = obj.etats || [];
+  if (!etats.length) return '&mdash;';
+  let txt = etats.join(', ');
+  if (obj.remarques) txt += ' &mdash; ' + escHtml(obj.remarques);
+  return txt;
+}
+
+// ═══════ MACROSCOPIE PANEL ═══════
+async function renderMacroPanel(c) {
+  const el = document.getElementById('panel-macro');
+  if (el.dataset.loaded === String(c.id)) return;
+  el.innerHTML = '<div class="loading-inline"><div class="spinner"></div> Chargement macroscopie...</div>';
+
+  const modules = c.modules || {};
+  const macroFrais = modules.macro_frais?.data || null;
+  const tranches = modules.tranches_section?.data || null;
+
+  // Charger les photos avec le pairing
+  let pairingData = null;
+  try {
+    const resp = await fetch(`${API}/cases/${c.id}/pairing`);
+    pairingData = await resp.json();
+  } catch(e) {}
+
+  const photosFrais = pairingData?.all_photos_frais || [];
+  const photosTranches = pairingData?.all_photos_tranches || [];
+  const allDbPhotos = c.photos || [];
+
+  // Si pairing n'a pas de photos, utiliser les photos de la DB
+  const hasPhotosFromPairing = photosFrais.length || photosTranches.length;
+
+  let html = '';
+
+  // ── Section Macro Frais ──
+  const fraisPhotos = hasPhotosFromPairing ? photosFrais : allDbPhotos.filter(p => p.module === 'macro_frais');
+  html += buildMacroSection('frais', '&#x1F7E2;', 'Examen macro frais', macroFrais, fraisPhotos, hasPhotosFromPairing, () => {
+    if (!macroFrais) return '';
+    let d = '<div class="field-grid">';
+    if (macroFrais.terme) d += `<div><div class="field-label">Terme</div><div class="field-value">${macroFrais.terme.sa || ''} SA${macroFrais.terme.jours ? ' + ' + macroFrais.terme.jours + 'j' : ''}</div></div>`;
+    if (macroFrais.masse_foetale_g) d += `<div><div class="field-label">Masse foetale</div><div class="field-value mono">${macroFrais.masse_foetale_g} g</div></div>`;
+    if (macroFrais.sexe) d += `<div><div class="field-label">Sexe</div><div class="field-value">${macroFrais.sexe}</div></div>`;
+    if (macroFrais.masse_paree_g) d += `<div><div class="field-label">Masse paree</div><div class="field-value mono">${macroFrais.masse_paree_g} g</div></div>`;
+    d += '</div>';
+    return d;
+  });
+
+  // ── Section Tranches de section ──
+  const tranchesPhotos = hasPhotosFromPairing ? photosTranches : allDbPhotos.filter(p => p.module === 'tranches_section');
+  const lesions = tranches?.lesions || [];
+  _trancheData = tranches;
+  const trancheComment = `<div style="margin-top:10px;">
+    <div class="field-label">Commentaire tranches de section</div>
+    <textarea class="input" rows="3" style="width:100%;resize:vertical;"
+      placeholder="Description libre des tranches de section..."
+      onchange="saveTrancheComment(this.value)">${escHtml(tranches?.commentaire || '')}</textarea>
+  </div>`;
+  html += buildMacroSection('tranches', '&#x1F52A;', 'Tranches de section', tranches, tranchesPhotos, hasPhotosFromPairing, () => {
+    if (!tranches) return '';
+    let d = '';
+    if (tranches.tranche_groups?.length) {
+      d += `<div style="font-size:13px;color:var(--text2);margin-bottom:10px;">${tranches.tranche_groups.length} groupe(s) de tranches</div>`;
+    }
+    if (lesions.length) {
+      d += '<div class="lesion-list">';
+      lesions.forEach(l => {
+        d += `<div class="lesion-item">
+          <span class="lesion-num">Lesion ${l.lesion || '?'}</span>
+          <span class="lesion-desc">${l.cassette ? 'K' + l.cassette + ' &mdash; ' : ''}${escHtml(l.description) || 'Pas de description'}</span>
+        </div>`;
+      });
+      d += '</div>';
+    }
+    return d;
+  }, trancheComment);
+
+  el.innerHTML = html || '<div style="padding:20px;color:var(--muted);font-size:13px;">Aucune donnee macroscopique disponible.</div>';
+  // no cache — always refresh from viewer
+}
+
+function buildMacroSection(id, icon, title, moduleData, photos, fromPairing, dataRendererFn, extraHtml = '') {
+  const hasData = !!moduleData;
+  const photoCount = photos.length;
+  const badgeTxt = photoCount ? photoCount + ' photo(s)' : (hasData ? 'Donnees' : 'Vide');
+  const badgeCls = hasData || photoCount ? 'has-data' : 'no-data';
+
+  // Store photos for lightbox
+  _sectionPhotos[id] = photos.map(p => {
+    if (fromPairing) {
+      return {
+        thumb: `${API}/photo/thumbnail?path=${encodeURIComponent(p.path)}&w=280&h=280`,
+        full: `${API}/photo/serve?path=${encodeURIComponent(p.path)}`,
+        label: p.filename || p.name,
+      };
+    } else {
+      return {
+        thumb: `${API}/photo/thumbnail?path=${encodeURIComponent(p.file_path)}&w=280&h=280`,
+        full: `${API}/photo/serve?path=${encodeURIComponent(p.file_path)}`,
+        label: p.label || p.photo_key,
+      };
+    }
+  });
+
+  let body = '';
+
+  // Photos grid
+  if (photoCount) {
+    body += '<div class="photos-grid">';
+    photos.forEach((p, i) => {
+      const thumbUrl = fromPairing
+        ? `${API}/photo/thumbnail?path=${encodeURIComponent(p.path)}&w=280&h=280`
+        : `${API}/photo/thumbnail?path=${encodeURIComponent(p.file_path)}&w=280&h=280`;
+      const label = fromPairing ? (p.filename || p.name) : (p.label || p.photo_key);
+      body += `<div class="photo-thumb" onclick="openLightbox(_sectionPhotos['${id}'],${i})" title="${escHtml(label)}">
+        <img src="${thumbUrl}" loading="lazy" alt="">
+        <div class="photo-label">${escHtml(label)}</div>
+      </div>`;
+    });
+    body += '</div>';
+  }
+
+  // Data collapsible
+  if (hasData && typeof dataRendererFn === 'function') {
+    const dataHtml = dataRendererFn();
+    if (dataHtml) {
+      const dtId = 'dt-' + id;
+      body += `<div class="data-toggle" onclick="toggleDataBlock('${dtId}', this)">&#9660; Donnees du module</div>`;
+      body += `<div class="data-collapsible" id="${dtId}">${dataHtml}</div>`;
+    }
+  }
+
+  body += extraHtml;
+
+  return `
+    <div class="macro-section${hasData || photoCount || extraHtml ? ' open' : ''}" id="msec-${id}">
+      <div class="macro-section-header" onclick="toggleMacroSection('msec-${id}')">
+        <span class="macro-section-icon">${icon}</span>
+        <span class="macro-section-title">${title}</span>
+        <span class="macro-section-badge ${badgeCls}">${badgeTxt}</span>
+        <span class="macro-section-chevron">&#9660;</span>
+      </div>
+      <div class="macro-section-body">${body}</div>
+    </div>`;
+}
+
+async function saveTrancheComment(val) {
+  if (!currentCase) return;
+  const data = Object.assign({}, _trancheData || {}, { commentaire: val });
+  try {
+    const res = await fetch(`${API}/cases/${currentCase.id}/modules/tranches_section`, {
+      method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    _trancheData = data;
+    toast('Commentaire tranches enregistré');
+  } catch(e) { toast('Erreur: ' + e.message, true); }
+}
+
+function toggleMacroSection(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function toggleDataBlock(dtId, el) {
+  document.getElementById(dtId).classList.toggle('open');
+}
+
+// ═══════ MICROSCOPIE PANEL (lames + appairage seulement) ═══════
+async function renderMicroPanel(c) {
+  const el = document.getElementById('panel-micro');
+  el.innerHTML = '<div class="loading-inline"><div class="spinner"></div> Chargement microscopie...</div>';
+
+  let lumi = null;
+  try {
+    const resp = await fetch(`${API}/cases/${c.id}/lumi-slides`);
+    lumi = await resp.json();
+  } catch(e) {}
+
+  const slides = lumi?.slides || [];
+  const stats = lumi?.stats || {};
+  const viewerUrl = lumi?.viewer_url || _viewerUrl || '';
+
+  let html = '';
+
+  if (!lumi?.available) {
+    html += `<div style="padding:20px;color:var(--muted);font-size:13px;">Aucune lame correspondant à <strong>${escHtml(c.numero_dossier)}</strong> dans Luminarium.</div>`;
+    el.innerHTML = html;
+    // no cache — always refresh from viewer
+    return;
+  }
+
+  // Stats row
+  html += `<div class="stats-row">
+    <div class="stat-card"><div class="stat-val">${stats.total || 0}</div><div class="stat-label">Lames</div></div>
+    <div class="stat-card"><div class="stat-val">${stats.in_viewer || 0}</div><div class="stat-label">Dans viewer</div></div>
+    <div class="stat-card"><div class="stat-val">${stats.annotated || 0}</div><div class="stat-label">Annotées</div></div>
+  </div>`;
+
+  // Global viewer button
+  const firstPath = slides[0]?.full_path || '';
+  const caseFolder = firstPath ? firstPath.replace(/\/[^/]+$/, '') : '';
+  if (viewerUrl && caseFolder) {
+    const allLink = viewerUrl + '/?root=' + encodeURIComponent(caseFolder);
+    html += `<div style="margin-bottom:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn primary" onclick="window.open('${allLink}','_blank')">
+        Ouvrir le viewer (${slides.length} lame${slides.length>1?'s':''})
+      </button>
+    </div>`;
+  }
+
+  // Slides gallery
+  html += `<div class="card">
+    <div class="card-header">Lames histologiques (${slides.length})</div>
+    <div class="card-body">
+      <div class="slide-grid">`;
+
+  slides.forEach(sl => {
+    const slidePath = sl.full_path || '';
+    const slFolder = slidePath ? slidePath.replace(/\/[^/]+$/, '') : '';
+    const thumbUrl = slidePath ? '/admin/api/slide-thumbnail?path=' + encodeURIComponent(slidePath) + '&w=300&h=200' : '';
+    const viewerLink = viewerUrl && slFolder
+        ? viewerUrl + '/?root=' + encodeURIComponent(slFolder) + '&slide=' + encodeURIComponent(slidePath)
+        : '';
+    const hasAnnot = sl.annotation_count > 0;
+    const labelDot = slideStatusDot(sl.label_status);
+
+    html += `<div class="slide-item">
+      <div ${viewerLink ? `onclick="window.open('${viewerLink}','_blank')" style="cursor:pointer"` : ''} title="${viewerLink ? 'Ouvrir dans le viewer' : sl.nom_lame}">
+        ${thumbUrl ? `<img src="${thumbUrl}" loading="lazy" alt="">` : '<div style="height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px">Pas d\'apercu</div>'}
+      </div>
+      <div class="slide-name">${escHtml(sl.nom_lame)}</div>
+      <div class="slide-ext" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+        ${sl.tissue_type ? '<span style="background:var(--accent-dim);color:var(--accent);padding:0 4px;border-radius:3px;font-size:9px">' + escHtml(sl.tissue_type) + '</span>' : ''}
+        ${labelDot}
+        ${hasAnnot ? '<span style="color:var(--success);font-size:9px" title="Annotée">&#x270F; Ann.</span>' : ''}
+      </div>
+      ${slideLabelsInline(sl)}
+    </div>`;
+  });
+  html += `</div></div></div>`;
+
+  // Tableau récap labels/annotations
+  html += slideSummaryTable(slides);
+
+  // Micro lecture summary (read-only)
+  const microMod = c.modules?.micro_lecture?.data;
+  if (microMod && typeof microMod === 'object') {
+    const filledSlides = Object.entries(microMod).filter(([k, v]) => v.tissues && v.tissues.length > 0);
+    if (filledSlides.length) {
+      html += `<div class="card">
+        <div class="card-header">&#x1F4CB; Grille de lecture micro (${filledSlides.length} lame${filledSlides.length>1?'s':''})</div>
+        <div class="card-body">`;
+      filledSlides.forEach(([slideKey, sData]) => {
+        const checkedItems = Object.entries(sData.items || {}).filter(([k,v]) => v.checked || v.value);
+        html += `<div style="margin-bottom:10px;padding:10px;background:var(--surface2);border-radius:var(--radius);border-left:3px solid var(--accent);">
+          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px;">${escHtml(slideKey)}</div>
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Tissus : ${sData.tissues.map(t => '<span style="color:var(--text);font-weight:600;">' + escHtml(t) + '</span>').join(', ')}</div>`;
+        if (checkedItems.length) {
+          html += '<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+          checkedItems.forEach(([itemId, itemData]) => {
+            const label = itemId.replace(/_/g, ' ');
+            const sev = itemData.severity ? ` (${itemData.severity}%)` : '';
+            const val = itemData.value ? ` = ${itemData.value}` : '';
+            html += `<span style="padding:2px 8px;background:var(--accent-dim);color:var(--accent);border-radius:10px;font-size:11px;font-weight:600;">${escHtml(label)}${val}${sev}</span>`;
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      });
+      html += '</div></div>';
+    }
+  }
+
+  el.innerHTML = html;
+  // no cache — always refresh from viewer
+}
+
+// ═══════ Helpers pastilles + tableau FOETO ═══════
+// ═══════ MODULES PANEL (Donnees) ═══════
+function renderModulesPanel() {
+  if (!currentCase) return;
+  const el = document.getElementById('panel-modules');
+  if (el.innerHTML.trim()) return; // already rendered
+  const modules = currentCase.modules || {};
+  const keys = Object.keys(modules);
+
+  let html = '';
+
+  // ── Micro lecture details ──
+  const microMod = modules.micro_lecture?.data;
+  if (microMod && typeof microMod === 'object') {
+    const filledSlides = Object.entries(microMod).filter(([k, v]) => v.tissues && v.tissues.length > 0);
+    if (filledSlides.length) {
+      html += `<div class="card" style="border-left:3px solid var(--accent);">
+        <div class="card-header">&#x1F52C; Microscopie — Grille de lecture (${filledSlides.length} lame${filledSlides.length>1?'s':''})</div>
+        <div class="card-body">`;
+      filledSlides.forEach(([slideKey, sData]) => {
+        const checkedItems = Object.entries(sData.items || {}).filter(([k,v]) => v.checked || v.value);
+        html += `<div style="margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius);">
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;font-family:var(--mono);">${escHtml(slideKey)}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">Tissus : ${sData.tissues.map(t => '<span style="background:var(--accent-dim);color:var(--accent);padding:2px 8px;border-radius:10px;font-weight:600;font-size:11px;">' + escHtml(t) + '</span>').join(' ')}</div>`;
+        if (checkedItems.length) {
+          html += '<div style="display:flex;flex-direction:column;gap:4px;">';
+          checkedItems.forEach(([itemId, itemData]) => {
+            const label = itemId.replace(/_/g, ' ');
+            const sev = itemData.severity ? itemData.severity : 0;
+            const val = itemData.value || '';
+            let detail = val;
+            if (sev > 0) {
+              let sevLabel = '';
+              if (sev <= 25) sevLabel = 'discret';
+              else if (sev <= 50) sevLabel = 'modere';
+              else if (sev <= 75) sevLabel = 'marque';
+              else sevLabel = 'massif';
+              detail = `<div style="display:flex;align-items:center;gap:6px;"><div style="width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;"><div style="width:${sev}%;height:100%;background:var(--accent);border-radius:3px;"></div></div><span style="font-size:10px;color:var(--accent);font-weight:600;">${sev}% (${sevLabel})</span></div>`;
+            }
+            html += `<div style="display:flex;align-items:center;gap:8px;padding:4px 8px;background:var(--surface);border-radius:4px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text);min-width:140px;">${escHtml(label)}</span>
+              ${val ? '<span style="font-size:12px;color:var(--accent);font-weight:600;">' + val + '</span>' : ''}
+              ${sev > 0 ? detail : ''}
+            </div>`;
+          });
+          html += '</div>';
+        } else {
+          html += '<div style="font-size:11px;color:var(--muted);">Aucune anomalie signalee</div>';
+        }
+        html += '</div>';
+      });
+      html += '</div></div>';
+    }
+  }
+
+  // ── Other modules (raw JSON) ──
+  const otherKeys = keys.filter(k => k !== 'micro_lecture' && k !== 'last_cr');
+  if (otherKeys.length) {
+    html += `<div class="module-chips" style="margin-bottom:16px;">
+      ${otherKeys.map(m => `<span class="module-chip" onclick="showModuleInline('${m}')">${m}</span>`).join('')}
+    </div>
+    <div id="module-detail-inline"></div>`;
+  }
+
+  if (!html) {
+    html = '<div style="padding:20px;color:var(--muted);font-size:13px;">Aucun module de donnees.</div>';
+  }
+
+  el.innerHTML = html;
+}
+
+async function showModuleInline(moduleName) {
+  if (!currentCase) return;
+  try {
+    const resp = await fetch(`${API}/cases/${currentCase.id}/modules/${moduleName}`);
+    const data = await resp.json();
+    document.getElementById('module-detail-inline').innerHTML = `
+      <div class="card">
+        <div class="card-header">Module : ${moduleName}</div>
+        <div class="card-body">
+          <div class="json-view">${escHtml(JSON.stringify(data.data, null, 2))}</div>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    toast('Erreur chargement module', true);
+  }
+}
+
+// ═══════ LIGHTBOX ═══════
+const lbState = { photos: [], idx: 0, zoom: 1, rotation: 0, fit: true, panX: 0, panY: 0, dragging: false, startX: 0, startY: 0 };
+
+function openLightbox(photos, idx) {
+  lbState.photos = photos;
+  lbState.idx = idx || 0;
+  lbState.zoom = 1; lbState.rotation = 0; lbState.fit = true; lbState.panX = 0; lbState.panY = 0;
+  document.getElementById('photoLightbox').classList.add('visible');
+  lbUpdate();
+}
+
+function closeLightbox() {
+  document.getElementById('photoLightbox').classList.remove('visible');
+}
+
+function lbNav(dir) {
+  lbState.idx = (lbState.idx + dir + lbState.photos.length) % lbState.photos.length;
+  lbState.zoom = 1; lbState.rotation = 0; lbState.fit = true; lbState.panX = 0; lbState.panY = 0;
+  lbUpdate();
+}
+
+function lbUpdate() {
+  const p = lbState.photos[lbState.idx];
+  if (!p) return;
+  const img = document.getElementById('lbImg');
+  img.src = p.full;
+  document.getElementById('lbTitle').textContent = p.label || '';
+  document.getElementById('lbCounter').textContent = (lbState.idx + 1) + ' / ' + lbState.photos.length;
+  lbApplyTransform();
+}
+
+function lbApplyTransform() {
+  const img = document.getElementById('lbImg');
+  if (lbState.fit) {
+    img.style.maxWidth = '90vw'; img.style.maxHeight = '80vh';
+  } else {
+    img.style.maxWidth = 'none'; img.style.maxHeight = 'none';
+  }
+  img.style.transform = `translate(${lbState.panX}px, ${lbState.panY}px) scale(${lbState.zoom}) rotate(${lbState.rotation}deg)`;
+}
+
+function lbZoom(dir) {
+  const steps = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8];
+  const cur = lbState.zoom;
+  let nextIdx;
+  if (dir > 0) {
+    nextIdx = steps.findIndex(s => s > cur + 0.01);
+    if (nextIdx === -1) nextIdx = steps.length - 1;
+  } else {
+    nextIdx = steps.length - 1;
+    for (let i = steps.length - 1; i >= 0; i--) { if (steps[i] < cur - 0.01) { nextIdx = i; break; } }
+  }
+  lbState.zoom = steps[nextIdx];
+  lbState.fit = false;
+  lbApplyTransform();
+}
+
+function lbZoomReset() {
+  lbState.zoom = 1; lbState.panX = 0; lbState.panY = 0; lbState.fit = false;
+  lbApplyTransform();
+}
+
+function lbFitToggle() {
+  lbState.fit = !lbState.fit;
+  if (lbState.fit) { lbState.zoom = 1; lbState.panX = 0; lbState.panY = 0; }
+  lbApplyTransform();
+}
+
+function lbRotate(deg) {
+  lbState.rotation = (lbState.rotation + deg) % 360;
+  lbApplyTransform();
+}
+
+// Lightbox drag/pan
+document.getElementById('lbImgWrap').addEventListener('mousedown', (e) => {
+  if (e.target.tagName === 'BUTTON') return;
+  lbState.dragging = true; lbState.startX = e.clientX - lbState.panX; lbState.startY = e.clientY - lbState.panY;
+  document.getElementById('lbImgWrap').classList.add('grabbing');
+});
+document.addEventListener('mousemove', (e) => {
+  if (!lbState.dragging) return;
+  lbState.panX = e.clientX - lbState.startX;
+  lbState.panY = e.clientY - lbState.startY;
+  lbApplyTransform();
+});
+document.addEventListener('mouseup', () => {
+  lbState.dragging = false;
+  document.getElementById('lbImgWrap')?.classList.remove('grabbing');
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('photoLightbox').classList.contains('visible')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === '+' || e.key === '=') lbZoom(1);
+  if (e.key === '-') lbZoom(-1);
+});
+
+// Scroll zoom
+document.getElementById('lbImgWrap').addEventListener('wheel', (e) => {
+  e.preventDefault();
+  lbZoom(e.deltaY < 0 ? 1 : -1);
+}, { passive: false });
+
+// ═══════ ACTIONS ═══════
+// CR panel is now provided by admin_cr.js (shared with foetus)
+
+async function exportJSON(caseId) {
+  try {
+    const resp = await fetch(`${API}/cases/${caseId}/export-json`, {method: 'POST'});
+    const data = await resp.json();
+    if (data.ok) toast(`JSON exporte -> ${data.path}`);
+    else toast(data.error || 'Erreur export', true);
+  } catch (e) {
+    toast('Erreur export JSON', true);
+  }
+}
+
+async function deleteCase(caseId) {
+  if (!confirm('Supprimer ce dossier placenta ?')) return;
+  try {
+    await fetch(`${API}/cases/${caseId}`, {method: 'DELETE'});
+    currentCaseId = null; currentCase = null;
+    document.getElementById('detail').innerHTML = '<div class="detail-empty">Dossier supprime</div>';
+    loadCases();
+    toast('Supprime');
+  } catch (e) {
+    toast('Erreur suppression', true);
+  }
+}
+
+// ═══════ ATTRIBUTION / GESTION DES CAS ═══════
+
+// Cache global des utilisateurs pour le dropdown
+let _cachedUsers = null;
+
+async function loadAssignedToDropdown(currentValue) {
+  const sel = document.getElementById('assignedToSelect');
+  if (!sel) return;
+
+  // Charger les utilisateurs (cache)
+  if (!_cachedUsers) {
+    try {
+      const resp = await fetch(`${API}/users/list`);
+      const data = await resp.json();
+      _cachedUsers = data.users || [];
+    } catch(e) {
+      _cachedUsers = [];
+    }
+  }
+
+  // Remplir le dropdown
+  let html = '<option value="">— Non attribué —</option>';
+  _cachedUsers.forEach(u => {
+    const display = u.display_name || u.username;
+    const roleTag = u.role === 'admin' ? ' (admin)' : u.role === 'admin_centre' ? ' (admin centre)' : '';
+    const selected = (u.username === currentValue) ? 'selected' : '';
+    html += `<option value="${escHtml(u.username)}" ${selected}>${escHtml(display)}${roleTag}</option>`;
+  });
+  sel.innerHTML = html;
+}
+
+async function assignCase(username) {
+  if (!currentCase) return;
+  try {
+    await fetch(`${API}/cases/${currentCase.id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({assigned_to: username})
+    });
+    currentCase.assigned_to = username;
+    toast(username ? 'Cas attribué à ' + username : 'Attribution retirée');
+    loadCases();
+  } catch(e) {
+    toast('Erreur attribution: ' + e.message, true);
+  }
+}
+
+async function updateCaseField(field, value) {
+  if (!currentCase) return;
+  try {
+    const body = {};
+    body[field] = value;
+    await fetch(`${API}/cases/${currentCase.id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    currentCase[field] = value;
+    toast('Mis à jour');
+    loadCases();
+  } catch(e) {
+    toast('Erreur: ' + e.message, true);
+  }
+}
+
+async function syncLocal() {
+  try {
+    const resp = await fetch(`${API}/sync`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: '{}',
+    });
+    const data = await resp.json();
+    toast(data.message || 'Sync termine');
+    loadCases();
+  } catch (e) {
+    toast('Erreur sync', true);
+  }
+}
+
+// ═══════ EDIT MODE ═══════
+let _editMode = false;
+
+function toggleEditMode() {
+  _editMode = !_editMode;
+  if (_editMode) renderEditPanel(currentCase);
+  else renderContextePanel(currentCase);
+}
+
+function renderEditPanel(c) {
+  const el = document.getElementById('panel-contexte');
+  const _v = (v) => v != null ? v : '';
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-header">&#x270F; Modifier le cas</div>
+      <div class="card-body">
+        <div class="field-grid" style="gap:12px;">
+          <div><label class="field-label">Numéro dossier</label><input id="ed_numero" class="input" value="${escHtml(_v(c.numero_dossier))}"></div>
+          <div><label class="field-label">Terme (SA)</label><input id="ed_terme_sa" class="input" type="number" min="12" max="43" value="${_v(c.terme_sa)}"></div>
+          <div><label class="field-label">Terme (jours)</label><input id="ed_terme_jours" class="input" type="number" min="0" max="6" value="${_v(c.terme_jours)}"></div>
+          <div><label class="field-label">Source terme</label><input id="ed_terme_source" class="input" value="${escHtml(_v(c.terme_source))}"></div>
+          <div><label class="field-label">Sexe</label>
+            <select id="ed_sexe" class="input">
+              <option value="">—</option>
+              <option value="M" ${c.sexe==='M'?'selected':''}>M</option>
+              <option value="F" ${c.sexe==='F'?'selected':''}>F</option>
+              <option value="I" ${c.sexe==='I'?'selected':''}>Indéterminé</option>
+            </select>
+          </div>
+          <div><label class="field-label">Masse fœtale (g)</label><input id="ed_masse_foetale_g" class="input" type="number" value="${_v(c.masse_foetale_g)}"></div>
+          <div><label class="field-label">Indication</label><input id="ed_indication_terme" class="input" value="${escHtml(_v(c.indication_terme))}"></div>
+          <div><label class="field-label">Masse parée (g)</label><input id="ed_masse_paree_g" class="input" type="number" value="${_v(c.masse_paree_g)}"></div>
+          <div><label class="field-label">Grand axe (cm)</label><input id="ed_grand_axe_cm" class="input" type="number" step="0.1" value="${_v(c.grand_axe_cm)}"></div>
+          <div><label class="field-label">Petit axe (cm)</label><input id="ed_petit_axe_cm" class="input" type="number" step="0.1" value="${_v(c.petit_axe_cm)}"></div>
+          <div><label class="field-label">Épaisseur (cm)</label><input id="ed_epaisseur_cm" class="input" type="number" step="0.1" value="${_v(c.epaisseur_cm)}"></div>
+          <div><label class="field-label">Forme</label><input id="ed_forme" class="input" value="${escHtml(_v(c.forme))}"></div>
+        </div>
+        <div style="margin-top:12px;">
+          <label class="field-label">Notes</label>
+          <textarea id="ed_notes" class="input" rows="3" style="width:100%;resize:vertical;">${escHtml(_v(c.notes))}</textarea>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px;">
+          <button class="btn primary" onclick="saveEditPanel()">Enregistrer</button>
+          <button class="btn" onclick="toggleEditMode()">Annuler</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function saveEditPanel() {
+  if (!currentCase) return;
+  const _num = (id) => { const v = document.getElementById(id).value; return v === '' ? null : Number(v); };
+  const _str = (id) => document.getElementById(id).value || null;
+
+  const data = {
+    numero_dossier: _str('ed_numero'),
+    terme_sa: _num('ed_terme_sa'),
+    terme_jours: _num('ed_terme_jours'),
+    terme_source: _str('ed_terme_source'),
+    sexe: _str('ed_sexe'),
+    masse_foetale_g: _num('ed_masse_foetale_g'),
+    indication_terme: _str('ed_indication_terme'),
+    masse_paree_g: _num('ed_masse_paree_g'),
+    grand_axe_cm: _num('ed_grand_axe_cm'),
+    petit_axe_cm: _num('ed_petit_axe_cm'),
+    epaisseur_cm: _num('ed_epaisseur_cm'),
+    forme: _str('ed_forme'),
+    notes: document.getElementById('ed_notes').value || null,
+  };
+
+  try {
+    const resp = await fetch(`${API}/cases/${currentCase.id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    Object.assign(currentCase, data);
+    _editMode = false;
+    toast('Cas mis à jour');
+    loadCases();
+    renderDetail(currentCase);
+  } catch(e) {
+    toast('Erreur: ' + e.message, true);
+  }
+}
+
+// ═══════ INIT ═══════
+loadCases();
+
+// Handle tab lazy-loading for modules and CR
+const observer = new MutationObserver(() => {
+  const modulesPanel = document.getElementById('panel-modules');
+  if (modulesPanel && modulesPanel.classList.contains('active') && !modulesPanel.innerHTML.trim()) {
+    renderModulesPanel();
+  }
+});
+observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] });
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ═══════ GRILLE DE LECTURE MICROSCOPIQUE ═════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════════
+
+const MICRO_TISSUES = {
+  cordon: {
+    label: 'Cordon', icon: '\u{1F517}',
+    items: [
+      { id: 'cordon_vx', label: 'Vaisseaux', type: 'radio',
+        options: [
+          { value: '3', label: '3 vaisseaux', anormal: false },
+          { value: '2', label: '2 vaisseaux', anormal: true }
+        ]},
+      { id: 'cordon_rif', label: 'RIF (Response Inflammatoire Funiculaire)', type: 'radio',
+        options: [
+          { value: '0', label: 'RIF 0', anormal: false },
+          { value: '1', label: 'RIF 1', anormal: true },
+          { value: '2', label: 'RIF 2', anormal: true },
+          { value: '3', label: 'RIF 3', anormal: true }
+        ]},
+      { id: 'cordon_mavm', label: 'MAVM (necrose myocytes)', type: 'check',
+        desc: 'Necrose des myocytes de la media' }
+    ]
+  },
+  membranes: {
+    label: 'Membranes', icon: '\u{1F9EB}',
+    items: [
+      { id: 'memb_mfm', label: 'MFM', type: 'check', desc: 'Macrophages charges de meconium' },
+      { id: 'memb_mfm_plus', label: 'MFM+', type: 'check', desc: 'Tres nombreux macrophages meconium' },
+      { id: 'memb_chorio1', label: 'Chorioamniotite stade 1', type: 'check', desc: 'Infiltrat PNN decidue sans extension chorion' },
+      { id: 'memb_chorio2', label: 'Chorioamniotite stade 2', type: 'check', desc: 'PNN decidue + extensions chorion' },
+      { id: 'memb_chorio3', label: 'Chorioamniotite stade 3', type: 'check', desc: 'PNN decidue + chorion + necrose amnios' },
+      { id: 'memb_neclamdec', label: 'Necrose lame decidue', type: 'check', desc: 'Plages necrose basale decidue capsulaire' },
+      { id: 'memb_decchro', label: 'Deciduite chronique', type: 'check', desc: 'Quelques plasmocytes decidue basale' },
+      { id: 'memb_decchro_plus', label: 'Deciduite chronique +', type: 'check', desc: 'Nombreux plasmocytes decidue basale' },
+      { id: 'memb_sg', label: 'Saignement', type: 'check', desc: 'Effusions sang frais chorion' },
+      { id: 'memb_sidero', label: 'Siderophages', type: 'check', desc: 'Siderophages decidue capsulaire' }
+    ]
+  },
+  plaque_choriale: {
+    label: 'Plaque choriale', icon: '\u{1F535}',
+    items: [
+      { id: 'pcho_normal', label: 'Normal', type: 'check', desc: 'Plaque choriale et vaisseaux allanto-choriaux sans particularite', isNormal: true },
+      { id: 'pcho_chorio1', label: 'Chorio 1', type: 'check', desc: 'Infiltrat PNN toit chambre intervilleuse, sans extension chorion' },
+      { id: 'pcho_chorio2', label: 'Chorio 2', type: 'check', desc: 'PNN toit chambre + extensions chorion' },
+      { id: 'pcho_chorio3', label: 'Chorio 3', type: 'check', desc: 'PNN + extensions chorion + necrose' },
+      { id: 'pcho_rif_allanto', label: 'RIF vx allanto-choriaux', type: 'check', desc: 'PNN media gros vaisseaux allanto-choriaux' }
+    ]
+  },
+  villosites: {
+    label: 'Villosites', icon: '\u{1F333}',
+    items: [
+      { id: 'villo_normal', label: 'Normal', type: 'check', desc: 'Villosites de maturation conforme au terme, morphologie normale', isNormal: true },
+      { id: 'villo_amv', label: 'AMV', type: 'check', desc: 'Acceleration maturation villositaire' },
+      { id: 'villo_ansct', label: 'ANSCT', type: 'check', desc: 'Amas nucleaires syncytiotrophoblastiques' },
+      { id: 'villo_hvd', label: 'HVD', type: 'check', desc: 'Hypoplasie villositaire distale' },
+      { id: 'villo_chorangio', label: 'Chorangiose', type: 'check', desc: 'Villosites distales hypervascularisees' },
+      { id: 'villo_kit', label: 'KIT', type: 'check', desc: 'Kystes inclusion trophoblastiques' },
+      { id: 'villo_vtf', label: 'VTF (sclerose)', type: 'check', desc: 'Villosites completement sclerosees' },
+      { id: 'villo_vue_bg', label: 'VUE bas grade', type: 'check', desc: 'Foyers <10 villosites infiltrat lympho-histiocytaire' },
+      { id: 'villo_vue_hg', label: 'VUE haut grade', type: 'check', desc: 'Foyers >10 villosites infiltrat lympho-histiocytaire' },
+      { id: 'villo_caryovs', label: 'Caryorrhexie VS', type: 'check', desc: 'Caryorrhexie vaso-stromale villosites' }
+    ]
+  },
+  espace_intervilleux: {
+    label: 'Espace intervilleux', icon: '\u{1F7E1}',
+    items: [
+      { id: 'eiv_normal', label: 'Normal', type: 'check', desc: 'Espace intervilleux libre, GR maternels normaux', isNormal: true },
+      { id: 'eiv_fibpv', label: 'Fibrine PV augmentee', type: 'check', desc: 'Fibrine perivillositaire diffusement augmentee' },
+      { id: 'eiv_nidf', label: 'NIDF', type: 'check', desc: 'Travees NIDF' },
+      { id: 'eiv_chi', label: 'CHI', type: 'check', desc: 'Inflammation histiocytaire intervilleuse' },
+      { id: 'eiv_calcif', label: 'Calcifications augmentees', type: 'check', desc: 'Calcifications diffuses augmentees' }
+    ]
+  },
+  plaque_basale: {
+    label: 'Plaque basale', icon: '\u{1F534}',
+    items: [
+      { id: 'pbas_normal', label: 'Normal', type: 'check', desc: 'Plaque basale sans particularite', isNormal: true },
+      { id: 'pbas_artodec', label: 'Artodec', type: 'check', desc: 'Necrose fibrinoide arteres utero-placentaires' },
+      { id: 'pbas_decchro', label: 'Deciduite chronique', type: 'check', desc: 'Plasmocytes epars plaque basale' },
+      { id: 'pbas_abruptus', label: 'Abruptus', type: 'check', desc: 'Plaque basale dechiree, effusions sang frais' }
+    ]
+  }
+};
+
+// State for the micro reading grid
+let microGridState = {};   // { slideKey: { tissues: ['cordon','membranes'], items: { cordon_mavm: { checked:true, severity:50 }, ... } } }
+let microGridCurrentSlide = null;
+let microGridSlides = [];  // List of { key, label, path }
+let microGridDirty = false;
+
+// Load existing micro_lecture data from modules
+function loadMicroLectureData(c) {
+  const mod = c.modules?.micro_lecture?.data;
+  if (mod && typeof mod === 'object') {
+    microGridState = JSON.parse(JSON.stringify(mod));
+  } else {
+    microGridState = {};
+  }
+  microGridDirty = false;
+}
+
+// Build the reading grid UI inside the micro panel
+function renderMicroGrid(slides, caseId) {
+  microGridSlides = slides.map(sl => ({
+    key: sl.filename.replace(/\.[^.]+$/, ''),
+    label: sl.filename,
+    path: sl.path
+  }));
+
+  if (!microGridSlides.length) return '';
+
+  let html = '<div class="micro-grid-container" id="microGridContainer">';
+  html += '<div class="card">';
+  html += '<div class="card-header">&#x1F4CB; Grille de lecture microscopique</div>';
+  html += '<div class="card-body">';
+
+  // Slide selector
+  html += '<div class="micro-grid-header">';
+  html += '<h3>Lecture par lame</h3>';
+  html += '<select class="slide-selector" id="microSlideSelect" onchange="onMicroSlideChange(this.value)">';
+  html += '<option value="">-- Choisir une lame --</option>';
+  microGridSlides.forEach(sl => {
+    html += `<option value="${escHtml(sl.key)}">${escHtml(sl.label)}</option>`;
+  });
+  html += '</select>';
+  html += '</div>';
+
+  // Grid content (populated dynamically)
+  html += '<div id="microGridContent"></div>';
+
+  // Save bar
+  html += `<div class="micro-save-bar">
+    <button class="btn primary" onclick="saveMicroLecture(${caseId})">&#x1F4BE; Sauvegarder la grille</button>
+    <button class="btn" onclick="resetMicroSlide()">&#x21BA; Reset lame</button>
+    <span class="save-status" id="microSaveStatus"></span>
+  </div>`;
+
+  html += '</div></div></div>';
+  return html;
+}
+
+function onMicroSlideChange(slideKey) {
+  microGridCurrentSlide = slideKey;
+  if (!slideKey) {
+    document.getElementById('microGridContent').innerHTML = '';
+    return;
+  }
+  // Init state for slide if not exists
+  if (!microGridState[slideKey]) {
+    microGridState[slideKey] = { tissues: [], items: {} };
+  }
+  renderSlideGrid(slideKey);
+}
+
+function renderSlideGrid(slideKey) {
+  const state = microGridState[slideKey];
+  const container = document.getElementById('microGridContent');
+
+  let html = '';
+
+  // Tissue picker
+  html += '<div class="tissue-picker">';
+  html += '<div class="tissue-picker-label">Tissus presents sur cette lame</div>';
+  Object.entries(MICRO_TISSUES).forEach(([key, t]) => {
+    const active = state.tissues.includes(key);
+    html += `<div class="tissue-pill ${active ? 'active' : ''}" onclick="toggleTissue('${slideKey}','${key}')" title="${t.label}">
+      ${t.icon} ${t.label}
+    </div>`;
+  });
+  html += `<div class="tissue-pill-add" onclick="addCustomTissue('${slideKey}')" title="Ajouter un tissu personnalise">+ Autre</div>`;
+  html += '</div>';
+
+  // Render each active tissue section
+  state.tissues.forEach(tissueKey => {
+    const tissueDef = MICRO_TISSUES[tissueKey];
+    if (!tissueDef) {
+      // Custom tissue — just show the name
+      html += `<div class="tissue-section" style="border-left-color:var(--muted);">
+        <div class="tissue-section-title"><span style="color:var(--muted)">&#x2699;</span> ${escHtml(tissueKey)}
+          <span style="margin-left:auto;font-size:11px;color:var(--danger);cursor:pointer;" onclick="removeTissue('${slideKey}','${tissueKey}')">&times; Retirer</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);">Tissu personnalise — pas d'items predefinies</div>
+      </div>`;
+      return;
+    }
+
+    html += `<div class="tissue-section">`;
+    html += `<div class="tissue-section-title">${tissueDef.icon} ${tissueDef.label}
+      <span style="margin-left:auto;font-size:11px;color:var(--muted);cursor:pointer;" onclick="removeTissue('${slideKey}','${tissueKey}')">&times; Retirer</span>
+    </div>`;
+    html += '<div class="anomaly-list">';
+
+    tissueDef.items.forEach(item => {
+      const itemState = state.items[item.id] || {};
+
+      if (item.type === 'radio') {
+        const val = itemState.value || '';
+        html += `<div class="anomaly-row" style="flex-wrap:wrap;">
+          <span class="anomaly-label" style="flex:none;min-width:120px;">${item.label}</span>
+          <div class="radio-group">`;
+        item.options.forEach(opt => {
+          const checked = val === opt.value ? 'checked' : '';
+          const anormalCls = opt.anormal ? ' anormal' : '';
+          html += `<input type="radio" name="micro_${slideKey}_${item.id}" id="micro_${slideKey}_${item.id}_${opt.value}"
+            value="${opt.value}" ${checked} class="${anormalCls}"
+            onchange="onMicroRadio('${slideKey}','${item.id}','${opt.value}')">
+            <label for="micro_${slideKey}_${item.id}_${opt.value}">${opt.label}</label>`;
+        });
+        html += '</div></div>';
+      } else {
+        // Checkbox item with severity slider
+        const checked = itemState.checked ? true : false;
+        const severity = itemState.severity ?? 0;
+        const isNormal = item.isNormal || false;
+        const normalCls = isNormal ? ' normal-item' : '';
+        html += `<div class="anomaly-row ${checked ? 'checked' : ''}${normalCls}" id="arow_${slideKey}_${item.id}">
+          <input type="checkbox" id="micro_${slideKey}_${item.id}" ${checked ? 'checked' : ''}
+            onchange="onMicroCheck('${slideKey}','${item.id}',this.checked,${isNormal})">
+          <label class="anomaly-label" for="micro_${slideKey}_${item.id}" title="${item.desc || ''}">${isNormal ? '\u2705 ' : ''}${item.label}</label>
+          ${isNormal ? '' : `<div class="severity-wrap">
+            <input type="range" class="severity-slider" min="0" max="100" value="${severity}"
+              id="sev_${slideKey}_${item.id}"
+              oninput="onMicroSeverity('${slideKey}','${item.id}',this.value)">
+            <span class="severity-val" id="sevval_${slideKey}_${item.id}">${severity}%</span>
+          </div>`}
+        </div>`;
+      }
+    });
+
+    html += '</div></div>';
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleTissue(slideKey, tissueKey) {
+  const state = microGridState[slideKey];
+  const idx = state.tissues.indexOf(tissueKey);
+  if (idx >= 0) {
+    state.tissues.splice(idx, 1);
+    // Clean up items for this tissue
+    const tissueDef = MICRO_TISSUES[tissueKey];
+    if (tissueDef) tissueDef.items.forEach(it => delete state.items[it.id]);
+  } else {
+    state.tissues.push(tissueKey);
+  }
+  microGridDirty = true;
+  renderSlideGrid(slideKey);
+}
+
+function removeTissue(slideKey, tissueKey) {
+  const state = microGridState[slideKey];
+  const idx = state.tissues.indexOf(tissueKey);
+  if (idx >= 0) {
+    state.tissues.splice(idx, 1);
+    const tissueDef = MICRO_TISSUES[tissueKey];
+    if (tissueDef) tissueDef.items.forEach(it => delete state.items[it.id]);
+  }
+  microGridDirty = true;
+  renderSlideGrid(slideKey);
+}
+
+function addCustomTissue(slideKey) {
+  const name = prompt('Nom du tissu personnalise :');
+  if (!name || !name.trim()) return;
+  const key = name.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+  const state = microGridState[slideKey];
+  if (!state.tissues.includes(key)) {
+    state.tissues.push(key);
+  }
+  microGridDirty = true;
+  renderSlideGrid(slideKey);
+}
+
+function onMicroCheck(slideKey, itemId, checked, isNormal) {
+  const state = microGridState[slideKey];
+  if (!state.items[itemId]) state.items[itemId] = {};
+  state.items[itemId].checked = checked;
+  if (!checked) state.items[itemId].severity = 0;
+  microGridDirty = true;
+
+  // Mutual exclusion: Normal <-> pathological items
+  if (checked && isNormal) {
+    // Uncheck all pathological items in same tissue
+    const prefix = itemId.replace('_normal', '_');
+    const tissueKey = Object.keys(MICRO_TISSUES).find(k =>
+      MICRO_TISSUES[k].items.some(it => it.id === itemId)
+    );
+    if (tissueKey) {
+      MICRO_TISSUES[tissueKey].items.forEach(it => {
+        if (it.id !== itemId && state.items[it.id]?.checked) {
+          state.items[it.id].checked = false;
+          state.items[it.id].severity = 0;
+        }
+      });
+    }
+    renderSlideGrid(slideKey);
+    return;
+  }
+  if (checked && !isNormal) {
+    // Uncheck the normal item of same tissue
+    const tissueKey = Object.keys(MICRO_TISSUES).find(k =>
+      MICRO_TISSUES[k].items.some(it => it.id === itemId)
+    );
+    if (tissueKey) {
+      const normalItem = MICRO_TISSUES[tissueKey].items.find(it => it.isNormal);
+      if (normalItem && state.items[normalItem.id]?.checked) {
+        state.items[normalItem.id].checked = false;
+        renderSlideGrid(slideKey);
+        return;
+      }
+    }
+  }
+
+  // Update row styling
+  const row = document.getElementById(`arow_${slideKey}_${itemId}`);
+  if (row) row.classList.toggle('checked', checked);
+  // Reset severity display
+  if (!checked) {
+    const sev = document.getElementById(`sev_${slideKey}_${itemId}`);
+    const sevVal = document.getElementById(`sevval_${slideKey}_${itemId}`);
+    if (sev) sev.value = 0;
+    if (sevVal) sevVal.textContent = '0%';
+  }
+}
+
+function onMicroSeverity(slideKey, itemId, value) {
+  const state = microGridState[slideKey];
+  if (!state.items[itemId]) state.items[itemId] = { checked: true };
+  state.items[itemId].severity = parseInt(value);
+  microGridDirty = true;
+  const sevVal = document.getElementById(`sevval_${slideKey}_${itemId}`);
+  if (sevVal) sevVal.textContent = value + '%';
+}
+
+function onMicroRadio(slideKey, itemId, value) {
+  const state = microGridState[slideKey];
+  if (!state.items[itemId]) state.items[itemId] = {};
+  state.items[itemId].value = value;
+  microGridDirty = true;
+}
+
+function resetMicroSlide() {
+  if (!microGridCurrentSlide) return;
+  if (!confirm('Reinitialiser les donnees de cette lame ?')) return;
+  microGridState[microGridCurrentSlide] = { tissues: [], items: {} };
+  microGridDirty = true;
+  renderSlideGrid(microGridCurrentSlide);
+}
+
+async function saveMicroLecture(caseId) {
+  const statusEl = document.getElementById('microSaveStatus');
+  statusEl.textContent = 'Sauvegarde...';
+  statusEl.style.color = 'var(--accent)';
+  try {
+    const resp = await fetch(`${API}/cases/${caseId}/modules/micro_lecture`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(microGridState)
+    });
+    const data = await resp.json();
+    if (resp.ok) {
+      statusEl.textContent = 'Sauvegarde OK \u2714';
+      statusEl.style.color = 'var(--success)';
+      microGridDirty = false;
+      toast('Grille micro sauvegardee');
+      // Update local cache
+      if (currentCase && currentCase.modules) {
+        if (!currentCase.modules.micro_lecture) currentCase.modules.micro_lecture = {};
+        currentCase.modules.micro_lecture.data = JSON.parse(JSON.stringify(microGridState));
+      }
+    } else {
+      statusEl.textContent = data.error || 'Erreur';
+      statusEl.style.color = 'var(--danger)';
+      toast('Erreur sauvegarde', true);
+    }
+  } catch (e) {
+    statusEl.textContent = 'Erreur reseau';
+    statusEl.style.color = 'var(--danger)';
+    toast('Erreur sauvegarde micro', true);
+  }
+  setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 4000);
+}
+
+</script>
+<script src="/static/idle-timeout.js"></script>
+</body>
+</html>

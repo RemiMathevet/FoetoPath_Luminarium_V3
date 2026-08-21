@@ -1,0 +1,6246 @@
+{
+  "_meta": {
+    "version": "2.0",
+    "generated": "2026-03-23",
+    "diseases_count": 106,
+    "hpo_terms_count": 109,
+    "associations_count": 735,
+    "corrections_applied": [
+      "HP:0000776",
+      "HP:0001791",
+      "HP:0000256",
+      "HP:0000431",
+      "HP:0000568",
+      "HP:0001161",
+      "HP:0001263",
+      "HP:0001762",
+      "HP:0002365",
+      "HP:0002650",
+      "HP:0002652",
+      "HP:0002676",
+      "HP:0002827",
+      "HP:0003026",
+      "HP:0003312",
+      "HP:0003416",
+      "HP:0008872"
+    ]
+  },
+  "hpo_terms": {
+    "HP:0000028": {
+      "name_fr": "Cryptorchidie"
+    },
+    "HP:0000062": {
+      "name_fr": "Ambiguite genitale"
+    },
+    "HP:0000085": {
+      "name_fr": "Rein en fer a  cheval"
+    },
+    "HP:0000104": {
+      "name_fr": "Agenesie renale"
+    },
+    "HP:0000110": {
+      "name_fr": "Anomalie renale"
+    },
+    "HP:0000158": {
+      "name_fr": "Hypertrophie gingivale"
+    },
+    "HP:0000175": {
+      "name_fr": "Fente palatine"
+    },
+    "HP:0000204": {
+      "name_fr": "Fente labiale"
+    },
+    "HP:0000252": {
+      "name_fr": "Microcephalie"
+    },
+    "HP:0000256": {
+      "name_fr": "Macrocephalie"
+    },
+    "HP:0000260": {
+      "name_fr": "Fontanelle anterieure large"
+    },
+    "HP:0000272": {
+      "name_fr": "Hypoplasie malaire"
+    },
+    "HP:0000280": {
+      "name_fr": "Facies grossier"
+    },
+    "HP:0000316": {
+      "name_fr": "Hypertelorisme"
+    },
+    "HP:0000347": {
+      "name_fr": "Micrognathie"
+    },
+    "HP:0000365": {
+      "name_fr": "Surdite"
+    },
+    "HP:0000369": {
+      "name_fr": "Oreilles bas implantees"
+    },
+    "HP:0000405": {
+      "name_fr": "Anomalie pavillon auriculaire"
+    },
+    "HP:0000431": {
+      "name_fr": "Ensellure nasale large"
+    },
+    "HP:0000457": {
+      "name_fr": "Ensellure nasale"
+    },
+    "HP:0000505": {
+      "name_fr": "Atrophie optique"
+    },
+    "HP:0000518": {
+      "name_fr": "Cataracte"
+    },
+    "HP:0000568": {
+      "name_fr": "Microphtalmie"
+    },
+    "HP:0000589": {
+      "name_fr": "Colobome"
+    },
+    "HP:0000592": {
+      "name_fr": "Sclerotiques bleues"
+    },
+    "HP:0000679": {
+      "name_fr": "Anomalies dentaires"
+    },
+    "HP:0000689": {
+      "name_fr": "Os wormiens"
+    },
+    "HP:0000767": {
+      "name_fr": "Pectus carinatum"
+    },
+    "HP:0000772": {
+      "name_fr": "Anomalie costale"
+    },
+    "HP:0000774": {
+      "name_fr": "Thorax etroit"
+    },
+    "HP:0000776": {
+      "name_fr": "Hygroma kystique"
+    },
+    "HP:0000885": {
+      "name_fr": "Hypoplasie claviculaire"
+    },
+    "HP:0000916": {
+      "name_fr": "Platyspondylie"
+    },
+    "HP:0000926": {
+      "name_fr": "Platyspondylie"
+    },
+    "HP:0000957": {
+      "name_fr": "Ichtyose"
+    },
+    "HP:0001156": {
+      "name_fr": "Brachydactylie"
+    },
+    "HP:0001159": {
+      "name_fr": "Syndactylie"
+    },
+    "HP:0001161": {
+      "name_fr": "Polydactylie postaxiale"
+    },
+    "HP:0001249": {
+      "name_fr": "Deficience intellectuelle"
+    },
+    "HP:0001250": {
+      "name_fr": "a‰pilepsie"
+    },
+    "HP:0001263": {
+      "name_fr": "Retard global de developpement"
+    },
+    "HP:0001274": {
+      "name_fr": "Agenesie du corps calleux"
+    },
+    "HP:0001360": {
+      "name_fr": "Holoprosencephalie"
+    },
+    "HP:0001371": {
+      "name_fr": "Contractures articulaires"
+    },
+    "HP:0001382": {
+      "name_fr": "Hyperlaxite articulaire"
+    },
+    "HP:0001388": {
+      "name_fr": "Hypotonie"
+    },
+    "HP:0001397": {
+      "name_fr": "Steatose hepatique"
+    },
+    "HP:0001409": {
+      "name_fr": "Hepatomegalie"
+    },
+    "HP:0001511": {
+      "name_fr": "Retard de croissance intra-uterin"
+    },
+    "HP:0001539": {
+      "name_fr": "Omphalocele"
+    },
+    "HP:0001545": {
+      "name_fr": "Imperforation anale"
+    },
+    "HP:0001561": {
+      "name_fr": "Hydramnios"
+    },
+    "HP:0001562": {
+      "name_fr": "Oligoamnios"
+    },
+    "HP:0001597": {
+      "name_fr": "Anomalie ungueale"
+    },
+    "HP:0001627": {
+      "name_fr": "Cardiopathie congenitale"
+    },
+    "HP:0001629": {
+      "name_fr": "Communication interventriculaire"
+    },
+    "HP:0001631": {
+      "name_fr": "Defaut septum auriculaire"
+    },
+    "HP:0001636": {
+      "name_fr": "Tetralogie de Fallot"
+    },
+    "HP:0001680": {
+      "name_fr": "Coarctation aortique"
+    },
+    "HP:0001738": {
+      "name_fr": "Insuffisance pancreatique exocrine"
+    },
+    "HP:0001744": {
+      "name_fr": "Splenomegalie"
+    },
+    "HP:0001762": {
+      "name_fr": "Pied bot varus equin"
+    },
+    "HP:0001791": {
+      "name_fr": "Anasarque foetale"
+    },
+    "HP:0001875": {
+      "name_fr": "Neutropenie"
+    },
+    "HP:0001903": {
+      "name_fr": "Anemie"
+    },
+    "HP:0002007": {
+      "name_fr": "Incurvation femorale"
+    },
+    "HP:0002023": {
+      "name_fr": "Atresie des choanes"
+    },
+    "HP:0002079": {
+      "name_fr": "Signe de la dent molaire / agenesie vermis"
+    },
+    "HP:0002084": {
+      "name_fr": "Encephalocele"
+    },
+    "HP:0002085": {
+      "name_fr": "Holoprosencephalie/anomalie SNC"
+    },
+    "HP:0002088": {
+      "name_fr": "Anomalie pulmonaire"
+    },
+    "HP:0002119": {
+      "name_fr": "Ventriculomegalie"
+    },
+    "HP:0002120": {
+      "name_fr": "Polymicrogyrie"
+    },
+    "HP:0002242": {
+      "name_fr": "Hirschsprung"
+    },
+    "HP:0002365": {
+      "name_fr": "Hypoplasie cerebelleuse"
+    },
+    "HP:0002575": {
+      "name_fr": "Atresie oesophagienne"
+    },
+    "HP:0002645": {
+      "name_fr": "Calcifications ponctuees"
+    },
+    "HP:0002650": {
+      "name_fr": "Scoliose"
+    },
+    "HP:0002652": {
+      "name_fr": "Dysostose multiplex"
+    },
+    "HP:0002676": {
+      "name_fr": "Craniostenose"
+    },
+    "HP:0002827": {
+      "name_fr": "Defaut ossification sacrum"
+    },
+    "HP:0002973": {
+      "name_fr": "Anomalie radiale"
+    },
+    "HP:0002983": {
+      "name_fr": "Micromelie"
+    },
+    "HP:0002999": {
+      "name_fr": "Luxations articulaires congenitales"
+    },
+    "HP:0003026": {
+      "name_fr": "Rhizomelie"
+    },
+    "HP:0003072": {
+      "name_fr": "Hypercalcemie"
+    },
+    "HP:0003312": {
+      "name_fr": "Os iliaques petits/anormaux"
+    },
+    "HP:0003416": {
+      "name_fr": "Metaphyses evasees"
+    },
+    "HP:0003422": {
+      "name_fr": "Anomalie vertebrale"
+    },
+    "HP:0004322": {
+      "name_fr": "Petite taille"
+    },
+    "HP:0005257": {
+      "name_fr": "Maturation squelettique avancee"
+    },
+    "HP:0005403": {
+      "name_fr": "Deficit immunitaire combine"
+    },
+    "HP:0005561": {
+      "name_fr": "Hematopoiese extramedullaire"
+    },
+    "HP:0006101": {
+      "name_fr": "Doigt en deviation radiale"
+    },
+    "HP:0006265": {
+      "name_fr": "Aplasie/hypoplasie des doigts"
+    },
+    "HP:0007370": {
+      "name_fr": "Anomalie fosse posterieure"
+    },
+    "HP:0007957": {
+      "name_fr": "Opacites corneennes"
+    },
+    "HP:0008070": {
+      "name_fr": "Cheveux clairsemes"
+    },
+    "HP:0008872": {
+      "name_fr": "Hypoplasie pulmonaire"
+    },
+    "HP:0009601": {
+      "name_fr": "Aplasie/hypoplasie pouce"
+    },
+    "HP:0009602": {
+      "name_fr": "Pouces larges"
+    },
+    "HP:0009623": {
+      "name_fr": "Pouce en auto-stoppeur"
+    },
+    "HP:0009813": {
+      "name_fr": "Deficience membre ipsilaterale"
+    },
+    "HP:0009816": {
+      "name_fr": "Os longs courts membres inferieurs"
+    },
+    "HP:0010729": {
+      "name_fr": "Tache rouge cerise maculaire"
+    },
+    "HP:0011001": {
+      "name_fr": "Osteosclerose"
+    },
+    "HP:0011603": {
+      "name_fr": "Hypoplasie thymique"
+    },
+    "HP:0011800": {
+      "name_fr": "Hypoplasie mediofaciale"
+    },
+    "HP:0020110": {
+      "name_fr": "Fractures multiples"
+    }
+  },
+  "diseases": [
+    {
+      "disease_id": "OMIM:190685",
+      "disease_name": "Trisomie 21 (Down)",
+      "prevalence": 0.01,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.5,
+          "source": "EUROCAT",
+          "notes": "canal AV ++"
+        },
+        {
+          "hpo_id": "HP:0001631",
+          "hpo_name_fr": "Defaut septum auriculaire",
+          "penetrance": 0.25,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001629",
+          "hpo_name_fr": "Communication interventriculaire",
+          "penetrance": 0.3,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.15,
+          "source": "EUROCAT",
+          "notes": "1er trimestre"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.3,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.12,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.6,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.5,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.5,
+          "source": "Spranger",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:300082",
+      "disease_name": "Trisomie 18 (Edwards)",
+      "prevalence": 0.005,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.9,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001629",
+          "hpo_name_fr": "Communication interventriculaire",
+          "penetrance": 0.5,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.85,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.4,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.7,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.3,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.8,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.2,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001539",
+          "hpo_name_fr": "Omphalocele",
+          "penetrance": 0.2,
+          "source": "EUROCAT",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:163950",
+      "disease_name": "Syndrome de Turner (45,X)",
+      "prevalence": 0.004,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.75,
+          "source": "EUROCAT",
+          "notes": "signe d'appel echo"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.3,
+          "source": "EUROCAT",
+          "notes": "coarctation aorte"
+        },
+        {
+          "hpo_id": "HP:0001680",
+          "hpo_name_fr": "Coarctation aortique",
+          "penetrance": 0.15,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.2,
+          "source": "EUROCAT",
+          "notes": "rein en fer a  cheval"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.2,
+          "source": "EUROCAT",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:300083",
+      "disease_name": "Trisomie 13 (Patau)",
+      "prevalence": 0.003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002085",
+          "hpo_name_fr": "Holoprosencephalie/anomalie SNC",
+          "penetrance": 0.6,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.8,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.6,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000204",
+          "hpo_name_fr": "Fente labiale",
+          "penetrance": 0.5,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.45,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000568",
+          "hpo_name_fr": "Microphtalmie",
+          "penetrance": 0.4,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.7,
+          "source": "EUROCAT",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.5,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.4,
+          "source": "EUROCAT",
+          "notes": "polykystose"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:188400",
+      "disease_name": "DiGeorge / del 22q11.2",
+      "prevalence": 0.002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.75,
+          "source": "GeneReviews",
+          "notes": "conotroncales"
+        },
+        {
+          "hpo_id": "HP:0001636",
+          "hpo_name_fr": "Tetralogie de Fallot",
+          "penetrance": 0.25,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.5,
+          "source": "GeneReviews",
+          "notes": "velopharyngee"
+        },
+        {
+          "hpo_id": "HP:0011603",
+          "hpo_name_fr": "Hypoplasie thymique",
+          "penetrance": 0.8,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.15,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000104",
+          "hpo_name_fr": "Agenesie renale",
+          "penetrance": 0.1,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:304340",
+      "disease_name": "Syndrome de Noonan",
+      "prevalence": 0.002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.7,
+          "source": "GeneReviews",
+          "notes": "stenose pulmonaire ++"
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": "1er trimestre"
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.7,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000028",
+          "hpo_name_fr": "Cryptorchidie",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000767",
+          "hpo_name_fr": "Pectus carinatum",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": "ou excavatum"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:173800",
+      "disease_name": "Syndrome de Poland",
+      "prevalence": 0.001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000885",
+          "hpo_name_fr": "Hypoplasie claviculaire",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Pectoralis major agenesis/hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0006265",
+          "hpo_name_fr": "Aplasie/hypoplasie des doigts",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Ipsilateral hand anomalies, symbrachydactyly"
+        },
+        {
+          "hpo_id": "HP:0000772",
+          "hpo_name_fr": "Anomalie costale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Rib anomalies ipsilateral"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:108300",
+      "disease_name": "Stickler type 1 (COL2A1)",
+      "prevalence": 0.001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.7,
+          "source": "Spranger_ch4",
+          "notes": "s'attenue avec a¢ge"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.25,
+          "source": "Spranger_ch4",
+          "notes": "sequence Robin"
+        },
+        {
+          "hpo_id": "HP:0000568",
+          "hpo_name_fr": "Microphtalmie",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": "congenitale severe"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.5,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.4,
+          "source": "Spranger_ch4",
+          "notes": "neurosensorielle"
+        },
+        {
+          "hpo_id": "HP:0000926",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.3,
+          "source": "Spranger_ch4",
+          "notes": "fentes coronales neonatal"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:236100",
+      "disease_name": "Holoprosencephalie (SHH)",
+      "prevalence": 0.001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001360",
+          "hpo_name_fr": "Holoprosencephalie",
+          "penetrance": 0.95,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": "mediane"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.5,
+          "source": "GeneReviews",
+          "notes": "ou hypotelorisme"
+        },
+        {
+          "hpo_id": "HP:0000457",
+          "hpo_name_fr": "Ensellure nasale",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000028",
+          "hpo_name_fr": "Cryptorchidie",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:214800",
+      "disease_name": "Syndrome CHARGE",
+      "prevalence": 0.001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000589",
+          "hpo_name_fr": "Colobome",
+          "penetrance": 0.8,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.8,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.75,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002023",
+          "hpo_name_fr": "Atresie des choanes",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000028",
+          "hpo_name_fr": "Cryptorchidie",
+          "penetrance": 0.5,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.25,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0011603",
+          "hpo_name_fr": "Hypoplasie thymique",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:192350",
+      "disease_name": "VACTERL",
+      "prevalence": 0.001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0003422",
+          "hpo_name_fr": "Anomalie vertebrale",
+          "penetrance": 0.7,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002575",
+          "hpo_name_fr": "Atresie oesophagienne",
+          "penetrance": 0.6,
+          "source": "expert",
+          "notes": "fistule tracheo-oesophagienne"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.6,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000104",
+          "hpo_name_fr": "Agenesie renale",
+          "penetrance": 0.4,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.3,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002973",
+          "hpo_name_fr": "Anomalie radiale",
+          "penetrance": 0.4,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.3,
+          "source": "expert",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:100100",
+      "disease_name": "Dysplasie thanatophore (type I/II)",
+      "prevalence": 0.0008,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.99,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0003026",
+          "hpo_name_fr": "Rhizomelie",
+          "penetrance": 0.95,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.3,
+          "source": "Spranger",
+          "notes": "crane en trefle type II"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.95,
+          "source": "Spranger",
+          "notes": "letal"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.5,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.3,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000767",
+          "hpo_name_fr": "Pectus carinatum",
+          "penetrance": 0.3,
+          "source": "Spranger",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:262600",
+      "disease_name": "Oseogenese imparfaite type II (letal)",
+      "prevalence": 0.0005,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0003026",
+          "hpo_name_fr": "Rhizomelie",
+          "penetrance": 0.8,
+          "source": "Spranger",
+          "notes": "fractures multiples"
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.3,
+          "source": "Spranger",
+          "notes": "cranium molle"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.7,
+          "source": "Spranger",
+          "notes": "cotes en chapelet"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.6,
+          "source": "Spranger",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:270400",
+      "disease_name": "Smith-Lemli-Opitz",
+      "prevalence": 0.0005,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.8,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000028",
+          "hpo_name_fr": "Cryptorchidie",
+          "penetrance": 0.8,
+          "source": "GeneReviews",
+          "notes": "ambiguite genitale"
+        },
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.9,
+          "source": "GeneReviews",
+          "notes": "2-3 orteils"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.85,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.5,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:265000",
+      "disease_name": "Sequence d'akinesie foetale (Pena-Shokeir)",
+      "prevalence": 0.0005,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.9,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.4,
+          "source": "expert",
+          "notes": "pterygiums"
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.6,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.8,
+          "source": "expert",
+          "notes": "hypoplasie pulmonaire"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.6,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.7,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002650",
+          "hpo_name_fr": "Scoliose",
+          "penetrance": 0.8,
+          "source": "expert",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:300998",
+      "disease_name": "Cornelia de Lange",
+      "prevalence": 0.0005,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.9,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.9,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.7,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.5,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": "surtout avant-bras"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:187600",
+      "disease_name": "Dysplasie thanatophore type I",
+      "prevalence": 0.0004,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Extremites tres courtes, disproportionnees"
+        },
+        {
+          "hpo_id": "HP:0003026",
+          "hpo_name_fr": "Rhizomelie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Segment proximal plus touche"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Cotes courtes, thorax etroit en AP et lateral"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Secondaire au thorax etroit"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Tete disproportionnellement large"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Depressed nasal bridge, front proeminent"
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Frequently present"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Corps vertebraux aplatis, type I plus severe"
+        },
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Os longs incurves en type I, droits en type II"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Nanisme disproportionne"
+        },
+        {
+          "hpo_id": "HP:0002084",
+          "hpo_name_fr": "Encephalocele",
+          "penetrance": 0.05,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Some cases, notably type 2"
+        },
+        {
+          "hpo_id": "HP:0002120",
+          "hpo_name_fr": "Polymicrogyrie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Nervous system: polymicrogyria, heterotopia neuronale"
+        },
+        {
+          "hpo_id": "HP:0002365",
+          "hpo_name_fr": "Hypoplasie cerebelleuse",
+          "penetrance": 0.25,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Cerebellar hypoplasia mentionnee dans remarks"
+        },
+        {
+          "hpo_id": "HP:0001263",
+          "hpo_name_fr": "Retard global de developpement",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Letal, mais survivants: retard severe"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:100800",
+      "disease_name": "Achondroplasie",
+      "prevalence": 0.0004,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Short-limb dwarfism"
+        },
+        {
+          "hpo_id": "HP:0003026",
+          "hpo_name_fr": "Rhizomelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Rhizomelic micromelia, proximal > distal"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Head disproportionately large"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Depressed nasal bridge, prominent forehead"
+        },
+        {
+          "hpo_id": "HP:0000272",
+          "hpo_name_fr": "Hypoplasie malaire",
+          "penetrance": 0.5,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Mild hypoplasia of midface"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Nanisme disproportionne"
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Short fingers, trident hand"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.4,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Small thorax mentionne, moins severe que thanatophore"
+        },
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.4,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Internal/external hydrocephalus, stabilise spontanement"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.3,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Vertebral bodies slightly flat en periode neonatale"
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Hearing loss si otites recurrentes non traitees"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:146000",
+      "disease_name": "Hypochondroplasie",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Short extremities, moins severe qu'achondroplasie"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Small stature, taille adulte 132-147cm"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Normal or slightly macrocephalic"
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Short phalanges"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Mild, associated with temporal lobe dysgenesis"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:166210",
+      "disease_name": "Osteogenese imparfaite type IIA (letal, os epais)",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Short limbs, deformed extremities"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Small thorax, short thick ribs with continuous beading"
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Soft calvarium caput membranaceum"
+        },
+        {
+          "hpo_id": "HP:0000689",
+          "hpo_name_fr": "Os wormiens",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Almost absent calvarial ossification"
+        },
+        {
+          "hpo_id": "HP:0020110",
+          "hpo_name_fr": "Fractures multiples",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Multiple fractures, callus formation"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Generalized loss of height vertebral bodies"
+        },
+        {
+          "hpo_id": "HP:0000592",
+          "hpo_name_fr": "Sclerotiques bleues",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Dark blue sclerae"
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.25,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Fetal hydrops in some cases"
+        },
+        {
+          "hpo_id": "HP:0001388",
+          "hpo_name_fr": "Hypotonie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Muscular hypotonia, ligamentous hyperlaxity"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:101200",
+      "disease_name": "Syndrome d'Apert (FGFR2)",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Mitten hands, severe syndactyly mains/pieds"
+        },
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Bicoronal synostosis"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Hypertelorism, shallow orbits, proptosis"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Midface hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Cleft palate"
+        },
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.4,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Hydrocephalus"
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.2,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Occasional callosal agenesis"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:101400",
+      "disease_name": "Syndrome de Saethre-Chotzen (TWIST1)",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Coronal synostosis, unilateral or bilateral"
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Small, low-set ears with prominent crus"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Hypertelorism, blepharophimosis"
+        },
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Cutaneous syndactyly 2nd-3rd fingers/toes"
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Short fingers, clinodactyly 5th"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:602849",
+      "disease_name": "Syndrome de Muenke (FGFR3 P250R)",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Uni- or bicoronal synostosis"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Mild hypertelorism"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Mild midface hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Sensorineural hearing loss"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:200610",
+      "disease_name": "Achondrogenese II / Hypochondrogenese",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.99,
+          "source": "Spranger_ch4",
+          "notes": "severe"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.95,
+          "source": "Spranger_ch4",
+          "notes": "en tonneau, cotes courtes"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.6,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.7,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": "aspect hydropique"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.99,
+          "source": "Spranger_ch4",
+          "notes": "absent/severement deficient"
+        },
+        {
+          "hpo_id": "HP:0002827",
+          "hpo_name_fr": "Defaut ossification sacrum",
+          "penetrance": 0.99,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0003312",
+          "hpo_name_fr": "Os iliaques petits/anormaux",
+          "penetrance": 0.95,
+          "source": "Spranger_ch4",
+          "notes": "marges en croissant"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:183900",
+      "disease_name": "SED congeniale (SEDC)",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.7,
+          "source": "Spranger_ch4",
+          "notes": "moins severe qu'ACG2"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.6,
+          "source": "Spranger_ch4",
+          "notes": "en tonneau + pectus carinatum"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.6,
+          "source": "Spranger_ch4",
+          "notes": "visage pla"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.2,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.2,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000926",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": "corps vertebraux en poire"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": "cervicales sup absentes"
+        },
+        {
+          "hpo_id": "HP:0000568",
+          "hpo_name_fr": "Microphtalmie",
+          "penetrance": 0.5,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001388",
+          "hpo_name_fr": "Hypotonie",
+          "penetrance": 0.7,
+          "source": "Spranger_ch4",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:256100",
+      "disease_name": "Meckel-Gruber",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.95,
+          "source": "GeneReviews",
+          "notes": "polykystose"
+        },
+        {
+          "hpo_id": "HP:0002085",
+          "hpo_name_fr": "Holoprosencephalie/anomalie SNC",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": "encephalocele occipital"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.7,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": "hypoplasie pulmonaire"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:608022",
+      "disease_name": "Syndrome de Jouber",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002079",
+          "hpo_name_fr": "Signe de la dent molaire / agenesie vermis",
+          "penetrance": 0.95,
+          "source": "GeneReviews",
+          "notes": "pathognomonique"
+        },
+        {
+          "hpo_id": "HP:0002365",
+          "hpo_name_fr": "Hypoplasie cerebelleuse",
+          "penetrance": 0.8,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0007370",
+          "hpo_name_fr": "Anomalie fosse posterieure",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": "nephronophtise"
+        },
+        {
+          "hpo_id": "HP:0000568",
+          "hpo_name_fr": "Microphtalmie",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": "colobome"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:607872",
+      "disease_name": "Syndrome de Zellweger",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.9,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001397",
+          "hpo_name_fr": "Steatose hepatique",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.7,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.8,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": "kystes corticaux"
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002088",
+          "hpo_name_fr": "Anomalie pulmonaire",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": "vacuolisation pneumocytes"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:600725",
+      "disease_name": "Syndrome d'Apert",
+      "prevalence": 0.0003,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.95,
+          "source": "Spranger",
+          "notes": "mains en moufle"
+        },
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.9,
+          "source": "Spranger",
+          "notes": "coronale bilaterale"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.7,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.3,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.4,
+          "source": "Spranger",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:187601",
+      "disease_name": "Dysplasie thanatophore type II",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Extremites courtes comme type I"
+        },
+        {
+          "hpo_id": "HP:0003026",
+          "hpo_name_fr": "Rhizomelie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Segment proximal raccourci"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Moins severe que type I"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Secondaire au thorax etroit"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Tete large"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Cloverleaf skull, plus frequent en type II"
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Frequently present"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Moins severe que type I"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Nanisme disproportionne letal"
+        },
+        {
+          "hpo_id": "HP:0002084",
+          "hpo_name_fr": "Encephalocele",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Plus frequent que type I"
+        },
+        {
+          "hpo_id": "HP:0002120",
+          "hpo_name_fr": "Polymicrogyrie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Anomalies SNC partagees avec type I"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Letal, survivants: retard severe"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:156500",
+      "disease_name": "Chondrodysplasie metaphysaire type Schmid",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Short tubular bones"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Height deficit > -3 SD, 135-160cm adulte"
+        },
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Bowed legs, genua vara"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Occasionally mild"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:222600",
+      "disease_name": "Dysplasie diastrophique",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Short extremities"
+        },
+        {
+          "hpo_id": "HP:0001371",
+          "hpo_name_fr": "Contractures articulaires",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Multiple joint contractures, shoulders/elbows/hips"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Therapy-resistant talipes, detectable des 12 SA"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.5,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Approximately 50% of cases"
+        },
+        {
+          "hpo_id": "HP:0009623",
+          "hpo_name_fr": "Pouce en auto-stoppeur",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Hitchhiker thumb, proximally set and abducted"
+        },
+        {
+          "hpo_id": "HP:0000405",
+          "hpo_name_fr": "Anomalie pavillon auriculaire",
+          "penetrance": 0.65,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Cystic masses 50-75%, cauliflower deformity later"
+        },
+        {
+          "hpo_id": "HP:0002650",
+          "hpo_name_fr": "Scoliose",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Progressive kyphoscoliose, cervical kyphosis birth"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Median adult 136cm M, 129cm F"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:208500",
+      "disease_name": "Dysplasie thoracique asphyxiante (Jeune)",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Long narrow thorax, respiratory difficulties"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Short extremities at birth or later"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Occasionally postaxial hexadactyly"
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Progressive renal disease, peut etre tardif"
+        },
+        {
+          "hpo_id": "HP:0003312",
+          "hpo_name_fr": "Os iliaques petits/anormaux",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Short iliac bones, trident acetabular roofs"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Hepatic fibrosis common"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:255500",
+      "disease_name": "Syndrome d'Ellis-van Creveld",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Progressive distalward shortness"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Postaxial or axial hexadactyly fingers"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.6,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Up to 60%, endocardial cushion defect/ASD"
+        },
+        {
+          "hpo_id": "HP:0000679",
+          "hpo_name_fr": "Anomalies dentaires",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Neonatal teeth, anodontia, microdontia"
+        },
+        {
+          "hpo_id": "HP:0001597",
+          "hpo_name_fr": "Anomalie ungueale",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Hypoplastic nails"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Occasionally short thorax at birth"
+        },
+        {
+          "hpo_id": "HP:0003312",
+          "hpo_name_fr": "Os iliaques petits/anormaux",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Low iliac wings, hook-like acetabular protrusion"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:259420",
+      "disease_name": "Osteogenese imparfaite type III (progressive deformante)",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0020110",
+          "hpo_name_fr": "Fractures multiples",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Multiple fractures at birth"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Short deformed extremities"
+        },
+        {
+          "hpo_id": "HP:0000592",
+          "hpo_name_fr": "Sclerotiques bleues",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Bluish sclerae at birth, white later"
+        },
+        {
+          "hpo_id": "HP:0000689",
+          "hpo_name_fr": "Os wormiens",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Wormian bones, wide open fontanels"
+        },
+        {
+          "hpo_id": "HP:0001388",
+          "hpo_name_fr": "Hypotonie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Muscular hypotonia"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Narrow thorax early infancy"
+        },
+        {
+          "hpo_id": "HP:0002650",
+          "hpo_name_fr": "Scoliose",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Kyphoscoliosis progressive"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:211990",
+      "disease_name": "Dysplasie campomelique",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Bowing of femora and tibiae, pretibial skin dimples"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Respiratory insufficiency, defective tracheobronchial cartilage"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Micrognathia, dolichocephaly"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Cleft palate"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Flat nasal bridge, long philtrum"
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Low-set ears"
+        },
+        {
+          "hpo_id": "HP:0002999",
+          "hpo_name_fr": "Luxations articulaires congenitales",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Dislocated hips"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Clubfeet"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.75,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Small bell-shaped thorax with 11 pairs of ribs"
+        },
+        {
+          "hpo_id": "HP:0000062",
+          "hpo_name_fr": "Ambiguite genitale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Sex reversal in most chromosomal males"
+        },
+        {
+          "hpo_id": "HP:0000772",
+          "hpo_name_fr": "Anomalie costale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "11 pairs of ribs (au lieu de 12)"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:119600",
+      "disease_name": "Dysplasie cleidocra¢nienne",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000260",
+          "hpo_name_fr": "Fontanelle anterieure large",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Wide sutures, delayed closure anterior fontanel"
+        },
+        {
+          "hpo_id": "HP:0000885",
+          "hpo_name_fr": "Hypoplasie claviculaire",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Partial to total absence clavicles, bilateral"
+        },
+        {
+          "hpo_id": "HP:0000689",
+          "hpo_name_fr": "Os wormiens",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Multiple Wormian bones"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Broad forehead, widely spaced eyes"
+        },
+        {
+          "hpo_id": "HP:0000679",
+          "hpo_name_fr": "Anomalies dentaires",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Supernumerary teeth, late eruption"
+        },
+        {
+          "hpo_id": "HP:0001382",
+          "hpo_name_fr": "Hyperlaxite articulaire",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Hypermobility of joints, muscular hypotonia"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:101600",
+      "disease_name": "Syndrome de Pfeiffer (FGFR1/2)",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Cloverleaf skull in type 2/3"
+        },
+        {
+          "hpo_id": "HP:0009602",
+          "hpo_name_fr": "Pouces larges",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Broad thumbs and great toes, radially deviated"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Hypertelorism, proptosis"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Midface hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Hydrocephalus type 2/3"
+        },
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Variable syndactyly"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:231670",
+      "disease_name": "GALD (hemochromatose neonatale)",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.95,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001397",
+          "hpo_name_fr": "Steatose hepatique",
+          "penetrance": 0.7,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0005561",
+          "hpo_name_fr": "Hematopoiese extramedullaire",
+          "penetrance": 0.5,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.6,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.3,
+          "source": "expert",
+          "notes": "anasarque"
+        },
+        {
+          "hpo_id": "HP:0001744",
+          "hpo_name_fr": "Splenomegalie",
+          "penetrance": 0.4,
+          "source": "expert",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:253310",
+      "disease_name": "Walker-Warburg (dystroglycanopathie)",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.9,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0007370",
+          "hpo_name_fr": "Anomalie fosse posterieure",
+          "penetrance": 0.5,
+          "source": "GeneReviews",
+          "notes": "Dandy-Walker"
+        },
+        {
+          "hpo_id": "HP:0002365",
+          "hpo_name_fr": "Hypoplasie cerebelleuse",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000568",
+          "hpo_name_fr": "Microphtalmie",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001263",
+          "hpo_name_fr": "Retard global de developpement",
+          "penetrance": 0.95,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:210200",
+      "disease_name": "Syndrome de Bardet-Biedl",
+      "prevalence": 0.0002,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.7,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000568",
+          "hpo_name_fr": "Microphtalmie",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": "retinite pigmentaire"
+        },
+        {
+          "hpo_id": "HP:0000028",
+          "hpo_name_fr": "Cryptorchidie",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": "ambiguite genitale"
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": "dysplasie kystique"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:250250",
+      "disease_name": "Hypoplasie cartilage-cheveux (McKusick)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Short-limb dwarfism 100%"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Length at birth -3 SD, adulte 105-150cm"
+        },
+        {
+          "hpo_id": "HP:0008070",
+          "hpo_name_fr": "Cheveux clairsemes",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Fine sparse hair, not obligatory"
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Short pudgy hands, distalward progressive shortness"
+        },
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.6,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Curved femora"
+        },
+        {
+          "hpo_id": "HP:0005403",
+          "hpo_name_fr": "Deficit immunitaire combine",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Impaired T-cell 88%, variable severity"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.25,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Sometimes short ribs"
+        },
+        {
+          "hpo_id": "HP:0002242",
+          "hpo_name_fr": "Hirschsprung",
+          "penetrance": 0.1,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "~10% des patients"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:260400",
+      "disease_name": "Syndrome de Shwachman-Diamond",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001738",
+          "hpo_name_fr": "Insuffisance pancreatique exocrine",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Steatorrhee, failure to thrive"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Growth retarded in most"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.4,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Narrow thorax due to short ribs in younger children"
+        },
+        {
+          "hpo_id": "HP:0001875",
+          "hpo_name_fr": "Neutropenie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Cyclic or persistent"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.5,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "In younger patients"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.5,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Metaphyseal irregularities, os courts ~50%"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:607014",
+      "disease_name": "MPS IH (Hurler)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Dysostosis multiplex: macrocephaly, dyscephaly"
+        },
+        {
+          "hpo_id": "HP:0000280",
+          "hpo_name_fr": "Facies grossier",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Coarse face, prominent forehead, puffy cheeks"
+        },
+        {
+          "hpo_id": "HP:0007957",
+          "hpo_name_fr": "Opacites corneennes",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Corneal clouding"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "DD/ID"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Visceromegaly"
+        },
+        {
+          "hpo_id": "HP:0001744",
+          "hpo_name_fr": "Splenomegalie",
+          "penetrance": 0.75,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Visceromegaly"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Oval/hook-shaped vertebral bodies"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Pattern radiographique caracteristique: cotes larges, ilia hypoplasiques, vertebres en crochet"
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.75,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Short tubular bones, proximal tapering metacarpals"
+        },
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Dilated ventricles, chiasmatic recess enlarged"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:156530",
+      "disease_name": "Dysplasie metatropique (TRPV4)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Narrow chest, infantile mortality respiratoire"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Secondaire au thorax etroit"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Extremites courtes, trunk long a  la naissance"
+        },
+        {
+          "hpo_id": "HP:0003416",
+          "hpo_name_fr": "Metaphyses evasees",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Dumbbell-shaped tubular bones, flared ends"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Wafer-thin ou diamond-shaped vertebral bodies"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Grossly deficient ossification, thickened pedicles"
+        },
+        {
+          "hpo_id": "HP:0001371",
+          "hpo_name_fr": "Contractures articulaires",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Restricted joint mobility, prominent joints"
+        },
+        {
+          "hpo_id": "HP:0003312",
+          "hpo_name_fr": "Os iliaques petits/anormaux",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Crescent-shaped iliac crests, hypoplastic basilar ilia"
+        },
+        {
+          "hpo_id": "HP:0000767",
+          "hpo_name_fr": "Pectus carinatum",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Tail-like appendage overlying sacrum frequent"
+        },
+        {
+          "hpo_id": "HP:0002650",
+          "hpo_name_fr": "Scoliose",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Progressive kyphoscoliose en enfance"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:150250",
+      "disease_name": "Syndrome de Larsen (AD, FLNB)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002999",
+          "hpo_name_fr": "Luxations articulaires congenitales",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Multiple joint dislocations hips/knees/elbows"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Low nasal bridge, flattened facies"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Widely spaced eyes, prominent forehead"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.5,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Cleft uvula and/or palate in about 50%"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Pes equinovarus"
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Cylindrical fingers, spatulate thumbs"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Cervical kyphosis, hypoplasia midcervical bodies"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:302960",
+      "disease_name": "Chondrodysplasie ponctuee X-dominante (CDPX2, Conradi-Ha¼nermann)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002645",
+          "hpo_name_fr": "Calcifications ponctuees",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Punctate calcifications ends long bones, carpals, tarsals"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Flat face, extremely depressed nasal bridge in infancy"
+        },
+        {
+          "hpo_id": "HP:0000957",
+          "hpo_name_fr": "Ichtyose",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Striated ichthyosiform hyperkeratosis"
+        },
+        {
+          "hpo_id": "HP:0000518",
+          "hpo_name_fr": "Cataracte",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Cataracts"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Frequently asymmetric shortening"
+        },
+        {
+          "hpo_id": "HP:0002650",
+          "hpo_name_fr": "Scoliose",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Scoliosis developing later in infancy"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:215100",
+      "disease_name": "Chondrodysplasie ponctuee rhizomelique (RCDP)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Rhizomelic shortening, very short humeri"
+        },
+        {
+          "hpo_id": "HP:0002645",
+          "hpo_name_fr": "Calcifications ponctuees",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Punctate epiphyses ends long bones, disappear 1-3 ans"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Flat face, small saddle nose"
+        },
+        {
+          "hpo_id": "HP:0000518",
+          "hpo_name_fr": "Cataracte",
+          "penetrance": 0.72,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Bilateral symmetric cataracts 72%"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Severe mental retardation"
+        },
+        {
+          "hpo_id": "HP:0000957",
+          "hpo_name_fr": "Ichtyose",
+          "penetrance": 0.27,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Ichthyosiform skin lesions 27%"
+        },
+        {
+          "hpo_id": "HP:0001371",
+          "hpo_name_fr": "Contractures articulaires",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Multiple contractures"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Coronal clefts vertebral bodies best seen infancy"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:610967",
+      "disease_name": "Osteogenese imparfaite type V (IFITM5)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0020110",
+          "hpo_name_fr": "Fractures multiples",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Hyperplastic callus, increased fragility"
+        },
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Mild to moderate bowing"
+        },
+        {
+          "hpo_id": "HP:0000592",
+          "hpo_name_fr": "Sclerotiques bleues",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Greyish-blue sclerae"
+        },
+        {
+          "hpo_id": "HP:0001382",
+          "hpo_name_fr": "Hyperlaxite articulaire",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Ligamentous laxity elbows/digits"
+        },
+        {
+          "hpo_id": "HP:0003416",
+          "hpo_name_fr": "Metaphyses evasees",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Rickets-like metaphyseal changes neonatal period"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:241500",
+      "disease_name": "Hypophosphatasia perinatale letale",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.15",
+          "notes": "Short deformed flaccid extremities"
+        },
+        {
+          "hpo_id": "HP:0000689",
+          "hpo_name_fr": "Os wormiens",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.15",
+          "notes": "Absence ossification major portions calvarium"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.15",
+          "notes": "Short thin ribs"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.15",
+          "notes": "Respiratory distress, death within hours/days"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.15",
+          "notes": "Poor/absent ossification vertebral bodies, skip lesions"
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.15",
+          "notes": "Polyhydramnios"
+        },
+        {
+          "hpo_id": "HP:0003416",
+          "hpo_name_fr": "Metaphyses evasees",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.15",
+          "notes": "Irregular metaphyseal ossification defects into diaphyses"
+        },
+        {
+          "hpo_id": "HP:0003312",
+          "hpo_name_fr": "Os iliaques petits/anormaux",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.15",
+          "notes": "Small scapulae, small pelvic bones with indentations"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:259700",
+      "disease_name": "Osteopetrose infantile maligne",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001744",
+          "hpo_name_fr": "Splenomegalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Hepatosplenomegaly, extramedullary hematopoiesis"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Hepatosplenomegaly"
+        },
+        {
+          "hpo_id": "HP:0011001",
+          "hpo_name_fr": "Osteosclerose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Homogeneous increased bone density"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Macrocephaly, hydrocephaly"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Retarded psychomotor development"
+        },
+        {
+          "hpo_id": "HP:0000505",
+          "hpo_name_fr": "Atrophie optique",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Visual impairment, optic atrophy"
+        },
+        {
+          "hpo_id": "HP:0001903",
+          "hpo_name_fr": "Anemie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Anemia from marrow failure"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:180700",
+      "disease_name": "Syndrome de Robinow (recessive/dominante)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Fetal face, hypertelorism, depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Micrognathia"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Mesomelic shortening forearms"
+        },
+        {
+          "hpo_id": "HP:0000062",
+          "hpo_name_fr": "Ambiguite genitale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Micropenis, hypoplastic genitalia"
+        },
+        {
+          "hpo_id": "HP:0000772",
+          "hpo_name_fr": "Anomalie costale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Rib anomalies in recessive form"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Hemivertebrae in recessive form"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:277300",
+      "disease_name": "Dysostose spondylocostale (Jarcho-Levin)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000772",
+          "hpo_name_fr": "Anomalie costale",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.24",
+          "notes": "Multiple rib anomalies, fused/absent ribs"
+        },
+        {
+          "hpo_id": "HP:0003422",
+          "hpo_name_fr": "Anomalie vertebrale",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.24",
+          "notes": "Multiple vertebral segmentation defects"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.24",
+          "notes": "Short thorax, variable respiratory compromise"
+        },
+        {
+          "hpo_id": "HP:0002650",
+          "hpo_name_fr": "Scoliose",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.24",
+          "notes": "Progressive scoliosis"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.24",
+          "notes": "Short-trunk short stature"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:151210",
+      "disease_name": "Dysplasie platyspondylique Torrance",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": "disproportionnee"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": "facies grossier"
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.6,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000926",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.99,
+          "source": "Spranger_ch4",
+          "notes": "galette a  ovoide"
+        },
+        {
+          "hpo_id": "HP:0003416",
+          "hpo_name_fr": "Metaphyses evasees",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": "femurs droits"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:156550",
+      "disease_name": "Dysplasie de Knies",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": "orbites peu profondes"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.5,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000926",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": "fentes coronales nourrisson"
+        },
+        {
+          "hpo_id": "HP:0003416",
+          "hpo_name_fr": "Metaphyses evasees",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": "aspect en haltere"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.7,
+          "source": "Spranger_ch4",
+          "notes": "protrusion sternale"
+        },
+        {
+          "hpo_id": "HP:0000568",
+          "hpo_name_fr": "Microphtalmie",
+          "penetrance": 0.7,
+          "source": "Spranger_ch4",
+          "notes": "risque decollement retinien"
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.6,
+          "source": "Spranger_ch4",
+          "notes": "conductive + neurosensorielle"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.2,
+          "source": "Spranger_ch4",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:277610",
+      "disease_name": "OSMED (COL11A2)",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.95,
+          "source": "Spranger_ch4",
+          "notes": "neurosensorielle congenitale"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.6,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.6,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.5,
+          "source": "Spranger_ch4",
+          "notes": "membres courts"
+        },
+        {
+          "hpo_id": "HP:0000926",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.5,
+          "source": "Spranger_ch4",
+          "notes": "fentes coronales neonatal"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:277180",
+      "disease_name": "Syndrome de Pallister-Hall",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001360",
+          "hpo_name_fr": "Holoprosencephalie",
+          "penetrance": 0.4,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.7,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000776",
+          "hpo_name_fr": "Hygroma kystique",
+          "penetrance": 0.15,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:174200",
+      "disease_name": "Pallister-Hall / GLI3",
+      "prevalence": 0.0001,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.8,
+          "source": "GeneReviews",
+          "notes": "mesoaxiale aussi"
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001629",
+          "hpo_name_fr": "Communication interventriculaire",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001636",
+          "hpo_name_fr": "Tetralogie de Fallot",
+          "penetrance": 0.15,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000776",
+          "hpo_name_fr": "Hygroma kystique",
+          "penetrance": 0.15,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000085",
+          "hpo_name_fr": "Rein en fer a  cheval",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:616482",
+      "disease_name": "SADDAN",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Rhizomelic short stature"
+        },
+        {
+          "hpo_id": "HP:0003026",
+          "hpo_name_fr": "Rhizomelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Rhizomelic"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Large head with frontal bossing"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Depressed nasal bridge, protruding eyes"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Bell-shaped thorax, short cupped ribs"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Thoracic hypoplasia with respiratory distress"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Moderate to severe"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Severity approaches thanatophoric"
+        },
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Hydrocephalus mentionne"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Moderate to severe developmental delay"
+        },
+        {
+          "hpo_id": "HP:0001250",
+          "hpo_name_fr": "a‰pilepsie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.1",
+          "notes": "Refractory seizures"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:253220",
+      "disease_name": "MPS VII (Sly)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.5,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Wide phenotypic spectrum, hydrops frequent dans forme severe"
+        },
+        {
+          "hpo_id": "HP:0000280",
+          "hpo_name_fr": "Facies grossier",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Coarse face"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Visceromegaly"
+        },
+        {
+          "hpo_id": "HP:0001744",
+          "hpo_name_fr": "Splenomegalie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Visceromegaly"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Severe dysostosis multiplex"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "DD/ID"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.75,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Short stature"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Dysostosis multiplex cra¢nienne"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:230500",
+      "disease_name": "GM1 gangliosidose type I",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000280",
+          "hpo_name_fr": "Facies grossier",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Hurler phenotype neonatal: paupieres epaisses, ensellure nasale"
+        },
+        {
+          "hpo_id": "HP:0010729",
+          "hpo_name_fr": "Tache rouge cerise maculaire",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Cherry-red macular spot"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Neurodegeneration severe"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Hepatomegaly"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Periosteal cloaking en periode neonatale, pathognomonique"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Depressed nasal bridge, upturned nares"
+        },
+        {
+          "hpo_id": "HP:0000158",
+          "hpo_name_fr": "Hypertrophie gingivale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Gingival hyperplasia"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Vertebral bodies flat avec indentations"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:168400",
+      "disease_name": "Dysplasie metatropique letale (TRPV4)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Forme letale"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Letal par insuffisance respiratoire"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Severe"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Wafer-thin vertebral bodies"
+        },
+        {
+          "hpo_id": "HP:0003416",
+          "hpo_name_fr": "Metaphyses evasees",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Hyperplastic metaphyses"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Absent ossification pedicles et neural arches"
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.6",
+          "notes": "Fetal akinesia dans certains cas"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:600972",
+      "disease_name": "Achondrogenese IB (Fraccaro)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Extreme micromelia, perte orientation longitudinale os"
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Hydropic appearance"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Absent/severely retarded, cobra sign en AP"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Barrel-shaped, short horizontal ribs"
+        },
+        {
+          "hpo_id": "HP:0003312",
+          "hpo_name_fr": "Os iliaques petits/anormaux",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Small iliac bodies, absent ossif pubis/ischion"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Club foot deformity, inward rotation consistent"
+        },
+        {
+          "hpo_id": "HP:0002827",
+          "hpo_name_fr": "Defaut ossification sacrum",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Absent ossification sacrum"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:256050",
+      "disease_name": "Atelosteogenese type 2 (De la Chapelle)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Short tubular bones, metaphyseal flaring"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Midface hypoplasia, micrognathia"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Cleft palate"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Small chest, bell-shaped"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Pulmonary hypoplasia + tracheobronchomalacia"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Talipes equinovarus, hitchhiker thumb"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Relative macrocephaly, midface hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Relative macrocephaly"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:251450",
+      "disease_name": "Dysplasie de Desbuquois",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Prenatal and postnatal micromelic short stature"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Round face, depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Prominent eyes, long upper lip, micrognathia"
+        },
+        {
+          "hpo_id": "HP:0001382",
+          "hpo_name_fr": "Hyperlaxite articulaire",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Joint laxity, dislocated hips/knees type 1"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Club feet, metatarsus adductus, rocker-bottom"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Occasionally cleft palate"
+        },
+        {
+          "hpo_id": "HP:0002650",
+          "hpo_name_fr": "Scoliose",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Progressive kyphoscoliosis"
+        },
+        {
+          "hpo_id": "HP:0003416",
+          "hpo_name_fr": "Metaphyses evasees",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Monkey-wrench/Swedish-key appearance femurs"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:614078",
+      "disease_name": "Chondrodysplasie CHST3 avec luxations",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002999",
+          "hpo_name_fr": "Luxations articulaires congenitales",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Congenital dislocations knees/elbows"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Clubfeet"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Short-limb short stature"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Cardiac valve dysplasia"
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Hearing loss"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:613091",
+      "disease_name": "Short-rib polydactylie type I/III (Saldino-Noonan/Verma-Naumoff)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Short horizontally oriented ribs, letal"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Striking shortness long tubular bones"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Postaxial, rarely pre-and postaxial"
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Hydropic appearance at birth"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Cardiovascular defects"
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Renal a/hypoplasia, cysts"
+        },
+        {
+          "hpo_id": "HP:0001545",
+          "hpo_name_fr": "Imperforation anale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Abnormal cloacal development"
+        },
+        {
+          "hpo_id": "HP:0002365",
+          "hpo_name_fr": "Hypoplasie cerebelleuse",
+          "penetrance": 0.25,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Dandy-Walker, less common"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:263520",
+      "disease_name": "Short-rib polydactylie type II (Majewski)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Short horizontally oriented ribs, letal"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Short extremities, tibiae ovoid shorter than fibulae"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Pre- and/or postaxial polysyndactyly"
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Hydropic appearance at birth"
+        },
+        {
+          "hpo_id": "HP:0000204",
+          "hpo_name_fr": "Fente labiale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Median cleft lip"
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Renal cysts"
+        },
+        {
+          "hpo_id": "HP:0000776",
+          "hpo_name_fr": "Hygroma kystique",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Intestinal malrotation, imperforate anus"
+        }
+      ]
+    },
+    {
+      "disease_id": "LOCAL:OI_IIC",
+      "disease_name": "Osteogenese imparfaite type IIC (os dense)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Relatively long, twisted extremities"
+        },
+        {
+          "hpo_id": "HP:0020110",
+          "hpo_name_fr": "Fractures multiples",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Fractures with increased density metaphyseal margins"
+        },
+        {
+          "hpo_id": "HP:0000689",
+          "hpo_name_fr": "Os wormiens",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Gross demineralization calvarium"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Small triangular face, protruding eyes"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Small for gestational age"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:601559",
+      "disease_name": "Syndrome de Sta¼ve-Wiedemann",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Short limbs"
+        },
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Bowing of long bones"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Micrognathia"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Small thorax"
+        },
+        {
+          "hpo_id": "HP:0001371",
+          "hpo_name_fr": "Contractures articulaires",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Contractures at elbows/knees"
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Occasional"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:210720",
+      "disease_name": "Nanisme primordial microcephale type 2 (MOPD2)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Intrauterine growth retardation"
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Microcephaly"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Short-limb, mesomelic shortening forearm"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Micrognathia"
+        },
+        {
+          "hpo_id": "HP:0000679",
+          "hpo_name_fr": "Anomalies dentaires",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Microdontia, hypodontia, enamel hypoplasia"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:602535",
+      "disease_name": "Syndrome de Marshall-Smith",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0005257",
+          "hpo_name_fr": "Maturation squelettique avancee",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Hallmark: advanced bone age"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Failure to thrive despite accelerated maturation"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Prominent forehead, shallow orbits, depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Micrognathia"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Respiratory problems, laryngeal/tracheal anomalies"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Severe developmental delay"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:277590",
+      "disease_name": "Syndrome de Weaver",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0005257",
+          "hpo_name_fr": "Maturation squelettique avancee",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Accelerated skeletal maturation"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Large head, broad forehead"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Overgrowth plutot que RCIU"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Mild to moderate developmental delay"
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.22",
+          "notes": "Broad thumbs, camptodactyly"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:201750",
+      "disease_name": "Syndrome d'Antley-Bixler",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Multiple suture synostosis"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Midface hypoplasia, depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Micrognathia"
+        },
+        {
+          "hpo_id": "HP:0002973",
+          "hpo_name_fr": "Anomalie radiale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Radiohumeral synostosis, bowed femora"
+        },
+        {
+          "hpo_id": "HP:0001371",
+          "hpo_name_fr": "Contractures articulaires",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Joint contractures"
+        },
+        {
+          "hpo_id": "HP:0000062",
+          "hpo_name_fr": "Ambiguite genitale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Ambiguous genitalia (POR mutations)"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:201000",
+      "disease_name": "Syndrome de Carpenter (RAB23)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Multi-suture synostosis, sagittal and lambdoid"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Preaxial polydactyly feet, postaxial hands"
+        },
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Cutaneous syndactyly"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Congenital heart defect"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Moderate intellectual disability"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.9,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.7,
+          "source": "GeneReviews",
+          "notes": "acromesomelique"
+        },
+        {
+          "hpo_id": "HP:0003026",
+          "hpo_name_fr": "Rhizomelie",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.6,
+          "source": "GeneReviews",
+          "notes": "CIA type ostium primum"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.2,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:602875",
+      "disease_name": "Dysplasie acromesomelique Maroteaux",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.13",
+          "notes": "Acromesomelic shortening"
+        },
+        {
+          "hpo_id": "HP:0001156",
+          "hpo_name_fr": "Brachydactylie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.13",
+          "notes": "Very short hands and feet"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.13",
+          "notes": "Short stature evident at birth"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:268300",
+      "disease_name": "Syndrome de Roberts/SC phocomelie",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Tetraphocomelia or hypomelia"
+        },
+        {
+          "hpo_id": "HP:0000204",
+          "hpo_name_fr": "Fente labiale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Cleft lip/palate"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Severe growth retardation"
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Microcephaly"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Hypertelorism, exophthalmos"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Occasional cardiac defects"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:134780",
+      "disease_name": "Syndrome femoro-facial",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0009816",
+          "hpo_name_fr": "Os longs courts membres inferieurs",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Bilateral femoral hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Midface hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Micrognathia"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Cleft palate"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:154400",
+      "disease_name": "Syndrome de Nager (acrofacial dysostosis)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Severe micrognathia, malar hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Malformed ears, preauricular tags"
+        },
+        {
+          "hpo_id": "HP:0002973",
+          "hpo_name_fr": "Anomalie radiale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Radial ray deficiency, absent/hypoplastic thumbs"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Cleft palate"
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Conductive hearing loss"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:228520",
+      "disease_name": "Fibrochondrogenese",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": "yeux proeminents"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": "posterieur; fentes coronales"
+        },
+        {
+          "hpo_id": "HP:0003312",
+          "hpo_name_fr": "Os iliaques petits/anormaux",
+          "penetrance": 0.9,
+          "source": "Spranger_ch4",
+          "notes": "eperons medial/lateral; escargot"
+        },
+        {
+          "hpo_id": "HP:0003416",
+          "hpo_name_fr": "Metaphyses evasees",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": "extremites bulbeuses"
+        },
+        {
+          "hpo_id": "HP:0000260",
+          "hpo_name_fr": "Fontanelle anterieure large",
+          "penetrance": 0.8,
+          "source": "Spranger_ch4",
+          "notes": "fontanelles et sutures larges"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:275630",
+      "disease_name": "Chanarin-Dorfman (ABHD5)",
+      "prevalence": 5e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000957",
+          "hpo_name_fr": "Ichtyose",
+          "penetrance": 0.95,
+          "source": "GeneReviews",
+          "notes": "signe d'appel neonatal"
+        },
+        {
+          "hpo_id": "HP:0001397",
+          "hpo_name_fr": "Steatose hepatique",
+          "penetrance": 0.9,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0002088",
+          "hpo_name_fr": "Anomalie pulmonaire",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": "vacuolisation pneumocytes"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.5,
+          "source": "GeneReviews",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.3,
+          "source": "GeneReviews",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:252500",
+      "disease_name": "Mucolipidose II (I-cell disease)",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000280",
+          "hpo_name_fr": "Facies grossier",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Coarse facial features des la naissance"
+        },
+        {
+          "hpo_id": "HP:0000158",
+          "hpo_name_fr": "Hypertrophie gingivale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Marked gingival hyperplasia"
+        },
+        {
+          "hpo_id": "HP:0001371",
+          "hpo_name_fr": "Contractures articulaires",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Joint contractures des la naissance"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Periosteal cloaking neonatal, dysostose severe"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Short stature des la naissance, contrairement a  Hurler"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Psychomotor retardation severe"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Progressive cardiac valve/myocardium involvement"
+        },
+        {
+          "hpo_id": "HP:0002645",
+          "hpo_name_fr": "Calcifications ponctuees",
+          "penetrance": 0.4,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Punctate calcifications suivant depots calciques in utero"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Pes equinovarus"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Short AP diameter vertebral bodies, hook configuration"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:616145",
+      "disease_name": "Syndrome de Catel-Manzke",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Robin anomaly"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Robin anomaly with cleft palate"
+        },
+        {
+          "hpo_id": "HP:0006101",
+          "hpo_name_fr": "Doigt en deviation radiale",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Crooked index finger, hyperphalangy"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Occasionally congenital heart defects"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.8",
+          "notes": "Postnatal growth failure"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:304120",
+      "disease_name": "Syndrome otopalatodigital type II (OPD2)",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Micrognathia with cleft palate, males"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Cleft palate"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Thoracic hypoplasia, narrow thorax"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Hypertelorism, flat nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0001539",
+          "hpo_name_fr": "Omphalocele",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Omphalocele"
+        },
+        {
+          "hpo_id": "HP:0002119",
+          "hpo_name_fr": "Ventriculomegalie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Hydrocephalus, cerebellar hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Bowing of the limbs"
+        },
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Variable syndactyly hands/feet"
+        },
+        {
+          "hpo_id": "HP:0000028",
+          "hpo_name_fr": "Cryptorchidie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Cryptorchidism, hypospadias"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:308050",
+      "disease_name": "CHILD syndrome",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000957",
+          "hpo_name_fr": "Ichtyose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Unilateral ichthyosiform erythroderma, midline demarcation"
+        },
+        {
+          "hpo_id": "HP:0002645",
+          "hpo_name_fr": "Calcifications ponctuees",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Ipsilateral punctate calcifications"
+        },
+        {
+          "hpo_id": "HP:0009813",
+          "hpo_name_fr": "Deficience membre ipsilaterale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Ipsilateral limb defects, amelia to mild hypoplasia"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "ASD, single ventricle"
+        },
+        {
+          "hpo_id": "HP:0000104",
+          "hpo_name_fr": "Agenesie renale",
+          "penetrance": 0.25,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Unilateral renal agenesis"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:269860",
+      "disease_name": "Short-rib polydactylie type IV (Beemer-Langer)",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Short horizontally oriented ribs"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Short tubular bones, smooth metaphyses"
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Hydropic appearance"
+        },
+        {
+          "hpo_id": "HP:0000204",
+          "hpo_name_fr": "Fente labiale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Median cleft lip"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.5,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Approximately 50% pre-/postaxial"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Congenital heart defect"
+        },
+        {
+          "hpo_id": "HP:0002085",
+          "hpo_name_fr": "Holoprosencephalie/anomalie SNC",
+          "penetrance": 0.25,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Holoprosencephaly, anencephaly, hydrocephaly"
+        },
+        {
+          "hpo_id": "HP:0000110",
+          "hpo_name_fr": "Anomalie renale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Cystic/hypoplastic kidneys"
+        },
+        {
+          "hpo_id": "HP:0000062",
+          "hpo_name_fr": "Ambiguite genitale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.11",
+          "notes": "Ambiguous genitalia"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:112240",
+      "disease_name": "Syndrome de Cole-Carpenter",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0020110",
+          "hpo_name_fr": "Fractures multiples",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Multiple fractures at birth"
+        },
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Craniosynostosis"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Hypertelorism, proptosis"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Short limbs, bowed"
+        },
+        {
+          "hpo_id": "HP:0001388",
+          "hpo_name_fr": "Hypotonie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.14",
+          "notes": "Muscular hypotonia"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:216340",
+      "disease_name": "Syndrome de Yunis-Varon",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Severe postnatal growth retardation, IUGR"
+        },
+        {
+          "hpo_id": "HP:0000260",
+          "hpo_name_fr": "Fontanelle anterieure large",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Large fontanels, stellate ossification calvarium"
+        },
+        {
+          "hpo_id": "HP:0000885",
+          "hpo_name_fr": "Hypoplasie claviculaire",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Hypoplastic or absent clavicles"
+        },
+        {
+          "hpo_id": "HP:0009601",
+          "hpo_name_fr": "Aplasie/hypoplasie pouce",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Absent/hypoplastic thumbs and great toes"
+        },
+        {
+          "hpo_id": "HP:0001274",
+          "hpo_name_fr": "Agenesie du corps calleux",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Arhinencephaly, callosal agenesis, vermian dysplasia"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Developmental delay with CNS malformations"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.20",
+          "notes": "Congenital heart defect"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:602361",
+      "disease_name": "Osteocraniostenose",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Moderate micromelia, short stubby fingers"
+        },
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Cloverleaf/acrocephalic skull, deficient mineralization"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Small nose, short philtrum, micrognathia"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Pulmonary hypoplasia, splenic hypoplasia/asplenia"
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Hydrops"
+        },
+        {
+          "hpo_id": "HP:0020110",
+          "hpo_name_fr": "Fractures multiples",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Thin dense tubular bones with abrupt metaphyseal flare"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:210710",
+      "disease_name": "Nanisme primordial microcephale type 1 (MOPD1, Taybi-Linder)",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Intrauterine and postnatal growth deficiency"
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Microcephaly"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Sloping forehead, protruding eyes, micrognathia"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Short limbs, broad hands, stick-like bones"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Increased muscle tone, developmental failure"
+        },
+        {
+          "hpo_id": "HP:0003312",
+          "hpo_name_fr": "Os iliaques petits/anormaux",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.21",
+          "notes": "Short and broad ilia, horizontal acetabular roofs"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:218600",
+      "disease_name": "Syndrome de Baller-Gerold (RECQL4)",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Coronal synostosis"
+        },
+        {
+          "hpo_id": "HP:0002973",
+          "hpo_name_fr": "Anomalie radiale",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Radial hypoplasia/aplasia, absent/hypoplastic thumb"
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Short stature"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Occasional"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:258315",
+      "disease_name": "Omodysplasie recessive",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Short limbs, rhizomelic"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Flat face, depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0002999",
+          "hpo_name_fr": "Luxations articulaires congenitales",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Joint dislocations"
+        },
+        {
+          "hpo_id": "HP:0001627",
+          "hpo_name_fr": "Cardiopathie congenitale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Occasional cardiac defects"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:249700",
+      "disease_name": "Dysplasie mesomelique type Langer",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Severe mesomelic shortening"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Micrognathia in some cases"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.12",
+          "notes": "Severe short stature, homozygous SHOX"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:200700",
+      "disease_name": "Dysplasie de Grebe",
+      "prevalence": 3e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.13",
+          "notes": "Severe limb shortening, distalward gradient"
+        },
+        {
+          "hpo_id": "HP:0009816",
+          "hpo_name_fr": "Os longs courts membres inferieurs",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.13",
+          "notes": "Femoral/tibial severe shortening"
+        },
+        {
+          "hpo_id": "HP:0001161",
+          "hpo_name_fr": "Polydactylie postaxiale",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.13",
+          "notes": "Occasional polydactyly"
+        },
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.13",
+          "notes": "Syndactyly, ball-like hands"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:156400",
+      "disease_name": "Chondrodysplasie metaphysaire type Jansen",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Severe shortness tubular bones"
+        },
+        {
+          "hpo_id": "HP:0004322",
+          "hpo_name_fr": "Petite taille",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Adult height 105-130cm"
+        },
+        {
+          "hpo_id": "HP:0000256",
+          "hpo_name_fr": "Macrocephalie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Moderately enlarged broad skull"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Frontonasal overgrowth in older patients"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Occasionally"
+        },
+        {
+          "hpo_id": "HP:0003072",
+          "hpo_name_fr": "Hypercalcemie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Developing first months after birth"
+        },
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Legs often bowed"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.25,
+          "source": "Bone Dysplasias ch.3",
+          "notes": "Occasionally clubfeet"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:256550",
+      "disease_name": "Sialidose infantile",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.75,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Infantile form: hydrops, organomegaly"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Organomegaly"
+        },
+        {
+          "hpo_id": "HP:0001744",
+          "hpo_name_fr": "Splenomegalie",
+          "penetrance": 0.75,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Organomegaly"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "DD/ID"
+        },
+        {
+          "hpo_id": "HP:0000365",
+          "hpo_name_fr": "Surdite",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Sensorineural deafness"
+        },
+        {
+          "hpo_id": "HP:0000280",
+          "hpo_name_fr": "Facies grossier",
+          "penetrance": 0.75,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Coarse features"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Dysostose multiplex moderee"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:269920",
+      "disease_name": "Maladie de surcharge en acide sialique libre (infantile)",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Infantile: hydrops"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Organomegaly"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "DD/ID"
+        },
+        {
+          "hpo_id": "HP:0001744",
+          "hpo_name_fr": "Splenomegalie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Organomegaly"
+        },
+        {
+          "hpo_id": "HP:0000280",
+          "hpo_name_fr": "Facies grossier",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Coarse features"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.5",
+          "notes": "Dysostose moins marquee que MPS"
+        },
+        {
+          "hpo_id": "HP:0000104",
+          "hpo_name_fr": "Agenesie renale",
+          "penetrance": 0.6,
+          "source": "expert",
+          "notes": "bilaterale"
+        },
+        {
+          "hpo_id": "HP:0001562",
+          "hpo_name_fr": "Oligoamnios",
+          "penetrance": 0.95,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.95,
+          "source": "expert",
+          "notes": "hypoplasie pulmonaire"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.6,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0000369",
+          "hpo_name_fr": "Oreilles bas implantees",
+          "penetrance": 0.5,
+          "source": "expert",
+          "notes": "facies de Potter"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.4,
+          "source": "expert",
+          "notes": ""
+        },
+        {
+          "hpo_id": "HP:0001511",
+          "hpo_name_fr": "Retard de croissance intra-uterin",
+          "penetrance": 0.5,
+          "source": "expert",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:112310",
+      "disease_name": "Dysplasie boomerang / Atelosteogenese I",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Severe rhizomelic shortening"
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Polyhydramnios"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Hypertelorism, depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Occasionally with cleft palate"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Talipes equinovarus"
+        },
+        {
+          "hpo_id": "HP:0002999",
+          "hpo_name_fr": "Luxations articulaires congenitales",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Large joint dislocations"
+        },
+        {
+          "hpo_id": "HP:0002652",
+          "hpo_name_fr": "Dysostose multiplex",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Defective ossification cervical/thoracic sup"
+        },
+        {
+          "hpo_id": "HP:0001539",
+          "hpo_name_fr": "Omphalocele",
+          "penetrance": 0.15,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Omphalocele and frontal encephalocele"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:108721",
+      "disease_name": "Atelosteogenese type III",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Short-limb dwarfism, small chest"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Small chest, protuberant abdomen"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Midface hypoplasia, depressed nasal bridge"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Cleft palate"
+        },
+        {
+          "hpo_id": "HP:0002999",
+          "hpo_name_fr": "Luxations articulaires congenitales",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Multiple dislocations elbows/hips/knees"
+        },
+        {
+          "hpo_id": "HP:0001762",
+          "hpo_name_fr": "Pied bot varus equin",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Talipes equinovarus, syndactyly"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.9",
+          "notes": "Small vertebral bodies, coronal clefts"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:215140",
+      "disease_name": "Dysplasie de Greenberg (HEM)",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Non-immune hydrops fetalis"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Rhizo-mesomelic shortening"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Midface hypoplasia, micrognathia"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Narrow thorax, protuberant abdomen"
+        },
+        {
+          "hpo_id": "HP:0000916",
+          "hpo_name_fr": "Platyspondylie",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Multiple punctate ossification centers vertebral bodies"
+        },
+        {
+          "hpo_id": "HP:0002645",
+          "hpo_name_fr": "Calcifications ponctuees",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Moth-eaten skeleton, punctate epiphyseal calcifications"
+        },
+        {
+          "hpo_id": "HP:0001561",
+          "hpo_name_fr": "Hydramnios",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.10",
+          "notes": "Polyhydramnios"
+        }
+      ]
+    },
+    {
+      "disease_id": "LOCAL:RAINE",
+      "disease_name": "Dysplasie de Raine (osteosclerose letale)",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Proptosis, wide cranial sutures"
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Often microcephaly"
+        },
+        {
+          "hpo_id": "HP:0000431",
+          "hpo_name_fr": "Ensellure nasale large",
+          "penetrance": 0.9,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Hypoplastic nose, depressed bridge, anteverted nares"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Micrognathia, cleft lip/palate, small mouth"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Narrow chest, respiratory distress"
+        },
+        {
+          "hpo_id": "HP:0011001",
+          "hpo_name_fr": "Osteosclerose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "Generalized osteosclerosis, periosteal bone formation"
+        },
+        {
+          "hpo_id": "HP:0000175",
+          "hpo_name_fr": "Fente palatine",
+          "penetrance": 0.35,
+          "source": "Bone Dysplasias ch.16",
+          "notes": "With or without cleft lip/palate"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:215045",
+      "disease_name": "Chondrodysplasie de Blomstrand",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Short-limb type, overmodeled tubular bones"
+        },
+        {
+          "hpo_id": "HP:0011001",
+          "hpo_name_fr": "Osteosclerose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Generalized increased bone density"
+        },
+        {
+          "hpo_id": "HP:0011800",
+          "hpo_name_fr": "Hypoplasie mediofaciale",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Midface hypoplasia, short nose, protruding eyes"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Micrognathia, protruding tongue"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Small thorax, short thick ribs"
+        },
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Fetal hydrops"
+        },
+        {
+          "hpo_id": "HP:0005257",
+          "hpo_name_fr": "Maturation squelettique avancee",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Advanced skeletal maturation carpal/tarsal/laryngeal"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:151050",
+      "disease_name": "Syndrome de Lenz-Majewski",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0011001",
+          "hpo_name_fr": "Osteosclerose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Progressive skull/vertebral sclerosis and hyperostosis"
+        },
+        {
+          "hpo_id": "HP:0000252",
+          "hpo_name_fr": "Microcephalie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Short stature and microcephaly"
+        },
+        {
+          "hpo_id": "HP:0000316",
+          "hpo_name_fr": "Hypertelorisme",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Prominent forehead/eyes, hypertelorism"
+        },
+        {
+          "hpo_id": "HP:0001159",
+          "hpo_name_fr": "Syndactylie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Short webbed fingers and toes"
+        },
+        {
+          "hpo_id": "HP:0001249",
+          "hpo_name_fr": "Deficience intellectuelle",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Intellectual impairment"
+        },
+        {
+          "hpo_id": "HP:0000028",
+          "hpo_name_fr": "Cryptorchidie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Undescended testes, hypospadias"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:614592",
+      "disease_name": "Bent bone dysplasia-FGFR2",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0002007",
+          "hpo_name_fr": "Incurvation femorale",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Bent/bowed long bones"
+        },
+        {
+          "hpo_id": "HP:0002676",
+          "hpo_name_fr": "Craniostenose",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Craniosynostosis"
+        },
+        {
+          "hpo_id": "HP:0000347",
+          "hpo_name_fr": "Micrognathie",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Micrognathia"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Short limbs with bowing"
+        },
+        {
+          "hpo_id": "HP:0000774",
+          "hpo_name_fr": "Thorax etroit",
+          "penetrance": 0.7,
+          "source": "Bone Dysplasias ch.23",
+          "notes": "Narrow thorax"
+        }
+      ]
+    },
+    {
+      "disease_id": "OMIM:276820",
+      "disease_name": "Syndrome d'Al-Awadi/Raas-Rothschild",
+      "prevalence": 2e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0009816",
+          "hpo_name_fr": "Os longs courts membres inferieurs",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Severe limb deficiency, phocomelia"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Severe limb shortening, absent ulna/fibula"
+        },
+        {
+          "hpo_id": "HP:0000062",
+          "hpo_name_fr": "Ambiguite genitale",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.25",
+          "notes": "Genital anomalies"
+        }
+      ]
+    },
+    {
+      "disease_id": "LOCAL:KOZTSUR",
+      "disease_name": "Hyperostose corticale dysplasique (Kozlowski-Tsuruta)",
+      "prevalence": 1e-05,
+      "phenotypes": [
+        {
+          "hpo_id": "HP:0001791",
+          "hpo_name_fr": "Anasarque foetale",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Severe fetal hydrops"
+        },
+        {
+          "hpo_id": "HP:0002983",
+          "hpo_name_fr": "Micromelie",
+          "penetrance": 0.8,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Short limbs"
+        },
+        {
+          "hpo_id": "HP:0011001",
+          "hpo_name_fr": "Osteosclerose",
+          "penetrance": 0.95,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Cortical hyperostosis all long bones, clavicles, ribs"
+        },
+        {
+          "hpo_id": "HP:0008872",
+          "hpo_name_fr": "Hypoplasie pulmonaire",
+          "penetrance": 0.85,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Pulmonary hypoplasia, invariably lethal"
+        },
+        {
+          "hpo_id": "HP:0001409",
+          "hpo_name_fr": "Hepatomegalie",
+          "penetrance": 0.55,
+          "source": "Bone Dysplasias ch.17",
+          "notes": "Hepatomegaly"
+        }
+      ]
+    }
+  ]
+}

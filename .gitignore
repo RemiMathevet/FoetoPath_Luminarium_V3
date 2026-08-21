@@ -1,0 +1,33 @@
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.db-shm
+*.db-wal
+*.sqlite3
+nohup.out
+logs/
+*.log
+.DS_Store
+*.egg-info/
+dist/
+build/
+graphify-out/
+
+# sorties des scripts embeddings : figures régénérables + exports contenant des n° de cas et du CR
+Lumi/embeddings/*.png
+Lumi/embeddings/*.csv
+Lumi/embeddings/*.tsv
+Lumi/embeddings/*.xlsx
+Lumi/embeddings/*.npz
+Lumi/embeddings/*.h5
+# manifestes de lames : croisent n° de cas et diagnostic — repo public
+Lumi/embeddings/*.txt
+# poids LoRA entraines, regenerables
+Lumi/embeddings/lora_*/
+
+# feedbacks saisis dans l'app : nominatifs + n° de cas
+Foeto/feedback/
+
+# sauvegarde du viewer avant le chantier superpixels (31/07)
+Lumi_preSLIC/

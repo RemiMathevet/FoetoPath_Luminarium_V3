@@ -1,0 +1,130 @@
+FoetoPath - Custom Research License
+=====================================
+Version 1.2 — March 2026
+
+Copyright (c) 2026 Rémi Mathevet
+All rights reserved.
+
+
+1. Definitions
+
+"Software" refers to the FoetoPath application, including all source code,
+documentation, templates, static assets, and associated files distributed
+in this repository.
+
+"Commercial Use" means any use intended for or directed toward commercial
+advantage or monetary compensation, including but not limited to: selling,
+licensing for a fee, offering as a paid service, or incorporating into a
+product or service that is sold or offered for a fee.
+
+"Research Use" means use solely for academic research, teaching, personal
+study, or non-profit clinical evaluation within a public hospital or
+academic institution.
+
+
+2. Grant of License
+
+Subject to the terms and conditions of this License, the copyright holder
+grants you a worldwide, royalty-free, non-exclusive, non-transferable
+license to use, copy, and modify the Software strictly for Research Use.
+
+
+3. Restrictions
+
+You may NOT:
+
+  a) Use the Software for any Commercial Use;
+
+  b) Sell, rent, lease, sublicense, or otherwise distribute the Software
+     or any derivative work in exchange for payment or any form of
+     compensation;
+
+  c) Charge any fee, subscription, or payment for access to, or use of,
+     the Software or any service built upon it;
+
+  d) Incorporate the Software, in whole or in part, into any commercial
+     product or service;
+
+  e) Remove or alter this license notice, copyright notice, or any
+     attribution contained in the Software.
+
+
+4. Redistribution
+
+You may redistribute the Software or derivative works thereof, provided
+that:
+
+  a) The distribution is made at no charge;
+
+  b) This License is included in its entirety with every copy;
+
+  c) The redistribution is solely for Research Use;
+
+  d) You clearly indicate any modifications made to the original Software.
+
+
+5. Attribution
+
+Any publication, presentation, or academic work that uses or references
+this Software must include the following citation:
+
+  "FoetoPath — Application de fœtopathologie, développée par
+   Rémi Mathevet."
+
+
+6. No Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
+FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+
+7. Regulatory Status and Medical Disclaimer
+
+  a) This Software is NOT a medical device within the meaning of
+     Regulation (EU) 2017/745 (Medical Device Regulation). It has not
+     been designed, validated, or certified for use in clinical
+     diagnosis, monitoring, prevention, or treatment of any disease or
+     medical condition.
+
+  b) The Software is a data-structuring and research-support tool. Its
+     purpose is limited to the collection, organization, and
+     presentation of anatomopathological data in a research context. It
+     does not implement any autonomous diagnostic logic, does not
+     produce clinical recommendations, and does not replace the
+     professional judgment of a qualified practitioner.
+
+  c) Any clinical interpretation or diagnostic conclusion derived while
+     using this Software remains the sole and exclusive responsibility
+     of the licensed medical professional operating it. The author
+     assumes no liability for any clinical decision made with the aid
+     of this Software.
+
+  d) This Software MUST NOT be marketed, presented, or deployed as a
+     medical device, a clinical decision-support system, or a
+     diagnostic tool, whether directly or as part of a larger system,
+     without prior regulatory certification in the applicable
+     jurisdiction.
+
+  e) Users who modify the Software in a way that introduces diagnostic,
+     predictive, or therapeutic functionality assume full regulatory
+     responsibility for the resulting product under applicable medical
+     device legislation.
+
+
+8. Termination
+
+This License is automatically terminated if you breach any of its terms.
+Upon termination, you must cease all use and destroy all copies of the
+Software in your possession.
+
+
+9. Governing Law
+
+This License shall be governed by and construed in accordance with the
+laws of France. Any disputes arising under this License shall be subject
+to the exclusive jurisdiction of the courts of Besançon, France.

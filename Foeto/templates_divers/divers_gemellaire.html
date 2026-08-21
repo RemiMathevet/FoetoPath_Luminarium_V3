@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placenta Gémellaire — Macroscopie | FoetoPath</title>
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #161b27; --bg3: #1e2435; --bg4: #252d42;
+    --border: #2e3854; --border2: #3d4f75;
+    --text: #e2e8f8; --text2: #8892aa; --text3: #556080;
+    --blue: #4f8ef7; --blue-dim: #1e3a6e; --blue-text: #93b8fa;
+    --green: #2dca72; --green-dim: #0f3d25; --green-text: #6ee8a2;
+    --amber: #f5a623; --amber-dim: #3d2800; --amber-text: #fbc85c;
+    --red: #e8445a; --red-dim: #3d1018; --red-text: #f88a9a;
+    --purple: #9b72f5; --purple-dim: #251850; --purple-text: #c4a8ff;
+    --teal: #2ec4b6; --teal-dim: #0c2f2d; --teal-text: #7de8e0;
+    --c1: #4f8ef7; --c2g: #2dca72; --c3: #f5a623;
+    --radius: 8px; --radius-lg: 12px;
+    --mono: 'JetBrains Mono','Fira Code','Courier New',monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system,'Segoe UI',sans-serif; font-size:14px; line-height:1.6; min-height:100vh; }
+  .app { max-width:980px; margin:0 auto; padding:2rem 1.5rem 4rem; }
+
+  .header { display:flex; align-items:center; gap:12px; margin-bottom:2rem; padding-bottom:1.25rem; border-bottom:1px solid var(--border); }
+  .header-icon { width:36px; height:36px; background:var(--purple-dim); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; }
+  .header h1 { font-size:18px; font-weight:600; letter-spacing:-0.01em; }
+  .header small { font-size:12px; color:var(--text3); display:block; margin-top:1px; }
+
+  .section { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.25rem; margin-bottom:1rem; }
+  .sec-title { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--text3); margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
+  .sec-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .row { display:grid; gap:10px; margin-bottom:10px; }
+  .c2 { grid-template-columns:1fr 1fr; }
+  .c3 { grid-template-columns:1fr 1fr 1fr; }
+  .c4 { grid-template-columns:repeat(4,1fr); }
+  .c23 { grid-template-columns:2fr 3fr; }
+
+  .fld { display:flex; flex-direction:column; gap:4px; }
+  label.lbl { font-size:11px; color:var(--text2); font-weight:500; }
+  input,select,textarea {
+    background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius);
+    color:var(--text); font-size:13px; padding:7px 10px; font-family:inherit; width:100%;
+    transition:border-color 0.15s;
+  }
+  input:focus,select:focus,textarea:focus { outline:none; border-color:var(--blue); }
+  textarea { resize:vertical; min-height:68px; }
+  select option { background:var(--bg3); }
+
+  .tg { display:flex; gap:0; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+  .tgb { flex:1; padding:7px 10px; background:transparent; border:none; color:var(--text2); font-size:12px; cursor:pointer; font-family:inherit; transition:all 0.15s; text-align:center; }
+  .tgb.active { background:var(--blue-dim); color:var(--blue-text); font-weight:500; }
+  .tgb:hover:not(.active) { background:var(--bg4); }
+
+  .nom-badge { display:inline-flex; align-items:center; gap:6px; background:var(--bg3); border:1px solid var(--border2); border-radius:var(--radius); padding:6px 12px; font-size:13px; margin-top:6px; }
+  .nom-val { color:var(--blue-text); font-weight:600; font-family:var(--mono); font-size:13px; }
+
+  .gal { border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.1rem 1.1rem 0.8rem; margin-bottom:12px; border-left-width:3px; }
+  .gal-hdr { font-size:14px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .badge { font-size:10px; padding:2px 8px; border-radius:4px; font-weight:500; }
+  .bdg-di { background:var(--bg4); color:var(--text2); border:1px solid var(--border); }
+  .bdg-mc { background:var(--purple-dim); color:var(--purple-text); border:1px solid var(--purple); }
+
+  .mono-panel { border:1px solid var(--purple); border-radius:var(--radius-lg); padding:1.1rem; background:var(--bg3); }
+  .mono-title { font-size:12px; font-weight:600; color:var(--purple-text); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .terr-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .terr-lbl { font-size:13px; min-width:46px; font-family:var(--mono); color:var(--text); }
+  .terr-input { width:72px!important; }
+  .sum-ok { color:var(--green-text); font-size:11px; }
+  .sum-bad { color:var(--red-text); font-size:11px; }
+  .sum-neu { color:var(--text3); font-size:11px; }
+
+  .ana-table { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:6px; }
+  .ana-table th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.07em; color:var(--text3); padding:5px 8px; border-bottom:1px solid var(--border); font-weight:600; }
+  .ana-table td { padding:4px 8px; border-bottom:1px solid var(--border); }
+  .ana-table select { font-size:12px; padding:3px 6px; }
+  .btn-add { font-size:12px; color:var(--blue-text); background:transparent; border:1px dashed var(--blue); padding:5px 14px; border-radius:var(--radius); cursor:pointer; font-family:inherit; margin-top:4px; transition:all 0.15s; }
+  .btn-add:hover { background:var(--blue-dim); }
+  .btn-del { background:none; border:none; color:var(--red); cursor:pointer; font-size:14px; line-height:1; padding:0 2px; }
+
+  .cr-panel { background:var(--bg3); border:1px solid var(--border2); border-radius:var(--radius-lg); padding:1.25rem; margin-top:1rem; }
+  .cr-text { font-family:var(--mono); font-size:12px; color:var(--text); line-height:1.8; white-space:pre-wrap; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:12px; min-height:100px; }
+  .btn-primary { background:var(--blue-dim); border:1px solid var(--blue); color:var(--blue-text); padding:9px 22px; border-radius:var(--radius); font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+  .btn-primary:hover { background:var(--blue); color:#fff; }
+  .btn-save { background:var(--green-dim); border:1px solid var(--green); color:var(--green-text); padding:9px 20px; border-radius:var(--radius); font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+  .btn-save:hover { background:var(--green); color:#fff; }
+  .btn-copy { background:var(--bg4); border:1px solid var(--border); color:var(--text2); padding:7px 14px; border-radius:var(--radius); font-size:12px; cursor:pointer; font-family:inherit; }
+  .btn-copy:hover { border-color:var(--border2); color:var(--text); }
+  .actions { display:flex; gap:8px; margin-top:10px; align-items:center; }
+  .copy-ok { font-size:11px; color:var(--green); display:none; }
+  .save-ok { font-size:11px; color:var(--green); display:none; }
+
+  .hint { font-size:11px; color:var(--text3); margin-top:2px; }
+  .sep { height:1px; background:var(--border); margin:10px 0; }
+  .hidden { display:none!important; }
+
+  @media (max-width:600px) { .c3,.c4 { grid-template-columns:1fr 1fr; } .c2 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-icon">
+      <svg width="20" height="20" fill="none" stroke="#9b72f5" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Placenta Gémellaire — Macroscopie</h1>
+      <small>FoetoPath Hub · Template de saisie macroscopique</small>
+    </div>
+    <a href="/divers/" style="color:var(--text3);font-size:12px;text-decoration:none;margin-left:auto">← Cas divers</a>
+  </div>
+
+  <!-- IDENTIFICATION -->
+  <div class="section">
+    <div class="sec-title">Identification</div>
+    <div class="row c3">
+      <div class="fld"><label class="lbl">N° dossier</label><input type="text" id="dossier" placeholder="2025-GEM-XXX"></div>
+      <div class="fld"><label class="lbl">Date prélèvement</label><input type="date" id="date-prel"></div>
+      <div class="fld"><label class="lbl">Opérateur</label><input type="text" id="operateur" placeholder="Nom"></div>
+    </div>
+    <div class="row c3">
+      <div class="fld"><label class="lbl">Terme (SA)</label><input type="number" id="ag-sa" placeholder="22" min="12" max="42"></div>
+      <div class="fld"><label class="lbl">+ jours</label><input type="number" id="ag-j" placeholder="0" min="0" max="6"></div>
+      <div class="fld"><label class="lbl">Indication</label>
+        <select id="indication">
+          <option value="">— Choisir —</option>
+          <option>MFIU</option>
+          <option>IMG médicale</option>
+          <option>STT (syndrome transfuseur-transfusé)</option>
+          <option>TAPS (twin anemia-polycythemia sequence)</option>
+          <option>RCIU sélectif</option>
+          <option>Accouchement prématuré spontané</option>
+          <option>Pré-éclampsie</option>
+          <option>Suivi de grossesse multiple</option>
+          <option>Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="row c2">
+      <div class="fld">
+        <label class="lbl">État du prélèvement</label>
+        <div class="tg">
+          <button class="tgb active" onclick="setTg('etat','frais',this)">Frais</button>
+          <button class="tgb" onclick="setTg('etat','fixe',this)">Fixé au formol</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHORIONICITÉ -->
+  <div class="section">
+    <div class="sec-title">Chorionicité & amnionicité</div>
+    <div class="row c2">
+      <div class="fld"><label class="lbl">Type de grossesse</label>
+        <select id="chorio" onchange="upChorio()">
+          <option value="">— Choisir —</option>
+          <option value="DCDA">Bichoriale biamniotique (DCDA)</option>
+          <option value="DCMA">Bichoriale monoamniotique (DCMA)</option>
+          <option value="MCDA">Monochoriale biamniotique (MCDA)</option>
+          <option value="MCMA">Monochoriale monoamniotique (MCMA)</option>
+          <option value="TC">Trichoriale triamniotique (TC)</option>
+          <option value="MCTA">Monochoriale triamniotique (MCTA)</option>
+        </select>
+      </div>
+      <div class="fld"><label class="lbl">Nombre de fœtus</label>
+        <select id="nb-foetus" onchange="upChorio()">
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPÉRAGE -->
+  <div class="section">
+    <div class="sec-title">Repérage des cordons</div>
+    <div class="row c2">
+      <div class="fld"><label class="lbl">Repérage par clamp ?</label>
+        <div class="tg">
+          <button class="tgb active" onclick="setTg('clamp','oui',this);upNom()">Oui — avec clamp(s)</button>
+          <button class="tgb" onclick="setTg('clamp','non',this);upNom()">Non — repérage visuel</button>
+        </div>
+      </div>
+      <div class="fld" id="nb-clamp-wrap"><label class="lbl">Nombre de clamps</label>
+        <div class="tg">
+          <button class="tgb active" onclick="setTg('nb-clamps','2',this);upNom()">2 clamps</button>
+          <button class="tgb" onclick="setTg('nb-clamps','1',this);upNom()">1 clamp</button>
+        </div>
+      </div>
+    </div>
+    <div class="nom-badge">
+      <span style="font-size:11px;color:var(--text3)">Nomenclature :</span>
+      <span class="nom-val" id="nom-display">—</span>
+      <span style="font-size:11px;color:var(--text3)" id="nom-expl"></span>
+    </div>
+  </div>
+
+  <!-- GALETTES -->
+  <div id="galettes-ctr"></div>
+
+  <!-- SECTION MONOCHORIALE -->
+  <div class="section hidden" id="sec-mono">
+    <div class="sec-title">Section monochoriale</div>
+    <div class="mono-panel">
+      <div class="mono-title">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Placenta <span id="mono-badge" style="font-weight:700"></span>
+      </div>
+      <div class="row c3">
+        <div class="fld"><label class="lbl">Équateur vasculaire</label>
+          <select id="equateur">
+            <option value="present_net">Présent — bien défini</option>
+            <option value="present_difficile">Présent — difficile à tracer</option>
+            <option value="absent">Absent / non identifiable</option>
+          </select>
+        </div>
+        <div class="fld"><label class="lbl">Injection des cordons</label>
+          <select id="injection">
+            <option value="non">Non injectés</option>
+            <option value="oui_diff">Oui — colorants différents</option>
+            <option value="oui_unique">Oui — colorant unique</option>
+          </select>
+        </div>
+        <div class="fld"><label class="lbl">Qualité de l'injection</label>
+          <select id="qual-inject">
+            <option value="na">N/A</option>
+            <option value="bonne">Bonne diffusion</option>
+            <option value="partielle">Partielle</option>
+            <option value="echec">Échec</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px">Territoires vasculaires</div>
+      <div id="terr-ctr"></div>
+      <div id="terr-sum" class="sum-neu" style="font-size:11px;margin-top:2px;margin-bottom:10px"></div>
+
+      <div class="sep"></div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px">Anastomoses vasculaires</div>
+      <table class="ana-table">
+        <thead><tr><th>Type</th><th>Direction</th><th>Calibre</th><th></th></tr></thead>
+        <tbody id="ana-body"></tbody>
+      </table>
+      <button class="btn-add" onclick="addAna()">+ Ajouter une anastomose</button>
+
+      <div class="sep"></div>
+      <div class="fld">
+        <label class="lbl">Observations monochoriales libres</label>
+        <textarea id="obs-mono" placeholder="Aspect de l'équateur, particularités des anastomoses, thromboses vasculaires choriales..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBSERVATIONS GÉNÉRALES -->
+  <div class="section">
+    <div class="sec-title">Observations générales</div>
+    <div class="fld"><textarea id="obs-gen" placeholder="Corrélations cliniques, remarques complémentaires, éléments à signaler..."></textarea></div>
+  </div>
+
+  <!-- CR -->
+  <div class="section">
+    <div class="sec-title">Compte-rendu macroscopique</div>
+    <div class="actions" style="margin-top:0">
+      <button class="btn-primary" onclick="generateCR()">Générer le texte</button>
+      <button class="btn-save" onclick="saveCas()" id="btn-save">Sauvegarder</button>
+      <span class="save-ok" id="save-status">✓ Sauvegardé</span>
+    </div>
+    <div class="cr-panel hidden" id="cr-panel">
+      <pre class="cr-text" id="cr-text"></pre>
+      <div class="actions">
+        <button class="btn-copy" onclick="copyCR()">Copier</button>
+        <span class="copy-ok" id="copy-ok">✓ Copié</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+var S = {
+  etat:'frais', clamp:'oui', 'nb-clamps':'2',
+  chorio:'', nbFoetus:2,
+  noms:[],
+  anastomoses:[],
+  anaId:0
+};
+
+function setTg(key, val, btn) {
+  S[key] = val;
+  btn.closest('.tg').querySelectorAll('.tgb').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function v(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+
+function upChorio() {
+  var ch = document.getElementById('chorio').value;
+  var nb = parseInt(document.getElementById('nb-foetus').value) || 2;
+  S.chorio = ch; S.nbFoetus = nb;
+  var isMono = ch.startsWith('MC');
+  document.getElementById('sec-mono').classList.toggle('hidden', !isMono || !ch);
+  if (isMono) document.getElementById('mono-badge').textContent = ch;
+  upNom();
+  renderTerr();
+}
+
+function upNom() {
+  var ch = S.chorio;
+  var nb = S.nbFoetus;
+  var avecClamp = S.clamp === 'oui';
+  var nbC = parseInt(S['nb-clamps']) || 2;
+  document.getElementById('nb-clamp-wrap').classList.toggle('hidden', !avecClamp);
+
+  var noms, expl;
+  if (!ch) { noms = []; expl = ''; }
+  else if (avecClamp) {
+    if (nb === 3) { noms = ['J1C','J2C','J3C']; expl = '(3 clamps)'; }
+    else if (nbC === 2) { noms = ['J1C','J2C']; expl = '(2 clamps)'; }
+    else { noms = ['JC','Jsans-C']; expl = '(1 clamp — cordon clampé vs libre)'; }
+  } else {
+    if (nb === 3) { noms = ['J1','J2','J3']; expl = '(repérage par taille de galette)'; }
+    else { noms = ['JG','JP']; expl = '(grande galette / petite galette)'; }
+  }
+  S.noms = noms;
+  document.getElementById('nom-display').textContent = noms.length ? noms.join(' / ') : '—';
+  document.getElementById('nom-expl').textContent = expl;
+  renderGalettes();
+  renderTerr();
+}
+
+var GAL_COLORS = ['#4f8ef7','#2dca72','#f5a623'];
+var GAL_DIMS = ['var(--blue-dim)','var(--green-dim)','var(--amber-dim)'];
+
+function renderGalettes() {
+  var ch = S.chorio;
+  var isDC = ch && ch.startsWith('DC');
+  var ctr = document.getElementById('galettes-ctr');
+  if (!S.noms.length) { ctr.innerHTML = ''; return; }
+
+  var html = '<div class="section"><div class="sec-title">Galettes placentaires</div>';
+  S.noms.forEach(function(nom, i) {
+    var col = GAL_COLORS[i] || GAL_COLORS[0];
+    html += '<div class="gal" style="border-left-color:' + col + '">' +
+      '<div class="gal-hdr" style="color:' + col + '">' + nom +
+        (isDC ? ' <span class="badge bdg-di">Dichorial — traité en singleton</span>' : ' <span class="badge bdg-mc">Monochorial</span>') +
+      '</div>' +
+      '<div class="row c4">' +
+        '<div class="fld"><label class="lbl">Masse (g)</label><input type="number" id="g' + i + '-masse" placeholder="—" min="0" step="0.1"></div>' +
+        '<div class="fld"><label class="lbl">Long. (cm)</label><input type="number" id="g' + i + '-l" placeholder="—" step="0.1" min="0"></div>' +
+        '<div class="fld"><label class="lbl">Larg. (cm)</label><input type="number" id="g' + i + '-la" placeholder="—" step="0.1" min="0"></div>' +
+        '<div class="fld"><label class="lbl">Épais. (cm)</label><input type="number" id="g' + i + '-e" placeholder="—" step="0.1" min="0"></div>' +
+      '</div>' +
+      '<div class="row c3">' +
+        '<div class="fld"><label class="lbl">Insertion cordonale</label>' +
+          '<select id="g' + i + '-insert">' +
+            '<option value="centrale">Centrale</option>' +
+            '<option value="excentree">Excentrée</option>' +
+            '<option value="marginale">Marginale (Battledore)</option>' +
+            '<option value="velamenteuse">Vélamenteuse</option>' +
+            '<option value="furcata">Furcata</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="fld"><label class="lbl">Distance au bord (cm)</label><input type="number" id="g' + i + '-dbord" placeholder="—" step="0.1" min="0"></div>' +
+        '<div class="fld"><label class="lbl">Dist. inter-funiculaire (cm)</label><input type="number" id="g' + i + '-dif" placeholder="—" step="0.1" min="0"></div>' +
+      '</div>' +
+      '<div class="row c2">' +
+        '<div class="fld"><label class="lbl">Plaque choriale</label><textarea id="g' + i + '-choria" placeholder="Couleur, réseau vasculaire, thromboses superficielles..."></textarea></div>' +
+        '<div class="fld"><label class="lbl">Face basale</label><textarea id="g' + i + '-basale" placeholder="Aspect, dépôts fibrineux (Kline), calcifications..."></textarea></div>' +
+      '</div>' +
+      '<div class="row c2">' +
+        '<div class="fld"><label class="lbl">Coupe parenchymateuse</label><textarea id="g' + i + '-coupe" placeholder="Couleur, consistance, infarctus (%), hématomes intervilleux, aspect lobaire..."></textarea></div>' +
+        '<div class="fld"><label class="lbl">Membranes</label><textarea id="g' + i + '-memb" placeholder="Transparence, coloration, épaisseur, dépôts..."></textarea></div>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div>';
+  ctr.innerHTML = html;
+}
+
+function renderTerr() {
+  var ctr = document.getElementById('terr-ctr');
+  var html = '';
+  S.noms.forEach(function(nom, i) {
+    html += '<div class="terr-row">' +
+      '<span class="terr-lbl" style="color:' + (GAL_COLORS[i]||GAL_COLORS[0]) + '">' + nom + '</span>' +
+      '<input class="terr-input" type="number" id="terr-' + i + '" min="0" max="100" placeholder="%" oninput="sumTerr()">' +
+      '<span style="font-size:12px;color:var(--text2)">%</span>' +
+    '</div>';
+  });
+  ctr.innerHTML = html;
+}
+
+function sumTerr() {
+  var s = 0;
+  document.querySelectorAll('[id^="terr-"]').forEach(function(el) { s += parseFloat(el.value) || 0; });
+  var lbl = document.getElementById('terr-sum');
+  lbl.textContent = s > 0 ? 'Total : ' + s.toFixed(0) + '%' : '';
+  lbl.className = Math.abs(s - 100) < 0.5 ? 'sum-ok' : s > 0 ? 'sum-bad' : 'sum-neu';
+}
+
+function addAna() {
+  var id = S.anaId++;
+  var n1 = S.noms[0] || 'J1C', n2 = S.noms[1] || 'J2C';
+  var tr = document.createElement('tr');
+  tr.id = 'ana-' + id;
+  tr.innerHTML =
+    '<td><select><option>AA</option><option>VV</option><option>AV</option><option>VA</option></select></td>' +
+    '<td><select><option>' + n1 + ' → ' + n2 + '</option><option>' + n2 + ' → ' + n1 + '</option><option>Bidirectionnelle</option></select></td>' +
+    '<td><select><option>Fine (&lt;1 mm)</option><option>Moyenne (1–2 mm)</option><option>Large (&gt;2 mm)</option></select></td>' +
+    '<td><button class="btn-del" onclick="document.getElementById('ana-' + id + '').remove()">✕</button></td>';
+  document.getElementById('ana-body').appendChild(tr);
+}
+
+function getAnastomoses() {
+  var rows = document.querySelectorAll('#ana-body tr');
+  var res = [];
+  rows.forEach(function(tr) {
+    var sels = tr.querySelectorAll('select');
+    if (sels.length >= 3) res.push({ type: sels[0].value, dir: sels[1].value, cal: sels[2].value });
+  });
+  return res;
+}
+
+function galVal(i, key) { return v('g' + i + '-' + key); }
+
+function generateCR() {
+  var ag_sa = v('ag-sa'), ag_j = v('ag-j');
+  var ag = ag_sa ? ag_sa + (ag_j && ag_j !== '0' ? ' SA + ' + ag_j + ' j' : ' SA') : '';
+  var ch = v('chorio');
+  var chTxt = ch ? document.getElementById('chorio').options[document.getElementById('chorio').selectedIndex].text || ch : '';
+  var etatTxt = S.etat === 'frais' ? 'à frais' : 'après fixation au formol';
+  var isDC = ch.startsWith('DC');
+  var isMono = ch.startsWith('MC');
+
+  var lines = [];
+
+  var dossier = v('dossier'), oper = v('operateur');
+  var hdr = '';
+  if (dossier) hdr += 'Dossier : ' + dossier;
+  if (ag) hdr += (hdr ? ' | ' : '') + 'AG : ' + ag;
+  var indEl = document.getElementById('indication');
+  var indTxt = indEl.options[indEl.selectedIndex] ? indEl.options[indEl.selectedIndex].text : '';
+  if (indTxt && indTxt !== '— Choisir —') hdr += (hdr ? ' | ' : '') + 'Indication : ' + indTxt;
+  if (oper) hdr += (hdr ? ' | ' : '') + 'Opérateur : ' + oper;
+  if (hdr) { lines.push(hdr); lines.push('—'.repeat(Math.min(hdr.length, 60))); lines.push(''); }
+
+  var nomStr = S.noms.join(' / ');
+  lines.push('Examen ' + etatTxt + " d'un placenta " + chTxt + (nomStr ? ', dont les cordons sont repérés (' + nomStr + ')' : '') + '.');
+  lines.push('');
+
+  S.noms.forEach(function(nom, i) {
+    var bloc = [nom + ' :' + (isDC ? ' [traité en singleton]' : '')];
+    var masse = galVal(i,'masse'), l = galVal(i,'l'), la = galVal(i,'la'), e = galVal(i,'e');
+    if (masse) bloc.push('Masse ' + masse + ' g' + (l && la && e ? ', dimensions ' + l + ' × ' + la + ' × ' + e + ' cm' : '') + '.');
+    var ins = galVal(i,'insert');
+    var insMap = { centrale:'centrale', excentree:'excentrée', marginale:'marginale (Battledore)', velamenteuse:'vélamenteuse', furcata:'furcata' };
+    var dbord = galVal(i,'dbord'), dif = galVal(i,'dif');
+    var insLine = 'Insertion cordonale ' + (insMap[ins]||ins);
+    if (dbord) insLine += ', à ' + dbord + ' cm du bord';
+    if (dif) insLine += '. Distance inter-funiculaire : ' + dif + ' cm';
+    bloc.push(insLine + '.');
+    var choria = galVal(i,'choria'), basale = galVal(i,'basale'), coupe = galVal(i,'coupe'), memb = galVal(i,'memb');
+    if (choria) bloc.push('Plaque choriale : ' + choria + '.');
+    if (basale) bloc.push('Face basale : ' + basale + '.');
+    if (coupe) bloc.push('À la coupe : ' + coupe + '.');
+    if (memb) bloc.push('Membranes : ' + memb + '.');
+    lines.push(bloc.join('
+'));
+    lines.push('');
+  });
+
+  if (isMono) {
+    lines.push('Section monochoriale (' + ch + ') :');
+    var eq = v('equateur');
+    var eqMap = { present_net:'présent, bien défini', present_difficile:'présent, difficile à tracer avec précision', absent:'absent ou non identifiable' };
+    lines.push('Équateur vasculaire ' + (eqMap[eq]||eq) + '.');
+
+    var inj = v('injection');
+    if (inj !== 'non') {
+      var injMap = { oui_diff:'réalisée avec deux colorants distincts', oui_unique:'réalisée avec un colorant unique' };
+      var qual = v('qual-inject');
+      var qualMap = { bonne:'— bonne diffusion', partielle:'— diffusion partielle', echec:"— échec de l'injection", na:'' };
+      lines.push(('Injection des cordons ' + (injMap[inj]||inj) + ' ' + (qualMap[qual]||'')).trim() + '.');
+    }
+
+    var terrLines = [];
+    S.noms.forEach(function(nom, i) {
+      var t = document.getElementById('terr-' + i);
+      if (t && t.value) terrLines.push(nom + ' : ' + t.value + '%');
+    });
+    if (terrLines.length) lines.push('Répartition des territoires vasculaires : ' + terrLines.join(', ') + '.');
+
+    var anas = getAnastomoses();
+    if (anas.length) {
+      lines.push('Anastomoses identifiées (' + anas.length + ') :');
+      anas.forEach(function(a) { lines.push('  — ' + a.type + ', ' + a.dir + ', calibre ' + a.cal); });
+    } else {
+      lines.push('Anastomoses : non identifiées / non injectées.');
+    }
+
+    var obsMono = v('obs-mono');
+    if (obsMono) lines.push(obsMono);
+    lines.push('');
+  }
+
+  var obsGen = v('obs-gen');
+  if (obsGen) lines.push(obsGen);
+
+  document.getElementById('cr-text').textContent = lines.join('
+');
+  document.getElementById('cr-panel').classList.remove('hidden');
+  document.getElementById('cr-panel').scrollIntoView({ behavior:'smooth' });
+}
+
+function copyCR() {
+  navigator.clipboard.writeText(document.getElementById('cr-text').textContent).then(function() {
+    var ok = document.getElementById('copy-ok');
+    ok.style.display = 'inline';
+    setTimeout(function() { ok.style.display = 'none'; }, 2000);
+  });
+}
+
+// === API COMMUNICATION ===
+var CAS_TYPE = 'gemellaire';
+var currentCasId = null;
+
+function collectFormData() {
+  var galettes = S.noms.map(function(nom, i) {
+    return {
+      nom: nom,
+      masse: parseFloat(galVal(i,'masse')) || null,
+      longueur: parseFloat(galVal(i,'l')) || null,
+      largeur: parseFloat(galVal(i,'la')) || null,
+      epaisseur: parseFloat(galVal(i,'e')) || null,
+      insertion: galVal(i,'insert'),
+      dist_bord: parseFloat(galVal(i,'dbord')) || null,
+      dist_inter_funiculaire: parseFloat(galVal(i,'dif')) || null,
+      plaque_choriale: galVal(i,'choria'),
+      face_basale: galVal(i,'basale'),
+      coupe: galVal(i,'coupe'),
+      membranes: galVal(i,'memb')
+    };
+  });
+
+  var territoires = S.noms.map(function(_, i) {
+    var el = document.getElementById('terr-' + i);
+    return el ? parseFloat(el.value) || null : null;
+  });
+
+  return {
+    chorio: S.chorio,
+    nb_foetus: S.nbFoetus,
+    clamp: S.clamp,
+    nb_clamps: S['nb-clamps'],
+    noms: S.noms,
+    galettes: galettes,
+    mono: {
+      equateur: v('equateur'),
+      injection: v('injection'),
+      qual_inject: v('qual-inject'),
+      territoires: territoires,
+      anastomoses: getAnastomoses(),
+      obs_mono: v('obs-mono')
+    },
+    obs_gen: v('obs-gen')
+  };
+}
+
+async function saveCas() {
+  var btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = 'Sauvegarde...';
+
+  generateCR();
+
+  var payload = {
+    type_cas: CAS_TYPE,
+    dossier: v('dossier'),
+    date_prel: v('date-prel'),
+    operateur: v('operateur'),
+    ag_sa: parseInt(v('ag-sa')) || null,
+    ag_j: parseInt(v('ag-j')) || 0,
+    indication: v('indication'),
+    etat: S.etat,
+    form_data: collectFormData(),
+    cr_text: document.getElementById('cr-text').textContent || ''
+  };
+
+  if (currentCasId) payload.id = currentCasId;
+
+  try {
+    var resp = await fetch('/divers/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var data = await resp.json();
+    currentCasId = data.id;
+
+    var status = document.getElementById('save-status');
+    status.style.display = 'inline';
+    setTimeout(function() { status.style.display = 'none'; }, 3000);
+  } catch(e) {
+    alert('Erreur de sauvegarde : ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sauvegarder';
+  }
+}
+
+async function loadCas(id) {
+  try {
+    var resp = await fetch('/divers/api/load/' + id);
+    var data = await resp.json();
+    if (data.error) { console.error(data.error); return; }
+    currentCasId = data.id;
+
+    document.getElementById('dossier').value = data.dossier || '';
+    document.getElementById('date-prel').value = data.date_prel || '';
+    document.getElementById('operateur').value = data.operateur || '';
+    document.getElementById('ag-sa').value = data.ag_sa || '';
+    document.getElementById('ag-j').value = data.ag_j || '';
+    document.getElementById('indication').value = data.indication || '';
+
+    var fd = data.form_data || {};
+    if (fd.chorio) {
+      document.getElementById('chorio').value = fd.chorio;
+      upChorio();
+    }
+    if (fd.nb_foetus) {
+      document.getElementById('nb-foetus').value = fd.nb_foetus;
+      upChorio();
+    }
+
+    if (data.cr_text) {
+      document.getElementById('cr-text').textContent = data.cr_text;
+      document.getElementById('cr-panel').classList.remove('hidden');
+    }
+  } catch(e) {
+    console.error('Erreur chargement:', e);
+  }
+}
+
+// Init
+upNom();
+
+// Charger un cas existant si ?id=XX
+var urlParams = new URLSearchParams(window.location.search);
+var editId = urlParams.get('id');
+if (editId) loadCas(editId);
+</script>
+</body>
+</html>
