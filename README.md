@@ -107,9 +107,18 @@ les mêmes identifiants, et chiffrer l'originale en laissant ses copies en clair
 
 ### Sauvegarde
 
-Les bases et les dossiers de cas sont répliqués par copie de fichiers vers un
-volume de sauvegarde. La copie à chaud d'une base SQLite doit se faire par
-`VACUUM INTO` ou `sqlite3 .backup`, pas par `cp` sur une base en écriture.
+Les bases et les dossiers de cas partent chaque nuit vers trois cibles, en
+snapshots datés : les photos sont dédupliquées par hardlink d'un snapshot à
+l'autre, et les plus anciens sont purgés en FIFO au-delà d'un plafond de taille.
+Rien n'est écrasé — une journée corrompue produit un snapshot de plus, elle ne
+remplace pas les précédents.
+
+La copie à chaud d'une base SQLite se fait par `VACUUM INTO` ou
+`sqlite3 .backup`, jamais par `cp` sur une base en écriture.
+
+Deux disques cibles vivent dans le même boîtier que la source : ils protègent
+d'une panne disque, pas d'un sinistre du poste. Seule la cible hors-site compte
+comme copie de secours.
 
 ### Miroir public
 
@@ -138,6 +147,18 @@ miroir public, où `publish_public.sh` refuse tout numéro réel.
 - **SQLCipher** — regrouper les ouvertures de base derrière un point d'entrée
   unique, condition pour n'ajouter la clé qu'à un seul endroit le jour du
   chiffrement.
+- **Canaris anti-rançongiciel** — répertoires-appâts dans l'arborescence des cas
+  et des lames, surveillés en inotify : rien n'y est jamais créé ni modifié
+  légitimement, donc le moindre événement est une alarme sans faux positif, et
+  la réaction est immédiate plutôt que différée au prochain passage d'un cron.
+  Surveiller le répertoire et pas seulement les fichiers-appâts : un
+  rançongiciel qui écrit à côté puis supprime l'original ne déclenche aucun
+  événement de modification.
+  Les snapshots datés protègent déjà d'un écrasement ; ce que le canari couvre,
+  c'est le délai de détection. Reste hors de sa portée le fait que le poste ait
+  les droits d'écriture sur ses propres cibles de sauvegarde — un rançongiciel
+  peut effacer les snapshots directement. Seule une sauvegarde en *pull*, ou une
+  cible en append-only, ferme cette porte.
 
 ## Licence
 
