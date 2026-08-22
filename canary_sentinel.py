@@ -13,8 +13,10 @@ agonise derriere un tunnel coupe n'est joignable par personne.
 
 Le nom du repertoire-appat commence par un point : les enumerations du hub et du
 viewer sautent les noms caches, sans quoi le scan placenta creerait un faux cas.
+Il se choisit au deploiement et ne se versionne pas — un nom publie est un nom
+qu'un rancongiciel peut apprendre a eviter.
 
-  ./canary_sentinel.py --seed --watch <arbre>/.ARCHIVE_2019
+  ./canary_sentinel.py --seed --watch <arbre>/<.nom_appat>
   ./canary_sentinel.py --watch <dir> --watch-read <dir> --port 5004 --tunnels-all
   ./canary_sentinel.py --self-check
   ./canary_sentinel.py --systemd            # unit a coller dans /etc/systemd/system
