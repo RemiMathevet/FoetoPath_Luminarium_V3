@@ -26,6 +26,8 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
 import pyotp
 
+from db_core import open_db
+
 log = logging.getLogger(__name__)
 
 # ── Hachage Argon2id (conforme HDS) ─────────────────────────────────────
@@ -173,8 +175,7 @@ def init_db(data_dir: str) -> str:
 def _connect():
     if _db_path is None:
         raise RuntimeError("auth_db.init_db() n'a pas été appelé")
-    conn = sqlite3.connect(_db_path, timeout=10)
-    conn.execute("PRAGMA journal_mode=WAL")
+    conn = open_db(_db_path, foreign_keys=False, row_factory=False)
     try:
         yield conn
         conn.commit()

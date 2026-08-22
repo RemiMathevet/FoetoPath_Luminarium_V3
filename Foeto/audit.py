@@ -21,6 +21,8 @@ from typing import Optional
 
 from flask import request, session
 
+from db_core import open_db
+
 log = logging.getLogger(__name__)
 
 _db_path: Optional[str] = None
@@ -61,8 +63,7 @@ def init_db(data_dir: str) -> str:
 def _connect():
     if _db_path is None:
         raise RuntimeError("audit.init_db() n'a pas été appelé")
-    conn = sqlite3.connect(_db_path, timeout=10)
-    conn.execute("PRAGMA journal_mode=WAL")
+    conn = open_db(_db_path, foreign_keys=False, row_factory=False)
     try:
         yield conn
         conn.commit()

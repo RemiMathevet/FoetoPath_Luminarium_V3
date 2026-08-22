@@ -23,7 +23,7 @@ from typing import Optional
 
 from config import (KNOWN_MODULES_FOETUS, MACRO_FOLDER_TYPES, DEFAULT_SETTINGS,
                      BAMARA_SITE_CODE, BAMARA_SITE_LABEL, BAMARA_SITE_ID)
-from db_core import DatabaseManager, _now, _row_to_dict
+from db_core import DatabaseManager, open_db, _now, _row_to_dict
 
 log = logging.getLogger(__name__)
 
@@ -92,10 +92,7 @@ def _ensure_default_settings(conn):
 
 def _migrate_legacy_safe(db_path):
     """Lance la migration legacy avec FK désactivées (connexion dédiée)."""
-    conn = sqlite3.connect(str(db_path), timeout=10)
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA foreign_keys=OFF")
-    conn.row_factory = sqlite3.Row
+    conn = open_db(db_path, foreign_keys=False)
     try:
         _migrate_legacy(conn)
         conn.commit()

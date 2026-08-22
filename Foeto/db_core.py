@@ -32,6 +32,21 @@ def _row_to_dict(row: sqlite3.Row) -> dict:
     return dict(row) if row else {}
 
 
+def open_db(path, *, foreign_keys: bool = True, row_factory: bool = True):
+    """Ouvre une base du hub. Point d'entrée unique de toutes les connexions.
+
+    Le chiffrement SQLCipher se branchera ici (import du driver + PRAGMA key),
+    d'où l'intérêt de n'avoir qu'une porte. Les bases de terminologie ouvertes
+    par Lumi (syndromes_foetaux.db) ne sont pas nominatives et restent en clair.
+    """
+    conn = sqlite3.connect(str(path), timeout=10)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=" + ("ON" if foreign_keys else "OFF"))
+    if row_factory:
+        conn.row_factory = sqlite3.Row
+    return conn
+
+
 class DatabaseManager:
     """Gestionnaire SQLite partagé pour foetus et placenta.
 
@@ -64,10 +79,7 @@ class DatabaseManager:
     @contextmanager
     def connect(self):
         """Context manager pour connexion SQLite avec WAL + foreign keys."""
-        conn = sqlite3.connect(str(self.get_db_path()), timeout=10)
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA foreign_keys=ON")
-        conn.row_factory = sqlite3.Row
+        conn = open_db(self.get_db_path())
         try:
             yield conn
             conn.commit()
