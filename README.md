@@ -196,11 +196,19 @@ sortent en code 66, que le lancement vienne de systemd, de nohup, d'un cron ou
 de la main. L'unité met ce code en `RestartPreventExitStatus` pour ne pas boucler.
 Le verrou survit au redémarrage du poste et ne se lève qu'à la main.
 
+**Et le réseau doit y survivre aussi.** Le verrou est un fichier, la table
+nftables vit en mémoire : un redémarrage la balaie. Sans rien de plus, un reboot
+rouvre la sortie alors que le canari est toujours déclenché — le pire état, celui
+où l'on croit tout fermé. `--systemd` émet donc une seconde unité, `oneshot`, qui
+repose la règle au démarrage sous `ConditionPathExists=<verrou>`. C'est ce qui
+rend supportable que seuls le hub et le viewer portent le verrou en dur : les dix
+autres services peuvent bien revenir au boot, ils ne sont joignables par personne.
+
 ```bash
 ./canary_sentinel.py --self-check                    # événement → verrou, de bout en bout
 ./canary_sentinel.py --seed --watch <dir_appat>      # poser les appâts
 ./canary_sentinel.py --systemd --watch <dir_appat> \
-    --port 5004 --port 5080 --tunnels-all            # unité à installer
+    --port 5004 --port 5080 --tunnels-all            # les deux unités à installer
 ```
 
 Ce que le canari ne couvre pas : le poste a les droits d'écriture sur ses propres
@@ -238,7 +246,9 @@ rm ~/.foetopath_canary_tripped
 
 Ne pas oublier la table `nft` : sans elle, les serveurs redémarrent et paraissent
 sains, mais aucun tunnel ne monte. C'est l'état le plus pénible à diagnostiquer —
-tout est vert en local, rien ne répond de l'extérieur.
+tout est vert en local, rien ne répond de l'extérieur. L'unité de coupure au
+démarrage, elle, n'a rien à défaire : elle est conditionnée au verrou, et se tait
+d'elle-même dès qu'il disparaît.
 
 Puis **relancer la sentinelle avant les serveurs** — sinon on rouvre l'accès sans
 surveillance, et c'est précisément la fenêtre qu'on cherchait à fermer.

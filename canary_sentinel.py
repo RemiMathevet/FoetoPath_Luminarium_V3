@@ -278,6 +278,25 @@ RestartPreventExitStatus={code}
 WantedBy=multi-user.target
 """
 
+# Le verrou est un fichier, il survit au redemarrage ; la table nftables vit en
+# memoire et disparait. Sans cette unite, un reboot rouvre les tunnels alors que le
+# canari est toujours declenche — et c'est le pire des etats, celui ou l'on croit
+# tout ferme. La condition porte sur le verrou : le jour ou on le leve, l'unite
+# redevient muette d'elle-meme, rien de plus a defaire.
+SYSTEMD_BOOT = """\
+[Unit]
+Description=FoetoPath — canari : coupure reseau maintenue apres redemarrage
+ConditionPathExists={latch}
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart={python} {script} --block-edge
+
+[Install]
+WantedBy=multi-user.target
+"""
+
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -298,7 +317,9 @@ def main() -> int:
     ap.add_argument("--notify", default="", help="chemin de 08_notify.py")
     ap.add_argument("--mail", default="", help="destinataire de l'alerte")
     ap.add_argument("--seed", action="store_true", help="poser les appats et sortir")
-    ap.add_argument("--systemd", action="store_true", help="afficher l'unit systemd et sortir")
+    ap.add_argument("--block-edge", action="store_true",
+                    help="poser la regle de coupure reseau et sortir (unite de redemarrage)")
+    ap.add_argument("--systemd", action="store_true", help="afficher les units systemd et sortir")
     ap.add_argument("--self-check", action="store_true", help="test de bout en bout et sortir")
     args = ap.parse_args()
 
@@ -307,11 +328,17 @@ def main() -> int:
 
     if args.self_check:
         return self_check(log)
+    if args.block_edge:
+        return 1 if "ECHEC" in block_edge(log)[0] else 0
     if args.systemd:
         rest = [a for a in sys.argv[1:] if a != "--systemd"]
+        print("### /etc/systemd/system/canari.service")
         print(SYSTEMD.format(user=os.environ.get("USER", "mathevet"), python=sys.executable,
                              script=Path(__file__).resolve(), args=" ".join(rest),
                              code=LATCH_EXIT_CODE))
+        print("### /etc/systemd/system/canari-coupure.service  (systemctl enable canari-coupure)")
+        print(SYSTEMD_BOOT.format(latch=latch_path(args.latch), python=sys.executable,
+                                  script=Path(__file__).resolve()))
         return 0
 
     watched = ([(Path(os.path.expanduser(d)), WATCH_MASK) for d in args.watch]
