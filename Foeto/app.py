@@ -19,6 +19,7 @@ import argparse
 import logging
 import os
 import secrets
+import sys
 from pathlib import Path
 
 from flask import Flask, jsonify, redirect, render_template, request, session, send_from_directory, url_for
@@ -424,6 +425,16 @@ if __name__ == "__main__":
     parser.add_argument("--data-dir", default="", help="Directory for FoetoPath data (DB, foetus folders)")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     args = parser.parse_args()
+
+    # Verrou du canari (canary_sentinel.py). Le refus de démarrer vit ici et pas
+    # dans l'unité systemd : il vaut aussi pour nohup, cron et le lancement à la
+    # main. Sans lui, un Restart=always ramènerait le serveur que la sentinelle
+    # vient d'arrêter. 66 = RestartPreventExitStatus de l'unité.
+    _latch = os.path.expanduser(os.environ.get("FOETOPATH_CANARY_LATCH",
+                                               "~/.foetopath_canary_tripped"))
+    if os.path.exists(_latch):
+        print(f"CANARI DÉCLENCHÉ — démarrage refusé. Voir {_latch}", file=sys.stderr)
+        sys.exit(66)
 
     # ── Déterminer le répertoire de données (config persistante > CLI > défaut) ──
     data_dir = persistent_config.get_db_directory(cli_arg=args.data_dir)

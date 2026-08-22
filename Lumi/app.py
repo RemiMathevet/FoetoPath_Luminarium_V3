@@ -1336,6 +1336,13 @@ if __name__ == "__main__":
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     args = parser.parse_args()
 
+    # Verrou du canari (canary_sentinel.py) : voir Foeto/app.py, même refus.
+    _latch = os.path.expanduser(os.environ.get("FOETOPATH_CANARY_LATCH",
+                                               "~/.foetopath_canary_tripped"))
+    if os.path.exists(_latch):
+        print(f"CANARI DÉCLENCHÉ — démarrage refusé. Voir {_latch}", file=sys.stderr)
+        sys.exit(66)
+
     app.config["DEFAULT_ROOT"] = args.root
     app.config["AUTH_DB"] = args.auth_db
 

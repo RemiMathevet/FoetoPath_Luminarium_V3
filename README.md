@@ -120,6 +120,88 @@ Deux disques cibles vivent dans le même boîtier que la source : ils protègent
 d'une panne disque, pas d'un sinistre du poste. Seule la cible hors-site compte
 comme copie de secours.
 
+### Canari anti-rançongiciel
+
+`canary_sentinel.py` surveille en inotify des répertoires-appâts placés dans
+l'arborescence des cas et des lames. Rien n'y est jamais créé ni modifié
+légitimement, donc le moindre événement est une alarme sans faux positif, et la
+réaction est immédiate plutôt que différée au prochain passage d'un cron.
+
+La surveillance porte sur le **répertoire**, pas seulement sur les fichiers-appâts :
+un rançongiciel qui écrit à côté puis supprime l'original ne déclenche aucun
+événement de modification, et la note de rançon déposée dans chaque répertoire
+parcouru est une création. Les appâts portent un contenu plausible — un
+répertoire vide peut être sauté.
+
+Sur les arbres qu'aucune sauvegarde ne parcourt, `--watch-read` ajoute l'ouverture
+et la lecture aux événements surveillés. Personne n'ouvre jamais un appât, donc
+une lecture dénonce la reconnaissance **avant** le chiffrement. C'est le
+déclenchement le plus précoce disponible, mais c'est le seul qui puisse avoir un
+faux positif : la lecture, contrairement à l'écriture, a des auteurs légitimes.
+D'où deux garde-fous. Le parcours d'un répertoire n'est pas un événement de
+lecture (`IN_ISDIR` est ignoré), sans quoi le `du` de la purge nocturne
+déclencherait chaque nuit. Et `backup_snapshot.sh` exclut les appâts du rsync,
+sans quoi la sauvegarde les lirait tous les soirs — ils n'ont rien à faire dans
+un snapshot de toute façon, `--seed` les recrée.
+
+Au déclenchement, dans l'ordre : pose du verrou, coupure des tunnels Cloudflare,
+arrêt des unités systemd, arrêt des serveurs, puis mail. Le verrou d'abord parce
+qu'un redémarrage peut courir contre nous ; les tunnels avant les serveurs parce
+qu'ils sont le chemin d'entrée.
+
+**Le verrou est ce qui empêche la résurrection.** Tuer un processus ne suffit
+pas : un `Restart=always` le ramène en cinq secondes. `Foeto/app.py` et
+`Lumi/app.py` refusent donc de démarrer tant que le fichier verrou existe et
+sortent en code 66, que le lancement vienne de systemd, de nohup, d'un cron ou
+de la main. L'unité met ce code en `RestartPreventExitStatus` pour ne pas boucler.
+Le verrou survit au redémarrage du poste et ne se lève qu'à la main.
+
+```bash
+./canary_sentinel.py --self-check                    # événement → verrou, de bout en bout
+./canary_sentinel.py --seed --watch <dir_appat>      # poser les appâts
+./canary_sentinel.py --systemd --watch <dir_appat> \
+    --port 5004 --port 5080 --tunnels-all            # unité à installer
+```
+
+Ce que le canari ne couvre pas : le poste a les droits d'écriture sur ses propres
+cibles de sauvegarde, donc un rançongiciel peut effacer les snapshots
+directement. Seule une sauvegarde en *pull*, ou une cible en append-only, ferme
+cette porte. Et la copie hors-site n'est pas surveillée : inotify est local, il
+faudrait une sentinelle sur la machine distante.
+
+#### Lever le verrou à la main
+
+Rien ne se relance tout seul, et c'est voulu. La levée est une décision, pas une
+manipulation — le verrou dit *quand* et *quoi*, à vous de dire *pourquoi*.
+
+```bash
+cat ~/.foetopath_canary_tripped        # horodatage et événement déclencheur
+```
+
+Avant de lever, établir ce qui a bougé depuis cet horodatage — la question n'est
+pas « le canari a-t-il eu raison », c'est « qu'est-ce qui a touché ce
+répertoire » :
+
+```bash
+find <arbre_surveillé> -newermt '2026-01-01 12:00' -type f | head -50
+ls -l <répertoire_appât>/              # les appâts eux-mêmes ont-ils changé ?
+```
+
+Un déclenchement compris et bénin (une manipulation à soi, un outil d'indexation)
+se lève ainsi :
+
+```bash
+rm ~/.foetopath_canary_tripped
+./canary_sentinel.py --seed --watch <répertoire_appât>   # réarmer si les appâts ont bougé
+```
+
+Puis **relancer la sentinelle avant les serveurs** — sinon on rouvre l'accès sans
+surveillance, et c'est précisément la fenêtre qu'on cherchait à fermer.
+
+Si le déclenchement n'est pas expliqué, le verrou reste posé : débrancher le
+réseau, monter la dernière sauvegarde saine en lecture seule, et comparer avant
+de restaurer quoi que ce soit.
+
 ### Miroir public
 
 Ce dépôt est **privé** et fait référence. Le miroir public est produit par
@@ -147,18 +229,11 @@ miroir public, où `publish_public.sh` refuse tout numéro réel.
 - **SQLCipher** — regrouper les ouvertures de base derrière un point d'entrée
   unique, condition pour n'ajouter la clé qu'à un seul endroit le jour du
   chiffrement.
-- **Canaris anti-rançongiciel** — répertoires-appâts dans l'arborescence des cas
-  et des lames, surveillés en inotify : rien n'y est jamais créé ni modifié
-  légitimement, donc le moindre événement est une alarme sans faux positif, et
-  la réaction est immédiate plutôt que différée au prochain passage d'un cron.
-  Surveiller le répertoire et pas seulement les fichiers-appâts : un
-  rançongiciel qui écrit à côté puis supprime l'original ne déclenche aucun
-  événement de modification.
-  Les snapshots datés protègent déjà d'un écrasement ; ce que le canari couvre,
-  c'est le délai de détection. Reste hors de sa portée le fait que le poste ait
-  les droits d'écriture sur ses propres cibles de sauvegarde — un rançongiciel
-  peut effacer les snapshots directement. Seule une sauvegarde en *pull*, ou une
-  cible en append-only, ferme cette porte.
+- **Canari anti-rançongiciel** — écrit et testé (voir plus haut), pas encore
+  déployé : appâts à poser dans l'arborescence de production et unité systemd à
+  installer.
+- **Sauvegarde en pull ou cible append-only** — tant que le poste peut écrire sur
+  ses propres cibles, les snapshots restent à portée d'un rançongiciel.
 
 ## Licence
 
