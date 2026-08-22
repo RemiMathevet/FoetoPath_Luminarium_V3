@@ -126,15 +126,18 @@ python -m pytest Foeto/tests -q
 ```
 
 Couverts : schéma et migrations, auth et TOTP, permissions, rate limiter, audit,
-dossiers placenta, templates de CR.
+dossiers placenta, templates de CR. Et les quatre coutures entre composants
+(`Foeto/tests/test_integration.py`) : liaison dossier ↔ lame, génération du CR
+microscopique, accès WSI par le proxy, soumission PWA.
+
+Les numéros de dossier des fixtures sont inventés — ce répertoire part dans le
+miroir public, où `publish_public.sh` refuse tout numéro réel.
 
 ## Chantiers en cours
 
 - **SQLCipher** — regrouper les ouvertures de base derrière un point d'entrée
   unique, condition pour n'ajouter la clé qu'à un seul endroit le jour du
   chiffrement.
-- **Tests d'intégration** — liaison dossier ↔ placenta ↔ lame, génération de CR,
-  accès WSI, PWA.
 
 ## Licence
 

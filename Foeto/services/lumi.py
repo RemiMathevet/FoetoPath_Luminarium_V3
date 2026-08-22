@@ -25,6 +25,18 @@ def _lames_db_path() -> str:
     return db.get_setting(LUMI_DB_PATH_SETTING, DEFAULT_LUMI_DB)
 
 
+def _like_prefix(numero_dossier: str) -> str:
+    """Motif LIKE des lames d'un cas, à utiliser avec ESCAPE '\\'.
+
+    Le `_` qui sépare le dossier du bloc est un joker SQL : sans échappement,
+    `25P123_%` remonte aussi les lames de 25P1234 — les deux longueurs de
+    numéro coexistent en base.
+    """
+    esc = (numero_dossier.replace("\\", "\\\\")
+           .replace("_", "\\_").replace("%", "\\%"))
+    return esc + "\\_%"
+
+
 def _connect_readonly(path: str) -> sqlite3.Connection | None:
     if not path or not Path(path).is_file():
         return None
@@ -100,7 +112,6 @@ def get_slides_for_case(numero_dossier: str) -> dict:
 
     Returns dict with slides list and summary stats.
     """
-    prefix = numero_dossier + "_"
     result = {
         "available": False,
         "slides": [],
@@ -114,8 +125,8 @@ def get_slides_for_case(numero_dossier: str) -> dict:
     try:
         rows = conn.execute(
             "SELECT id, nom_lame, taille_mo, chemin, storage, cold_root FROM lames "
-            "WHERE nom_lame LIKE ? ORDER BY nom_lame",
-            (prefix + "%",),
+            "WHERE nom_lame LIKE ? ESCAPE '\\' ORDER BY nom_lame",
+            (_like_prefix(numero_dossier),),
         ).fetchall()
     except sqlite3.OperationalError:
         conn.close()
@@ -540,8 +551,8 @@ def _load_case_annotations(numero_dossier: str) -> list:
     try:
         rows = conn.execute(
             "SELECT slide_id, ann_class FROM annotations "
-            "WHERE slide_id LIKE ? GROUP BY slide_id, ann_class",
-            (numero_dossier + "_%",),
+            "WHERE slide_id LIKE ? ESCAPE '\\' GROUP BY slide_id, ann_class",
+            (_like_prefix(numero_dossier),),
         ).fetchall()
         return [(r["slide_id"], r["ann_class"]) for r in rows
                 if r["ann_class"] and not r["ann_class"].startswith("STRUCT:")]
@@ -705,7 +716,6 @@ def get_annotations_for_case(numero_dossier: str) -> dict:
     Groups annotations by tissue_type and ann_class, with counts.
     Returns diagnoses per slide.
     """
-    prefix = numero_dossier + "_"
     result = {"annotations_by_tissue": {}, "diagnoses_by_slide": {}, "slide_count": 0}
 
     conn = _connect_readonly(_lames_db_path())
@@ -714,8 +724,8 @@ def get_annotations_for_case(numero_dossier: str) -> dict:
 
     try:
         slides = conn.execute(
-            "SELECT slide_id FROM slides WHERE slide_id LIKE ?",
-            (prefix + "%",),
+            "SELECT slide_id FROM slides WHERE slide_id LIKE ? ESCAPE '\\'",
+            (_like_prefix(numero_dossier),),
         ).fetchall()
         slide_ids = [s["slide_id"] for s in slides]
         if not slide_ids:
