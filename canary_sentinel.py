@@ -11,10 +11,16 @@ Le verrou d'abord parce qu'un redemarrage peut courir contre nous ; les tunnels
 avant les serveurs parce qu'ils sont le chemin d'entree, et qu'un serveur qui
 agonise derriere un tunnel coupe n'est joignable par personne.
 
-  ./canary_sentinel.py --seed --watch /media/SSDsamsung/FoetoPath/Cas_CHUB_prod/_ARCHIVE_2019
-  ./canary_sentinel.py --watch <dir> [--watch <dir>] --port 5004 --port 5080 --tunnels-all
+Le nom du repertoire-appat commence par un point : les enumerations du hub et du
+viewer sautent les noms caches, sans quoi le scan placenta creerait un faux cas.
+
+  ./canary_sentinel.py --seed --watch <arbre>/.ARCHIVE_2019
+  ./canary_sentinel.py --watch <dir> --watch-read <dir> --port 5004 --tunnels-all
   ./canary_sentinel.py --self-check
   ./canary_sentinel.py --systemd            # unit a coller dans /etc/systemd/system
+
+--watch-read ajoute l'ouverture et la lecture : a reserver aux arbres qu'aucune
+sauvegarde ne parcourt, la lecture ayant des auteurs legitimes.
 """
 from __future__ import annotations
 
