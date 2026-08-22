@@ -122,10 +122,28 @@ comme copie de secours.
 
 ### Canari anti-rançongiciel
 
-`canary_sentinel.py` surveille en inotify des répertoires-appâts placés dans
-l'arborescence des cas et des lames. Rien n'y est jamais créé ni modifié
-légitimement, donc le moindre événement est une alarme sans faux positif, et la
-réaction est immédiate plutôt que différée au prochain passage d'un cron.
+`canary_sentinel.py` surveille en inotify des répertoires-appâts. Rien n'y est
+jamais créé ni modifié légitimement, donc le moindre événement est une alarme sans
+faux positif, et la réaction est immédiate plutôt que différée au prochain passage
+d'un cron.
+
+Les appâts se posent en trois couches, du plus tôt mordu au plus tard :
+
+| Où | Pourquoi |
+|---|---|
+| `$HOME` | Un rançongiciel arrivé par le navigateur ou le mail commence là, pas sur les disques de données |
+| Racine de chaque disque | Il est mordu avant que le parcours ne descende dans les gros arbres |
+| Dans les arbres de cas et de lames | Dernier filet, si le parcours commence par le milieu |
+
+Seuls les appâts posés dans les arbres de cas ont besoin d'un nom commençant par
+un point : le scan placenta crée un dossier par sous-répertoire trouvé, et un appât
+visible y fabriquerait un faux cas. Rien n'énumère les racines de disque ni `$HOME`,
+les appâts y sont donc visibles — ce qui est préférable, un parcours qui saute les
+noms cachés les voit quand même.
+
+L'appât se met dans un répertoire à lui, jamais en fichier nu à la racine d'un
+disque : la surveillance porte sur le répertoire contenant, et une racine de disque
+sert de zone de dépôt. Le moindre `cp` y déclencherait une fausse alarme.
 
 La surveillance porte sur le **répertoire**, pas seulement sur les fichiers-appâts :
 un rançongiciel qui écrit à côté puis supprime l'original ne déclenche aucun
@@ -138,16 +156,38 @@ et la lecture aux événements surveillés. Personne n'ouvre jamais un appât, d
 une lecture dénonce la reconnaissance **avant** le chiffrement. C'est le
 déclenchement le plus précoce disponible, mais c'est le seul qui puisse avoir un
 faux positif : la lecture, contrairement à l'écriture, a des auteurs légitimes.
-D'où deux garde-fous. Le parcours d'un répertoire n'est pas un événement de
-lecture (`IN_ISDIR` est ignoré), sans quoi le `du` de la purge nocturne
-déclencherait chaque nuit. Et `backup_snapshot.sh` exclut les appâts du rsync,
+D'où trois garde-fous, un par lecteur légitime identifié.
+
+Le parcours d'un répertoire n'est pas un événement de lecture (`IN_ISDIR` est
+ignoré), sans quoi le `du` de la purge nocturne déclencherait chaque nuit. Ce
+filtre suffit à mettre `ls`, `tree`, `find` et `du` hors de cause : aucun n'ouvre
+le contenu d'un fichier. Ensuite, `backup_snapshot.sh` exclut les appâts du rsync,
 sans quoi la sauvegarde les lirait tous les soirs — ils n'ont rien à faire dans
 un snapshot de toute façon, `--seed` les recrée.
 
-Au déclenchement, dans l'ordre : pose du verrou, coupure des tunnels Cloudflare,
-arrêt des unités systemd, arrêt des serveurs, puis mail. Le verrou d'abord parce
-qu'un redémarrage peut courir contre nous ; les tunnels avant les serveurs parce
-qu'ils sont le chemin d'entrée.
+Reste `grep -r`, la seule commande courante qui lise vraiment les fichiers, et qui
+descend dans les répertoires cachés. Un `--exclude-dir` sur le nom d'appât, posé
+en alias, ferme le cas — mais un alias ne vaut que pour les shells interactifs :
+un script qui grep récursivement dans un arbre surveillé en lecture doit porter
+l'exclusion lui-même.
+
+Au déclenchement, dans l'ordre : pose du verrou, coupure de la sortie réseau,
+arrêt des unités systemd, des tunnels, des serveurs, puis mail. Le verrou d'abord
+parce qu'un redémarrage peut courir contre nous ; le réseau avant les serveurs
+parce que c'est le chemin d'entrée.
+
+**Couper la sortie, pas les processus.** Tuer les tunnels ne tient pas : ce sont
+des unités `Restart=on-failure`, et pour systemd un `SIGKILL` est un échec — elles
+reviennent en quelques secondes. La sentinelle pose donc une règle nftables dans
+une table à elle, qui bloque le port de l'edge Cloudflare en TCP et en UDP. Elle
+survit aux redémarrages d'unité et vaut pour tous les tunnels, y compris ceux
+ajoutés après coup : aucun inventaire à tenir à jour. Les processus sont tués
+ensuite, pour l'effet immédiat ; s'ils reviennent, ils ne joignent plus personne.
+
+Ce n'est pas une précaution théorique : le hub n'est pas la seule porte. Une
+douzaine de services distincts tournent sur le même compte et écrivent dans les
+mêmes arborescences, et le hub — Argon2id + TOTP — est le mieux défendu du lot.
+Le jour de l'incident on veut « plus rien ne sort », pas « ces deux-là s'arrêtent ».
 
 **Le verrou est ce qui empêche la résurrection.** Tuer un processus ne suffit
 pas : un `Restart=always` le ramène en cinq secondes. `Foeto/app.py` et
@@ -191,9 +231,14 @@ Un déclenchement compris et bénin (une manipulation à soi, un outil d'indexat
 se lève ainsi :
 
 ```bash
+sudo nft delete table inet canari                       # rouvrir la sortie réseau
 rm ~/.foetopath_canary_tripped
 ./canary_sentinel.py --seed --watch <répertoire_appât>   # réarmer si les appâts ont bougé
 ```
+
+Ne pas oublier la table `nft` : sans elle, les serveurs redémarrent et paraissent
+sains, mais aucun tunnel ne monte. C'est l'état le plus pénible à diagnostiquer —
+tout est vert en local, rien ne répond de l'extérieur.
 
 Puis **relancer la sentinelle avant les serveurs** — sinon on rouvre l'accès sans
 surveillance, et c'est précisément la fenêtre qu'on cherchait à fermer.

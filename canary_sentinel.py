@@ -6,10 +6,11 @@ moindre evenement est une alarme sans faux positif. On surveille le REPERTOIRE e
 pas seulement les fichiers : un rancongiciel qui ecrit a cote puis supprime
 l'original ne declenche aucun evenement de modification sur l'appat.
 
-Au declenchement, dans cet ordre : verrou, tunnels, unites systemd, serveurs, mail.
-Le verrou d'abord parce qu'un redemarrage peut courir contre nous ; les tunnels
-avant les serveurs parce qu'ils sont le chemin d'entree, et qu'un serveur qui
-agonise derriere un tunnel coupe n'est joignable par personne.
+Au declenchement, dans cet ordre : verrou, coupure de la sortie vers l'edge
+Cloudflare, unites systemd, tunnels, serveurs, mail. Le verrou d'abord parce qu'un
+redemarrage peut courir contre nous ; le reseau ensuite parce que c'est le chemin
+d'entree, et qu'un serveur qui agonise derriere un tunnel coupe n'est joignable
+par personne.
 
 Le nom du repertoire-appat commence par un point : les enumerations du hub et du
 viewer sautent les noms caches, sans quoi le scan placenta creerait un faux cas.
@@ -40,6 +41,9 @@ from pathlib import Path
 LATCH_ENV = "FOETOPATH_CANARY_LATCH"
 LATCH_DEFAULT = "~/.foetopath_canary_tripped"
 LATCH_EXIT_CODE = 66  # a mettre en RestartPreventExitStatus, sinon systemd relance en boucle
+
+EDGE_PORT = 7844      # cloudflared <-> edge Cloudflare, en TCP comme en UDP
+NFT_TABLE = "canari"
 
 # Tout ce qui peut arriver a un repertoire ou rien n'arrive jamais.
 IN_MODIFY, IN_ATTRIB, IN_CLOSE_WRITE = 0x2, 0x4, 0x8
@@ -140,12 +144,37 @@ def _kill(resolve, label: str, log) -> list[str]:
         except OSError:
             pass
     # Reapparu sous un autre PID = service supervise : le tuer ne suffira jamais.
+    # C'est attendu pour les tunnels, et sans consequence — leur sortie est coupee.
     time.sleep(2)
     for tag, pid in resolve():
-        done.append(f"{label} {tag} REVENU en pid {pid} — supervise, passer par --unit")
+        done.append(f"{label} {tag} REVENU en pid {pid} — supervise")
     for line in done:
         log(f"  {line}")
     return done
+
+
+def block_edge(log) -> list[str]:
+    """Coupe la sortie vers l'edge Cloudflare. Tuer les tunnels ne suffit pas : ce sont
+    des unites Restart=on-failure, et un SIGKILL est un echec — elles reviennent en
+    quelques secondes. La regle, elle, tient a travers les redemarrages et vaut pour
+    tous les tunnels, y compris ceux ajoutes apres coup : pas d'inventaire a maintenir.
+    Table dediee pour ne pas toucher au pare-feu existant, et pour que la levee tienne
+    en une commande : nft delete table inet canari."""
+    rules = (f"table inet {NFT_TABLE} {{\n"
+             f"  chain sortie {{\n"
+             f"    type filter hook output priority 0; policy accept;\n"
+             f"    tcp dport {EDGE_PORT} drop\n"
+             f"    udp dport {EDGE_PORT} drop\n"
+             f"  }}\n}}\n")
+    try:
+        r = subprocess.run(["nft", "-f", "-"], input=rules, capture_output=True,
+                           text=True, timeout=10)
+        done = (f"sortie edge Cloudflare ({EDGE_PORT}/tcp+udp) coupee" if r.returncode == 0
+                else f"coupure edge EN ECHEC : {r.stderr.strip() or r.returncode}")
+    except Exception as exc:   # nft absent ou fige : on continue, le verrou est deja pose
+        done = f"coupure edge EN ECHEC : {exc}"
+    log(f"  {done}")
+    return [done]
 
 
 def stop_units(units: list[str], log) -> list[str]:
@@ -170,7 +199,12 @@ def trip(reason: str, latch: Path, ports: list[int], tunnels: list[str], all_tun
                      encoding="utf-8")
     log(f"  verrou pose : {latch}")
 
-    killed = stop_units(units, log)
+    killed = []
+    # Le reseau avant les processus : une fois la sortie coupee, un tunnel qui
+    # ressuscite ne joint plus personne, et l'ordre des kills n'a plus d'urgence.
+    if all_tunnels:
+        killed += block_edge(log)
+    killed += stop_units(units, log)
     if tunnels or all_tunnels:
         killed += _kill(lambda: cloudflared(tunnels, all_tunnels), "tunnel", log)
     if ports:
