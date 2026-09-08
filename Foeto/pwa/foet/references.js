@@ -225,21 +225,30 @@ function getMarounGrade23(score) { if (score <= 1) return '01'; return '23'; }
 
 // ═══ GUIHARD-COSTA 2002 — Masses d'organes (bi-hebdomadaire, g) ═══
 // Keys: thymus, coeur, poumons, foie, spleen, pancreas, surrenales, reins
+/* Guihard-Costa 2002 — poumons, reins et surrenales sont publies cote par
+   cote. Ici on les recombine en organe pair, puisque masse2 additionne les
+   deux masses avant de noter :
+     moyenne    = G + D
+     ecart-type = sG + sD        (correlation forte : les deux organes d'un
+                                  meme foetus grandissent ensemble)
+   La table portait auparavant la moyenne de la PAIRE avec l'ecart-type d'UN
+   organe, v((sG²+sD²)/2). Le z en sortait double : un foetus normal declenchait
+   « hors norme » sur un organe pair une fois sur trois. */
 var GC_ORG = {
-  "13-14":{thymus:{m:0.09,sd:0.07},coeur:{m:0.24,sd:0.13},poumons:{m:1.26,sd:0.25},foie:{m:3.09,sd:0.27},spleen:{m:0.06,sd:0.04},pancreas:{m:0.09,sd:0.01},surrenales:{m:0.29,sd:0.06},reins:{m:0.41,sd:0.11}},
-  "15-16":{thymus:{m:0.17,sd:0.12},coeur:{m:0.82,sd:0.23},poumons:{m:2.99,sd:0.54},foie:{m:5.81,sd:1.71},spleen:{m:0.12,sd:0.08},pancreas:{m:0.28,sd:0.08},surrenales:{m:0.56,sd:0.10},reins:{m:0.71,sd:0.18}},
-  "17-18":{thymus:{m:0.31,sd:0.19},coeur:{m:1.44,sd:0.37},poumons:{m:5.09,sd:0.91},foie:{m:9.39,sd:3.33},spleen:{m:0.23,sd:0.13},pancreas:{m:0.42,sd:0.16},surrenales:{m:0.91,sd:0.16},reins:{m:1.38,sd:0.27}},
-  "19-20":{thymus:{m:0.53,sd:0.3},coeur:{m:2.21,sd:0.56},poumons:{m:7.68,sd:1.34},foie:{m:14.33,sd:5.15},spleen:{m:0.38,sd:0.2},pancreas:{m:0.57,sd:0.24},surrenales:{m:1.32,sd:0.23},reins:{m:2.41,sd:0.38}},
-  "21-22":{thymus:{m:0.87,sd:0.45},coeur:{m:3.23,sd:0.79},poumons:{m:10.84,sd:1.84},foie:{m:21,sd:7.15},spleen:{m:0.62,sd:0.29},pancreas:{m:0.78,sd:0.34},surrenales:{m:1.79,sd:0.32},reins:{m:3.84,sd:0.53}},
-  "23-24":{thymus:{m:1.35,sd:0.64},coeur:{m:4.55,sd:1.07},poumons:{m:14.65,sd:2.39},foie:{m:29.63,sd:9.35},spleen:{m:0.96,sd:0.42},pancreas:{m:1.08,sd:0.45},surrenales:{m:2.33,sd:0.41},reins:{m:5.64,sd:0.70}},
-  "25-26":{thymus:{m:2.01,sd:0.89},coeur:{m:6.21,sd:1.39},poumons:{m:19.09,sd:2.98},foie:{m:40.27,sd:11.75},spleen:{m:1.44,sd:0.59},pancreas:{m:1.47,sd:0.57},surrenales:{m:2.92,sd:0.51},reins:{m:7.78,sd:0.90}},
-  "27-28":{thymus:{m:2.92,sd:1.21},coeur:{m:8.2,sd:1.76},poumons:{m:24.15,sd:3.61},foie:{m:52.89,sd:14.33},spleen:{m:2.09,sd:0.8},pancreas:{m:1.98,sd:0.7},surrenales:{m:3.57,sd:0.61},reins:{m:10.22,sd:1.12}},
-  "29-30":{thymus:{m:4.14,sd:1.61},coeur:{m:10.48,sd:2.17},poumons:{m:29.79,sd:4.27},foie:{m:67.29,sd:17.1},spleen:{m:2.95,sd:1.06},pancreas:{m:2.58,sd:0.84},surrenales:{m:4.3,sd:0.72},reins:{m:12.9,sd:1.37}},
-  "31-32":{thymus:{m:5.72,sd:2.1},coeur:{m:12.98,sd:2.63},poumons:{m:35.9,sd:4.94},foie:{m:83.1,sd:20.07},spleen:{m:4.08,sd:1.39},pancreas:{m:3.26,sd:0.98},surrenales:{m:5.08,sd:0.82},reins:{m:15.73,sd:1.65}},
-  "33-34":{thymus:{m:7.75,sd:2.7},coeur:{m:15.6,sd:3.14},poumons:{m:42.36,sd:5.62},foie:{m:99.87,sd:23.23},spleen:{m:5.53,sd:1.78},pancreas:{m:3.97,sd:1.14},surrenales:{m:5.93,sd:0.92},reins:{m:18.62,sd:1.96}},
-  "35-36":{thymus:{m:10.33,sd:3.42},coeur:{m:18.21,sd:3.69},poumons:{m:48.98,sd:6.30},foie:{m:116.97,sd:26.58},spleen:{m:7.35,sd:2.25},pancreas:{m:4.66,sd:1.31},surrenales:{m:6.83,sd:1.01},reins:{m:21.46,sd:2.29}},
-  "37-38":{thymus:{m:13.54,sd:4.27},coeur:{m:20.63,sd:4.28},poumons:{m:55.59,sd:6.98},foie:{m:133.64,sd:30.12},spleen:{m:9.63,sd:2.82},pancreas:{m:5.26,sd:1.49},surrenales:{m:7.79,sd:1.09},reins:{m:24.12,sd:2.65}},
-  "39-40":{thymus:{m:17.5,sd:5.27},coeur:{m:22.68,sd:4.92},poumons:{m:61.94,sd:7.64},foie:{m:148.97,sd:33.85},spleen:{m:12.43,sd:3.48},pancreas:{m:5.71,sd:1.67},surrenales:{m:8.83,sd:1.17},reins:{m:26.45,sd:3.04}},
-  "41-42":{thymus:{m:22.34,sd:6.44},coeur:{m:24.49,sd:5.58},poumons:{m:67.6,sd:8.28},foie:{m:161.94,sd:37.78},spleen:{m:15.85,sd:4.25},pancreas:{m:5.9,sd:1.87},surrenales:{m:9.92,sd:1.22},reins:{m:28.28,sd:3.45}}
+  "13-14":{thymus:{m:0.09,sd:0.07},coeur:{m:0.24,sd:0.13},poumons:{m:1.26,sd:0.5},foie:{m:3.09,sd:0.27},spleen:{m:0.06,sd:0.04},pancreas:{m:0.09,sd:0.01},surrenales:{m:0.29,sd:0.11},reins:{m:0.41,sd:0.22}},
+  "15-16":{thymus:{m:0.17,sd:0.12},coeur:{m:0.82,sd:0.23},poumons:{m:2.99,sd:1.08},foie:{m:5.81,sd:1.71},spleen:{m:0.12,sd:0.08},pancreas:{m:0.28,sd:0.08},surrenales:{m:0.56,sd:0.19},reins:{m:0.71,sd:0.35}},
+  "17-18":{thymus:{m:0.31,sd:0.19},coeur:{m:1.44,sd:0.37},poumons:{m:5.09,sd:1.81},foie:{m:9.39,sd:3.33},spleen:{m:0.23,sd:0.13},pancreas:{m:0.42,sd:0.16},surrenales:{m:0.91,sd:0.31},reins:{m:1.38,sd:0.53}},
+  "19-20":{thymus:{m:0.53,sd:0.3},coeur:{m:2.21,sd:0.56},poumons:{m:7.68,sd:2.68},foie:{m:14.33,sd:5.15},spleen:{m:0.38,sd:0.2},pancreas:{m:0.57,sd:0.24},surrenales:{m:1.32,sd:0.46},reins:{m:2.41,sd:0.76}},
+  "21-22":{thymus:{m:0.87,sd:0.45},coeur:{m:3.23,sd:0.79},poumons:{m:10.84,sd:3.67},foie:{m:21,sd:7.15},spleen:{m:0.62,sd:0.29},pancreas:{m:0.78,sd:0.34},surrenales:{m:1.79,sd:0.63},reins:{m:3.84,sd:1.05}},
+  "23-24":{thymus:{m:1.35,sd:0.64},coeur:{m:4.55,sd:1.07},poumons:{m:14.65,sd:4.75},foie:{m:29.63,sd:9.35},spleen:{m:0.96,sd:0.42},pancreas:{m:1.08,sd:0.45},surrenales:{m:2.33,sd:0.81},reins:{m:5.64,sd:1.4}},
+  "25-26":{thymus:{m:2.01,sd:0.89},coeur:{m:6.21,sd:1.39},poumons:{m:19.09,sd:5.92},foie:{m:40.27,sd:11.75},spleen:{m:1.44,sd:0.59},pancreas:{m:1.47,sd:0.57},surrenales:{m:2.92,sd:1.01},reins:{m:7.78,sd:1.79}},
+  "27-28":{thymus:{m:2.92,sd:1.21},coeur:{m:8.2,sd:1.76},poumons:{m:24.15,sd:7.16},foie:{m:52.89,sd:14.33},spleen:{m:2.09,sd:0.8},pancreas:{m:1.98,sd:0.7},surrenales:{m:3.57,sd:1.22},reins:{m:10.22,sd:2.24}},
+  "29-30":{thymus:{m:4.14,sd:1.61},coeur:{m:10.48,sd:2.17},poumons:{m:29.79,sd:8.47},foie:{m:67.29,sd:17.1},spleen:{m:2.95,sd:1.06},pancreas:{m:2.58,sd:0.84},surrenales:{m:4.3,sd:1.43},reins:{m:12.9,sd:2.74}},
+  "31-32":{thymus:{m:5.72,sd:2.1},coeur:{m:12.98,sd:2.63},poumons:{m:35.9,sd:9.8},foie:{m:83.1,sd:20.07},spleen:{m:4.08,sd:1.39},pancreas:{m:3.26,sd:0.98},surrenales:{m:5.08,sd:1.63},reins:{m:15.73,sd:3.3}},
+  "33-34":{thymus:{m:7.75,sd:2.7},coeur:{m:15.6,sd:3.14},poumons:{m:42.36,sd:11.17},foie:{m:99.87,sd:23.23},spleen:{m:5.53,sd:1.78},pancreas:{m:3.97,sd:1.14},surrenales:{m:5.93,sd:1.83},reins:{m:18.62,sd:3.92}},
+  "35-36":{thymus:{m:10.33,sd:3.42},coeur:{m:18.21,sd:3.69},poumons:{m:48.98,sd:12.54},foie:{m:116.97,sd:26.58},spleen:{m:7.35,sd:2.25},pancreas:{m:4.66,sd:1.31},surrenales:{m:6.83,sd:2.01},reins:{m:21.46,sd:4.58}},
+  "37-38":{thymus:{m:13.54,sd:4.27},coeur:{m:20.63,sd:4.28},poumons:{m:55.59,sd:13.9},foie:{m:133.64,sd:30.12},spleen:{m:9.63,sd:2.82},pancreas:{m:5.26,sd:1.49},surrenales:{m:7.79,sd:2.18},reins:{m:24.12,sd:5.29}},
+  "39-40":{thymus:{m:17.5,sd:5.27},coeur:{m:22.68,sd:4.92},poumons:{m:61.94,sd:15.25},foie:{m:148.97,sd:33.85},spleen:{m:12.43,sd:3.48},pancreas:{m:5.71,sd:1.67},surrenales:{m:8.83,sd:2.33},reins:{m:26.45,sd:6.07}},
+  "41-42":{thymus:{m:22.34,sd:6.44},coeur:{m:24.49,sd:5.58},poumons:{m:67.6,sd:16.55},foie:{m:161.94,sd:37.78},spleen:{m:15.85,sd:4.25},pancreas:{m:5.9,sd:1.87},surrenales:{m:9.92,sd:2.45},reins:{m:28.28,sd:6.89}}
 };
 function getGCOrg(sa) { return (sa >= 13 && sa <= 42) ? GC_ORG[getGCKey(sa)] : null; }
