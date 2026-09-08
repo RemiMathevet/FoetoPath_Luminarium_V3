@@ -721,9 +721,9 @@ fetch(_url('/api/foeto/structures')).then(r => r.json()).then(data => {
     _populateStructDropdown();
 }).catch(() => {});
 
-fetch(_url('/api/foeto/grades')).then(r => r.json()).then(data => {
-    FOETO_GRADES = data.grades || {};
-}).catch(() => {});
+// Le viewer annote la lesion elementaire. Le grading est un travail d'aval,
+// sur les positifs deja classes : FOETO_GRADES reste vide, _isGradable() rend
+// false, aucun bouton .G* n'est propose. /api/foeto/grades sert le CR.
 
 function _diagBaseId(diagStr) { return diagStr.replace(/\.G\d+$/, ''); }
 function _diagGrade(diagStr) { const m = diagStr.match(/\.G(\d+)$/); return m ? parseInt(m[1]) : 0; }
