@@ -124,15 +124,15 @@ var MA_ORG = [
 // ═══ MULLER-BROCHUT 2018 — Masses d'organes (12-20 SA) ═══
 // All in grams
 var MB_ORG = {
-  12:{Brain:{m:3.6,sd:2.03},Thymus:{m:0.10,sd:0.06},Heart:{m:0.15,sd:0.09},Lungs:{m:0.49,sd:0.24},Liver:{m:1.15,sd:0.43},Spleen:{m:0.05,sd:0.07},Kidneys:{m:0.24,sd:0.13},Adrenals:{m:0.10,sd:0.06}},
-  13:{Brain:{m:5.26,sd:1.14},Thymus:{m:0.14,sd:0.06},Heart:{m:0.21,sd:0.06},Lungs:{m:0.89,sd:0.29},Liver:{m:1.49,sd:0.30},Spleen:{m:0.34,sd:0.07},Kidneys:{m:0.61,sd:0.21},Adrenals:{m:0.12,sd:0.05}},
-  14:{Brain:{m:7.96,sd:2.03},Thymus:{m:0.11,sd:0.05},Heart:{m:0.33,sd:0.12},Lungs:{m:1.52,sd:0.43},Liver:{m:2.36,sd:0.52},Spleen:{m:0.55,sd:0.04},Kidneys:{m:0.63,sd:0.13},Adrenals:{m:0.25,sd:0.08}},
-  15:{Brain:{m:11.33,sd:2.21},Thymus:{m:0.17,sd:0.06},Heart:{m:0.46,sd:0.15},Lungs:{m:2.34,sd:0.58},Liver:{m:3.37,sd:0.66},Spleen:{m:0.65,sd:0.15},Kidneys:{m:1.05,sd:0.25},Adrenals:{m:0.41,sd:0.33}},
-  16:{Brain:{m:15.48,sd:3.19},Thymus:{m:0.19,sd:0.05},Heart:{m:0.64,sd:0.12},Lungs:{m:3.04,sd:0.55},Liver:{m:4.63,sd:0.78},Spleen:{m:0.79,sd:0.06},Kidneys:{m:1.17,sd:0.33},Adrenals:{m:0.47,sd:0.36}},
-  17:{Brain:{m:20.13,sd:2.62},Thymus:{m:0.22,sd:0.13},Heart:{m:0.80,sd:0.19},Lungs:{m:3.93,sd:0.61},Liver:{m:6.07,sd:1.07},Spleen:{m:0.96,sd:0.14},Kidneys:{m:1.50,sd:0.35},Adrenals:{m:0.61,sd:0.28}},
-  18:{Brain:{m:26.26,sd:4.48},Thymus:{m:0.24,sd:0.06},Heart:{m:1.14,sd:0.36},Lungs:{m:4.89,sd:0.76},Liver:{m:7.92,sd:1.21},Spleen:{m:1.21,sd:0.15},Kidneys:{m:1.76,sd:0.51},Adrenals:{m:0.90,sd:0.23}},
-  19:{Brain:{m:34.58,sd:5.02},Thymus:{m:0.29,sd:0.09},Heart:{m:1.65,sd:0.43},Lungs:{m:6.09,sd:0.25},Liver:{m:10.77,sd:1.45},Spleen:{m:0.90,sd:0.24},Kidneys:{m:2.13,sd:0.41},Adrenals:{m:1.05,sd:0.24}},
-  20:{Brain:{m:46.0,sd:0.57},Thymus:{m:0.26,sd:0.14},Heart:{m:1.99,sd:0.18},Lungs:{m:6.64,sd:1.15},Liver:{m:12.76,sd:1.23},Spleen:{m:0.55,sd:0.26},Kidneys:{m:2.63,sd:0.63},Adrenals:{m:1.27,sd:0.32}}
+  12:{Brain:{m:3.6,sd:2.03},Thymus:{m:0.07,sd:0.05},Heart:{m:0.15,sd:0.09},Lungs:{m:0.49,sd:0.24},Liver:{m:1.15,sd:0.43},Spleen:{m:0.05,sd:0.07},Kidneys:{m:0.2,sd:0.13},Adrenals:{m:0.10,sd:0.06}},
+  13:{Brain:{m:5.26,sd:1.14},Thymus:{m:0.03,sd:0.01},Heart:{m:0.21,sd:0.06},Lungs:{m:0.89,sd:0.29},Liver:{m:1.49,sd:0.30},Spleen:{m:0.03,sd:0.03},Kidneys:{m:0.21,sd:0.07},Adrenals:{m:0.14,sd:0.06}},
+  14:{Brain:{m:7.96,sd:2.03},Thymus:{m:0.08,sd:0.11},Heart:{m:0.33,sd:0.12},Lungs:{m:1.52,sd:0.43},Liver:{m:2.36,sd:0.52},Spleen:{m:0.05,sd:0.04},Kidneys:{m:0.36,sd:0.13},Adrenals:{m:0.25,sd:0.08}},
+  15:{Brain:{m:11.33,sd:2.21},Thymus:{m:0.09,sd:0.06},Heart:{m:0.46,sd:0.15},Lungs:{m:2.34,sd:0.58},Liver:{m:3.37,sd:0.66},Spleen:{m:0.07,sd:0.06},Kidneys:{m:0.53,sd:0.15},Adrenals:{m:0.35,sd:0.12}},
+  16:{Brain:{m:15.48,sd:3.19},Thymus:{m:0.12,sd:0.04},Heart:{m:0.64,sd:0.12},Lungs:{m:3.04,sd:0.55},Liver:{m:4.63,sd:0.78},Spleen:{m:0.09,sd:0.06},Kidneys:{m:0.71,sd:0.19},Adrenals:{m:0.44,sd:0.09}},
+  17:{Brain:{m:20.13,sd:2.62},Thymus:{m:0.22,sd:0.13},Heart:{m:0.80,sd:0.19},Lungs:{m:3.93,sd:0.61},Liver:{m:6.07,sd:1.07},Spleen:{m:0.10,sd:0.04},Kidneys:{m:1.11,sd:0.33},Adrenals:{m:0.61,sd:0.17}},
+  18:{Brain:{m:26.26,sd:4.48},Thymus:{m:0.24,sd:0.06},Heart:{m:1.14,sd:0.36},Lungs:{m:4.89,sd:0.76},Liver:{m:7.92,sd:1.21},Spleen:{m:0.15,sd:0.04},Kidneys:{m:1.43,sd:0.20},Adrenals:{m:0.90,sd:0.23}},
+  19:{Brain:{m:34.58,sd:5.02},Thymus:{m:0.35,sd:0.04},Heart:{m:1.65,sd:0.43},Lungs:{m:6.09,sd:0.25},Liver:{m:10.77,sd:1.45},Spleen:{m:0.20,sd:0.08},Kidneys:{m:1.76,sd:0.51},Adrenals:{m:1.05,sd:0.24}},
+  20:{Brain:{m:46.0,sd:0.57},Thymus:{m:0.45,sd:0.14},Heart:{m:1.99,sd:0.18},Lungs:{m:6.64,sd:1.15},Liver:{m:12.76,sd:1.23},Spleen:{m:0.35,sd:0.05},Kidneys:{m:2.63,sd:0.63},Adrenals:{m:1.27,sd:0.32}}
 };
 
 // ═══ GENEST — Critères de rétention in utero ═══
