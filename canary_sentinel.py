@@ -223,7 +223,8 @@ def trip(reason: str, latch: Path, ports: list[int], tunnels: list[str], all_tun
             log(f"  mail en echec : {exc}")
 
 
-def watch(dirs: list[tuple[Path, int]], on_event, log) -> None:
+def watch(dirs: list[tuple[Path, int]], on_event, log,
+          fan_fd: int | None = None) -> None:
     libc = ctypes.CDLL("libc.so.6", use_errno=True)
     fd = libc.inotify_init1(0)
     if fd < 0:
@@ -248,8 +249,139 @@ def watch(dirs: list[tuple[Path, int]], on_event, log) -> None:
             if mask & IN_ISDIR and not mask & WATCH_MASK:
                 continue
             on_event(f"{_flags(mask)} sur {name or '<le repertoire lui-meme>'} "
-                     f"dans {where.get(wd, '?')}")
+                     f"dans {where.get(wd, '?')}"
+                     f"{attribute(fan_fd, name)}")
             return  # un seul evenement suffit, on ne revient jamais en surveillance
+
+
+# --- fanotify : inotify dit QUOI, fanotify dit QUI ---------------------------
+# inotify ne transporte aucun PID : le 2026-09-08, retrouver l'auteur d'un open a
+# demande une heure d'atimes et de scopes systemd. fanotify le donne dans
+# metadata.pid. On ne remplace pas inotify pour autant — sans FAN_REPORT_FID il ne
+# voit ni create, ni rename, ni delete, et perdre ces evenements serait echanger un
+# faux positif contre un faux negatif. inotify reste le declencheur, fanotify est
+# interroge au moment du tir.
+FAN_CLOEXEC, FAN_CLASS_NOTIF, FAN_NONBLOCK = 0x01, 0x00, 0x02
+FAN_MARK_ADD, FAN_MARK_ONLYDIR = 0x01, 0x08
+FAN_ACCESS, FAN_MODIFY, FAN_CLOSE_WRITE, FAN_OPEN = 0x01, 0x02, 0x08, 0x20
+FAN_EVENT_ON_CHILD = 0x08000000
+FAN_WRITE_MASK = FAN_MODIFY | FAN_CLOSE_WRITE | FAN_EVENT_ON_CHILD
+FAN_READ_MASK = FAN_OPEN | FAN_ACCESS
+AT_FDCWD = -100
+_FAN_META = "=IBBHQii"   # event_len, vers, reserved, metadata_len, mask, fd, pid
+_FAN_META_SIZE = struct.calcsize(_FAN_META)
+
+
+def fan_arm(dirs: list[tuple[Path, int]], log) -> int | None:
+    """Marque les memes repertoires en fanotify, avec le MEME masque qu'inotify.
+    Ecouter les lectures d'un appat arme en ecriture seule empilerait des evenements
+    que rien ne vient consommer : la file deborderait et l'attribution designerait un
+    processus perime. Best effort : sans CAP_SYS_ADMIN on surveille quand meme,
+    simplement sans nommer l'auteur."""
+    libc = ctypes.CDLL("libc.so.6", use_errno=True)
+    libc.fanotify_init.argtypes = [ctypes.c_uint, ctypes.c_uint]
+    libc.fanotify_mark.argtypes = [ctypes.c_int, ctypes.c_uint, ctypes.c_uint64,
+                                   ctypes.c_int, ctypes.c_char_p]
+    fd = libc.fanotify_init(FAN_CLOEXEC | FAN_CLASS_NOTIF | FAN_NONBLOCK, os.O_RDONLY)
+    if fd < 0:
+        log(f"  attribution indisponible ({os.strerror(ctypes.get_errno())}) — "
+            f"fanotify demande CAP_SYS_ADMIN")
+        return None
+    for d, in_mask in dirs:
+        mask = FAN_WRITE_MASK | (FAN_READ_MASK if in_mask & READ_MASK else 0)
+        if libc.fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_ONLYDIR, mask,
+                              AT_FDCWD, str(d).encode()) < 0:
+            log(f"  attribution partielle : {d} ({os.strerror(ctypes.get_errno())})")
+    return fd
+
+
+def who(pid: int) -> str:
+    """Carte d'identite du fautif, lue tant que /proc/<pid> existe. La chaine des
+    parents est le vrai renseignement : un grep ne dit rien, `grep <- claude <- bash
+    <- sshd` dit tout."""
+    if pid <= 0:
+        return "    auteur inconnu"
+
+    def fields(d: Path) -> tuple[str, dict]:
+        try:
+            cmd = " ".join(d.joinpath("cmdline").read_bytes()
+                           .decode(errors="replace").split("\0")).strip()
+            st = dict(l.split(":", 1) for l in
+                      d.joinpath("status").read_text(errors="replace").splitlines() if ":" in l)
+        except Exception:
+            return "", {}
+        return cmd or st.get("Name", "?").strip(), st
+
+    def link(d: Path, rel: str) -> str:
+        try:
+            return os.readlink(str(d / rel))
+        except Exception:
+            return "?"
+
+    p = Path("/proc") / str(pid)
+    cmd, st = fields(p)
+    if not st:
+        return f"    pid {pid} deja disparu"
+    try:
+        loginuid = (p / "loginuid").read_text().strip()
+    except Exception:
+        loginuid = "?"
+    out = [f"    pid {pid}  {cmd[:300]}",
+           f"    exe {link(p, 'exe')}",
+           f"    cwd {link(p, 'cwd')}",
+           f"    uid {st.get('Uid', '?').strip()}  loginuid {loginuid}"]
+    for line in (p / "cgroup").read_text(errors="replace").splitlines():
+        if ".scope" in line or ".service" in line:
+            out.append(f"    cgroup {line.split(':')[-1]}")
+            break
+    ppid = st.get("PPid", "0").strip()
+    for _ in range(5):        # la remontee s'arrete a init ou apres 5 crans
+        if not ppid or ppid == "0":
+            break
+        pcmd, pst = fields(Path("/proc") / ppid)
+        if not pst:
+            break
+        out.append(f"      ^ {ppid}  {pcmd[:200]}")
+        ppid = pst.get("PPid", "0").strip()
+    return "\n".join(out)
+
+
+def attribute(fan_fd: int | None, name: str) -> str:
+    """Draine la file fanotify et rend l'identite de l'auteur. Les deux files sont
+    alimentees par le meme evenement mais pas dans un ordre garanti : on accorde un
+    demi-seconde, jamais plus, le verrou n'attend pas."""
+    if fan_fd is None:
+        return ""
+    best, deadline = None, time.monotonic() + 0.5
+    while time.monotonic() < deadline:
+        try:
+            buf = os.read(fan_fd, 65536)
+        except BlockingIOError:      # file vide : soit on tient le bon, soit on patiente
+            if best and best[2]:
+                break
+            time.sleep(0.01)
+            continue
+        except OSError:
+            break
+        off = 0
+        while off + _FAN_META_SIZE <= len(buf):
+            ev_len, _v, _r, _ml, _mask, efd, pid = struct.unpack_from(_FAN_META, buf, off)
+            off += ev_len or _FAN_META_SIZE
+            path = "?"
+            if efd >= 0:
+                try:
+                    path = os.readlink(f"/proc/self/fd/{efd}")
+                except OSError:
+                    pass
+                os.close(efd)
+            # On vide TOUTE la file : un evenement perime est en tete, le nom cherche
+            # est en queue. Le dernier vu gagne, une correspondance exacte l'emporte.
+            exact = bool(name) and os.path.basename(path) == name
+            if best is None or exact or not best[2]:
+                best = (pid, path, exact)
+    if best is None:
+        return "\n(fanotify n'a rien vu : auteur non identifie)"
+    return f"\nauteur de l'acces a {best[1]} :\n" + who(best[0])
 
 
 def seed(dirs: list[Path], log) -> None:
@@ -360,8 +492,9 @@ def main() -> int:
         return LATCH_EXIT_CODE
 
     log(f"Sentinelle active. Verrou prevu : {latch}")
+    fan_fd = fan_arm(watched, log)
     watch(watched, lambda reason: trip(reason, latch, args.port, args.tunnel, args.tunnels_all,
-                                       args.unit, args.notify, args.mail, log), log)
+                                       args.unit, args.notify, args.mail, log), log, fan_fd)
     return 1  # on ne sort de watch() que declenche
 
 
@@ -375,7 +508,7 @@ def self_check(log) -> int:
         seed([bait], log)
         fired = []
 
-        def arm(mask, react=True):
+        def arm(mask, react=True, fan_fd=None):
             """react=False pour les cas qui ne doivent PAS declencher : le veilleur
             leur survit, et il reposerait le verrou en voyant le menage de fin."""
             fired.clear()
@@ -387,7 +520,8 @@ def self_check(log) -> int:
                 if react:
                     trip(r, latch, [], [], False, [], "", "", log)
 
-            t = threading.Thread(target=watch, args=([(bait, mask)], on_event, log), daemon=True)
+            t = threading.Thread(target=watch,
+                                 args=([(bait, mask)], on_event, log, fan_fd), daemon=True)
             t.start()
             time.sleep(0.3)
             return t
@@ -427,8 +561,32 @@ def self_check(log) -> int:
         t.join(timeout=2)
         assert not fired, f"un simple parcours a declenche : {fired}"
 
+        # fanotify doit nommer l'auteur, et l'auteur ici c'est nous. Repertoire neuf :
+        # les veilleurs des cas precedents survivent sur le premier appat (voir arm),
+        # et le premier a poster gagnerait la course sans porter d'attribution.
+        seul = Path(tmp) / "appat_attribution"
+        seed([seul], log)
+        fan = fan_arm([(seul, WATCH_MASK | READ_MASK)], log)
+        if fan is None:
+            log("  attribution non testee : fanotify demande CAP_SYS_ADMIN (lancer en root)")
+        else:
+            vus = []
+            t = threading.Thread(target=watch,
+                                 args=([(seul, WATCH_MASK | READ_MASK)], vus.append, log, fan),
+                                 daemon=True)
+            t.start()
+            time.sleep(0.3)
+            (seul / "backup_keys.json").read_bytes()
+            t.join(timeout=5)
+            os.close(fan)
+            assert vus, "aucun evenement capte avec fanotify arme"
+            assert f"pid {os.getpid()}" in vus[0], f"attribution absente ou fausse : {vus[0]}"
+            assert "backup_keys.json" in vus[0], f"mauvais fichier attribue : {vus[0]}"
+            assert "^ " in vus[0], f"chaine des parents absente : {vus[0]}"
+            log("  attribution OK — l'auteur et sa lignee sont nommes")
+
     log("self-check OK — create/modify declenchent ; la lecture seulement sous "
-        "--watch-read, et jamais le parcours du repertoire")
+        "--watch-read, jamais le parcours du repertoire ; l'auteur est nomme")
     return 0
 
 

@@ -242,13 +242,13 @@ def _build_organes_fixes(macro_autopsie: dict, macro_fixe: dict,
             "masse_g": masse,
         }
 
-        base = org_key.rsplit("_", 1)[0]
-        indiv_ref = gc_indiv.get(base, {})
+        base, side = org_key.rsplit("_", 1)
+        indiv_ref = gc_indiv.get(base, {}).get(side.upper(), {})
         if indiv_ref:
             ds = calc_ds(masse, indiv_ref["moy"], indiv_ref["sd"])
             entry["zscore"] = ds
             entry["interpretation"] = interpret_ds(ds)
-            entry["reference"] = "Guihard-Costa 2002 (dérivé)"
+            entry["reference"] = "Guihard-Costa 2002 (côtés séparés)"
 
         seen_organs.add(org_key)
         organes_list.append(entry)

@@ -25,7 +25,7 @@ def _cr_text_to_html(text: str) -> str:
         line = lines[i]
         stripped = line.strip()
 
-        if stripped and i + 1 < len(lines):
+        if stripped and not stripped.startswith("<") and i + 1 < len(lines):
             next_stripped = lines[i + 1].strip()
             if next_stripped and len(next_stripped) >= 3 and all(c == "=" for c in next_stripped):
                 out.append(f'<h2 style="margin:18px 0 6px;font-size:15px;color:var(--accent)">{html_escape(stripped)}</h2>')
@@ -53,6 +53,76 @@ def _cr_text_to_html(text: str) -> str:
         i += 1
 
     return "\n".join(out)
+
+
+# ── Variante « colle dans Word » ────────────────────────────────────────────
+# Word ignore les feuilles de style et les variables CSS : tout doit être en
+# style inline, en points, et chaque ligne doit être un <p> (un <br> donnerait
+# un seul paragraphe géant, impossible à restyler dans Word).
+
+WORD_FONT = "Calibri, Carlito, Arial, sans-serif"
+_W_BODY = f"font-family:{WORD_FONT};font-size:11pt;line-height:1.3;color:#000"
+_W_P = "margin:0 0 2pt 0"
+_W_TITLE = (f"font-family:{WORD_FONT};font-size:14pt;font-weight:bold;"
+            "text-align:center;margin:0 0 10pt 0;color:#000")
+_W_H = (f"font-family:{WORD_FONT};font-size:11pt;font-weight:bold;"
+        "text-transform:uppercase;margin:12pt 0 4pt 0;padding-bottom:1pt;"
+        "border-bottom:0.75pt solid #000;color:#000")
+_W_SPACER = "margin:0;font-size:6pt;line-height:6pt"
+
+
+def _cr_text_to_word_html(text: str) -> str:
+    """CR (texte + tableaux HTML) → HTML collable dans Word en gardant la mise en page.
+
+    Un <p> par ligne, indentation des lignes en retrait convertie en margin-left,
+    titres soulignés « === » / « --- » convertis en titre et en-têtes de section.
+    """
+    lines = text.split("\n")
+    out = [f'<div style="{_W_BODY}">']
+    i = 0
+    while i < len(lines):
+        line = lines[i].rstrip()
+        stripped = line.strip()
+        nxt = lines[i + 1].strip() if i + 1 < len(lines) else ""
+        # un bloc HTML (tableau d'un helper) n'est jamais un titre, même suivi
+        # du séparateur « --- » de pied de CR
+        underline = (len(nxt) >= 3 and len(set(nxt)) == 1
+                     and not stripped.startswith("<"))
+
+        if stripped and underline and nxt[0] == "=":
+            out.append(f'<p style="{_W_TITLE}">{html_escape(stripped)}</p>')
+            i += 2
+            continue
+        if stripped and underline and nxt[0] == "-":
+            out.append(f'<p style="{_W_H}">{html_escape(stripped)}</p>')
+            i += 2
+            continue
+        if stripped == "---":
+            out.append('<p style="margin:10pt 0 4pt 0;border-top:0.75pt solid #999">'
+                       '&nbsp;</p>')
+            i += 1
+            continue
+        if stripped.startswith("<"):          # tableaux produits par les helpers
+            out.append(line)
+            i += 1
+            continue
+        if not stripped:
+            out.append(f'<p style="{_W_SPACER}">&nbsp;</p>')
+            i += 1
+            continue
+
+        indent = len(line) - len(line.lstrip(" "))
+        style = _W_P + (f";margin-left:{indent * 4}pt" if indent else "")
+        out.append(f'<p style="{style}">{html_escape(stripped)}</p>')
+        i += 1
+
+    out.append("</div>")
+    return "\n".join(out)
+
+
+def _word_wrap(html: str) -> str:
+    """Enveloppe un CR déjà en HTML (modèles utilisateur) pour le collage Word."""
+    return f'<div style="{_W_BODY}">{html}</div>'
 
 
 def make_cr_blueprint(
@@ -149,6 +219,7 @@ def make_cr_blueprint(
             "template_id": template_id,
             "text": cr_text,
             "html": cr_html,
+            "html_word": _cr_text_to_word_html(cr_text),
             "doc_id": doc_id,
         })
 
@@ -271,7 +342,8 @@ def make_cr_blueprint(
 
         doc_id = db_mod.save_generated_doc(case_id, template_id, html, text)
 
-        return jsonify({"ok": True, "doc_id": doc_id, "html": html, "text": text})
+        return jsonify({"ok": True, "doc_id": doc_id, "html": html, "text": text,
+                        "html_word": _word_wrap(html)})
 
     # ── Generated docs CRUD ─────────────────────────────────────────
 

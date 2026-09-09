@@ -87,6 +87,7 @@ async function renderCRPanel(c) {
             <div id="crText" style="background:var(--bg);padding:14px;border-radius:var(--radius);font-size:12px;max-height:500px;overflow:auto;color:var(--text);border:1px solid var(--border);line-height:1.6">${lastCr.html || (lastCr.text ? escHtml(lastCr.text) : '')}</div>
             <div style="display:flex;gap:8px;margin-top:8px">
                 <button class="btn btn-sm" onclick="copyCRText()">Copier</button>
+                <button class="btn btn-sm" onclick="copyCRWord()" title="Colle dans Word en gardant titres, retraits et tableaux">Copier pour Word</button>
             </div>
         </div>
     </div>
@@ -292,6 +293,7 @@ async function generateCR(caseId) {
             });
         }
         document.getElementById('crText').innerHTML = res.html || escHtml(res.text);
+        _crWordHtml = res.html_word || '';
         document.getElementById('crOutput').style.display = '';
         status.textContent = 'CR généré';
         status.style.color = 'var(--success)';
@@ -304,9 +306,30 @@ async function generateCR(caseId) {
     }
 }
 
+let _crWordHtml = '';
+
 function copyCRText() {
     const text = document.getElementById('crText').innerText;
     navigator.clipboard.writeText(text).then(() => toast('CR copié', 'success'));
+}
+
+// Presse-papier riche : Word lit le flavor text/html et garde la mise en page.
+// Sans ClipboardItem (navigateur ancien, page non sécurisée) on retombe sur le texte.
+async function copyCRWord() {
+    const text = document.getElementById('crText').innerText;
+    if (!_crWordHtml || typeof ClipboardItem === 'undefined') {
+        return copyCRText();
+    }
+    try {
+        await navigator.clipboard.write([new ClipboardItem({
+            'text/html': new Blob([_crWordHtml], { type: 'text/html' }),
+            'text/plain': new Blob([text], { type: 'text/plain' }),
+        })]);
+        toast('CR copié avec sa mise en page — coller dans Word', 'success');
+    } catch (e) {
+        copyCRText();
+        toast('Presse-papier riche refusé, copié en texte simple', 'info');
+    }
 }
 
 function crShowVersion() {
@@ -766,6 +789,7 @@ async function tplGenerate(caseId, templateId) {
         });
         if (status) { status.textContent = 'CR généré'; status.style.color = 'var(--success)'; }
         toast('CR généré depuis modèle utilisateur', 'success');
+        _crWordHtml = res.html_word || '';
         _tplShowGeneratedPreview(res.html, res.text, res.doc_id);
         renderDocsHistory(caseId);
     } catch (e) {

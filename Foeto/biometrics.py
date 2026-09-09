@@ -17,6 +17,7 @@ from typing import Any, Optional
 
 from reference_data import (
     GC_MACRO, GC_ORGANES,
+    MB_BIOMETRIE, MB_ORGANES,
     GC_POUMON_INDIVIDUEL, GC_REIN_INDIVIDUEL, GC_SURRENALE_INDIVIDUELLE,
     MAROUN,
     ORGAN_LABELS, BIO_LABELS,
@@ -234,7 +235,8 @@ class DSCalculator:
 
             for key, val, side in [(key_d, val_d, "D"), (key_g, val_g, "G")]:
                 if val is not None:
-                    ds = calc_ds(val, r["moy"], r["sd"])
+                    rs = r[side]           # côté droit et côté gauche ont leur propre réf.
+                    ds = calc_ds(val, rs["moy"], rs["sd"])
                     if key == key_d:
                         ds_d_val = ds
                     else:
@@ -242,10 +244,10 @@ class DSCalculator:
                     organes_pairs[key] = {
                         "valeur": val,
                         "label": ORGAN_LABELS.get(key, f"{base.capitalize()} {side}"),
-                        "moyenne": r["moy"], "sd": r["sd"],
+                        "moyenne": rs["moy"], "sd": rs["sd"],
                         "ds": ds, "interpretation": interpret_ds(ds),
                         "unite": "g",
-                        "ref_note": "dérivé (moy/2, sd/√2)",
+                        "ref_note": "Guihard-Costa 2002, table 2 (côtés séparés)",
                     }
 
             # DS poolé
@@ -259,7 +261,63 @@ class DSCalculator:
                     "method": "√(mean(ds²))",
                 }
 
-        return {"reference": "Guihard-Costa 2002 (dérivé)", "organes_pairs": organes_pairs}
+        return {"reference": "Guihard-Costa 2002", "organes_pairs": organes_pairs}
+
+    # ── Muller-Brochut 2018 — 12 à 20 SA ──
+    # Guihard-Costa commence à 13 SA et ne donne pas les côtés avant le terme :
+    # cette référence couvre le trou et cote D et G séparément dès 12 SA.
+    # Longueurs de l'article en cm, modules en mm → coefficient 0.1.
+    MB_BIO_MAP = {"vc": ("CRL", 0.1), "pc": ("HC", 0.1), "pt": ("TC", 0.1),
+                  "pa": ("AC", 0.1), "pied": ("Foot", 0.1), "main": ("Hand", 0.1),
+                  "bip": ("BPD", 0.1), "fo": ("FOD", 0.1)}
+    MB_ORG_MAP = {"masse": "Fetus", "cerveau": "Brain", "thymus": "Thymus",
+                  "coeur": "Heart", "poumons": "Lungs", "foie": "Liver",
+                  "rate": "Spleen", "surrenales": "Adrenals", "reins": "Kidneys",
+                  "poumon_d": "Right_Lung", "poumon_g": "Left_Lung",
+                  "rein_d": "Right_Kidney", "rein_g": "Left_Kidney"}
+
+    def muller_brochut(self, macro_frais: dict, extractor: OrganExtractor) -> dict:
+        ref = MB_ORGANES.get(self.terme_sa)
+        ref_bio = MB_BIOMETRIE.get(self.terme_sa)
+        if not ref and not ref_bio:
+            return {}
+
+        bio = (macro_frais or {}).get("biometries") or (macro_frais or {}).get("biometrie") or macro_frais or {}
+        mesures = {}
+        for app_key, (mb_key, coef) in self.MB_BIO_MAP.items():
+            val, r = bio.get(app_key), (ref_bio or {}).get(mb_key)
+            if val is None or not r:
+                continue
+            ds = calc_ds(float(val) * coef, r["moy"], r["sd"])
+            mesures[mb_key] = {
+                "valeur": float(val), "unite": "mm",
+                "valeur_cm": round(float(val) * coef, 2),
+                "moyenne": r["moy"], "sd": r["sd"],
+                "ds": ds, "interpretation": interpret_ds(ds),
+            }
+
+        organes = {}
+        masses = {**extractor.combined, **extractor.individual_pairs}
+        masse_corp = bio.get("masse")
+        if masse_corp is not None:
+            masses["masse"] = float(masse_corp)
+        for app_key, mb_key in self.MB_ORG_MAP.items():
+            val, r = masses.get(app_key), (ref or {}).get(mb_key)
+            if val is None or not r:
+                continue
+            ds = calc_ds(val, r["moy"], r["sd"])
+            organes[app_key] = {
+                "valeur": val, "unite": "g",
+                "label": "Masse corporelle" if app_key == "masse"
+                         else ORGAN_LABELS.get(app_key, app_key),
+                "moyenne": r["moy"], "sd": r["sd"],
+                "ds": ds, "interpretation": interpret_ds(ds),
+            }
+
+        if not mesures and not organes:
+            return {}
+        return {"reference": "Muller-Brochut 2018", "terme_sa": self.terme_sa,
+                "mesures": mesures, "organes": organes}
 
     # ── Organes Maroun (stratifié par macération) ──
     def organes_maroun(self, extractor: OrganExtractor, maceration_grade: int = 0) -> dict:
@@ -363,6 +421,7 @@ def compute_all(terme_sa: int, macro_frais: dict = None, macro_autopsie: dict = 
         "organes_gc": {},
         "organes_maroun": {},
         "organes_individuels": {},
+        "muller_brochut": {},
         "ratios": {},
         "alertes": [],
     }
@@ -375,6 +434,7 @@ def compute_all(terme_sa: int, macro_frais: dict = None, macro_autopsie: dict = 
         results["organes_gc"] = calc.organes_combines(extractor)
         results["organes_maroun"] = calc.organes_maroun(extractor, maceration_grade)
         results["organes_individuels"] = calc.organes_individuels(extractor)
+        results["muller_brochut"] = calc.muller_brochut(macro_frais, extractor)
 
         masse = None
         if macro_frais:
@@ -395,6 +455,13 @@ def compute_all(terme_sa: int, macro_frais: dict = None, macro_autopsie: dict = 
     for key, val in results.get("organes_gc", {}).get("organes", {}).items():
         if val.get("ds") is not None and abs(val["ds"]) > 2:
             results["alertes"].append(f"{val.get('label', key)} : {val['ds']:+.1f} DS ({val['interpretation']})")
+
+    if not results.get("organes_gc", {}).get("organes"):
+        # sous 13 SA Guihard-Costa ne couvre rien : Muller-Brochut porte l'alerte
+        for key, val in results.get("muller_brochut", {}).get("organes", {}).items():
+            if val.get("ds") is not None and abs(val["ds"]) > 2:
+                results["alertes"].append(
+                    f"{val.get('label', key)} (Muller-Brochut) : {val['ds']:+.1f} DS ({val['interpretation']})")
 
     for key, val in results.get("organes_individuels", {}).get("organes_pairs", {}).items():
         if key.startswith("_"):
@@ -439,6 +506,16 @@ MASSES D'ORGANES — MAROUN 2017 (macération {{ maceration_grade }})
 MASSES D'ORGANES — COMBINÉS (réf. Guihard-Costa 2002)
 -------------------------------------------------------
 {% for key, o in organes_gc.organes.items() %}
+{{ "%-18s"|format(o.label) }} : {{ "%8.2f"|format(o.valeur) }} g  (moy: {{ "%.2f"|format(o.moyenne) }}, sd: {{ "%.2f"|format(o.sd) }})  →  {{ "%+.2f"|format(o.ds) }} DS  [{{ o.interpretation }}]
+{% endfor %}
+{% endif %}
+{% if muller_brochut and (muller_brochut.mesures or muller_brochut.organes) %}
+MULLER-BROCHUT 2018 — {{ muller_brochut.terme_sa }} SA (réf. 12-20 SA)
+-------------------------------------------------------------------
+{% for key, m in muller_brochut.mesures.items() %}
+{{ "%-18s"|format(key) }} : {{ "%8.1f"|format(m.valeur) }} mm  (moy: {{ "%.2f"|format(m.moyenne) }} cm, sd: {{ "%.2f"|format(m.sd) }})  →  {{ "%+.2f"|format(m.ds) }} DS  [{{ m.interpretation }}]
+{% endfor %}
+{% for key, o in muller_brochut.organes.items() %}
 {{ "%-18s"|format(o.label) }} : {{ "%8.2f"|format(o.valeur) }} g  (moy: {{ "%.2f"|format(o.moyenne) }}, sd: {{ "%.2f"|format(o.sd) }})  →  {{ "%+.2f"|format(o.ds) }} DS  [{{ o.interpretation }}]
 {% endfor %}
 {% endif %}

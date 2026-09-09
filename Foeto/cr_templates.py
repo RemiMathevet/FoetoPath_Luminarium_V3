@@ -481,12 +481,22 @@ def _genest_retention(maceration):
 # ══════════════════════════════════════════════════════════════════════════
 
 _NORMAL_WORDS = {"normal", "normaux", "normale", "normales", "ras", "rdp",
-                 "sans particularité", "pas de particularité", ""}
+                 "sans particularité", "pas de particularité", "",
+                 # vocabulaire d'autopsie : valeurs attendues, pas des anomalies
+                 "solitus", "intègre", "intègres", "integre", "integres",
+                 "perméable", "permeable", "présent", "present", "présents",
+                 "en place", "absent", "libre", "libres", "habituel"}
 
 
 def _is_normal(val):
+    """Vrai si la valeur décrit un état attendu. Une liste ne l'est que si
+    TOUS ses éléments le sont (['normaux'] est normal, ['kystiques'] non)."""
     if not val:
         return True
+    if isinstance(val, (list, tuple, set)):
+        return all(_is_normal(v) for v in val)
+    if isinstance(val, dict):
+        return all(_is_normal(v) for v in val.values())
     return str(val).strip().lower() in _NORMAL_WORDS
 
 
@@ -516,7 +526,7 @@ def _split_radio(radio):
     vert = radio.get("vertebres", {})
     if isinstance(vert, dict):
         aspects = vert.get("aspects", [])
-        if not aspects or aspects == ["Normal"]:
+        if _is_normal(aspects):
             normales.append("Rachis")
         else:
             anomalies.append(f"Rachis : {', '.join(aspects)}")
@@ -524,7 +534,7 @@ def _split_radio(radio):
     os = radio.get("aspect_os", {})
     if isinstance(os, dict):
         aspects = os.get("aspects", [])
-        if not aspects or aspects == ["Normal"]:
+        if _is_normal(aspects):
             normales.append("Aspect des os")
         else:
             anomalies.append(f"Aspect des os : {', '.join(aspects)}")
@@ -584,6 +594,16 @@ _AUTOPSIE_CHECKS = [
 ]
 
 
+# Valeurs attendues, champ par champ : « crosse gauche » ou « FO perméable »
+# décrivent l'anatomie normale et ne doivent pas remonter en anomalie.
+_COEUR_ATTENDU = {
+    "crosse": {"gauche", "à gauche", "crosse gauche"},
+    "foramen_ovale": {"fo perméable", "perméable", "fo ouvert", "ouvert"},
+    "quatre_cav": {"équilibrées", "equilibrees", "4 cavités équilibrées"},
+    "gros_vx": {"croisés", "croises", "normalement croisés"},
+}
+
+
 def _split_autopsie(ctx):
     normales, anomalies = [], []
 
@@ -595,6 +615,8 @@ def _split_autopsie(ctx):
         if _is_normal(val):
             normales.append(label)
         else:
+            if isinstance(val, (list, tuple)):
+                val = ", ".join(str(v) for v in val)   # sinon repr Python dans le CR
             anomalies.append(f"{label} : {val}")
 
     # Nested dicts with "etat" or "aspect"
@@ -638,12 +660,16 @@ def _split_autopsie(ctx):
         for ck, cl in [("quatre_cav", "4 cavités"), ("foramen_ovale", "Foramen ovale"),
                         ("gros_vx", "Gros vaisseaux"), ("crosse", "Crosse")]:
             v = coeur.get(ck)
+            if v and str(v).strip().lower() in _COEUR_ATTENDU.get(ck, ()):
+                continue          # valeur attendue du champ, pas une anomalie
             if v and not _is_normal(v):
                 coeur_normal = False
                 coeur_details.append(f"{cl}: {v}")
         if coeur.get("vg_ej", {}).get("civ_diam"):
             coeur_normal = False
-            coeur_details.append(f"CIV {coeur['vg_ej']['civ_diam']} mm")
+            _civ = str(coeur["vg_ej"]["civ_diam"]).strip()
+            coeur_details.append("CIV " + (_civ if _civ.lower().endswith("mm")
+                                           else _civ + " mm"))
         if coeur_normal and any(coeur.get(k) for k in ("quatre_cav", "foramen_ovale", "gros_vx")):
             normales.append("Cœur")
         elif coeur_details:
@@ -782,6 +808,88 @@ def build_radio_context(case: dict, modules: dict) -> dict:
 # ══════════════════════════════════════════════════════════════════════════
 
 TEMPLATES = {
+    "service": {
+        "label": "CR calqué sur les CR du service",
+        "description": "Mise en forme relevée sur le corpus anonymisé 07/2026 "
+                       "(200 CR fœtus) : mensurations en prose, confrontation au "
+                       "terme, anomalies indentées, checklist négative en conclusion",
+        "version": "1.0.0",
+        "file": "service.jinja2",
+        "changelog": [
+            {
+                "version": "1.0.0",
+                "date": "2026-09-09",
+                "changes": [
+                    "Calage sur le corpus anonymise du service (200 CR foetus) : "
+                    "en-têtes « Examen externe : » / « Examen interne : », "
+                    "mensurations en une phrase (VT, VC, PC, BIP, FO, fente "
+                    "palpébrale, DICI, DICE, PT, PA, DIM, sternum, pied)",
+                    "Phrase de confrontation au terme : mesures < 5e / > 95e "
+                    "percentile listées (Guihard-Costa et al., 2002)",
+                    "Conclusion « Fœtus de sexe X … de développement conforme à "
+                    "un terme de N SA, présentant : » + « Absence de lésion : » "
+                    "construit depuis labellisation_table (DB-driven)",
+                ],
+            },
+        ],
+    },
+    "integral": {
+        "label": "CR intégral (nomenclature service)",
+        "description": "Toutes les données saisies, sections aux en-têtes du service "
+                       "(clinique, macro externe, radio, macro interne, fixation, "
+                       "prélèvements, histologie, conclusion)",
+        "version": "1.0.0",
+        "file": "integral.jinja2",
+        "changelog": [
+            {
+                "version": "1.0.0",
+                "date": "2026-09-09",
+                "changes": [
+                    "Proposition : radiologie intégrée au CR fœtal (os longs Chitty, "
+                    "maturation, scores staturaux, codes HPO)",
+                    "Genest (table + rétention estimée) en plus du score de Maroun",
+                    "FDR maternels et bilan prénatal en normal/anormal explicite",
+                    "Histologie : histo_organes/histo_lesions + labellisation FOETO",
+                ],
+            },
+        ],
+    },
+    "dicte": {
+        "label": "CR dicté (prose continue)",
+        "description": "Même contenu que l'intégral, rédigé en phrases : normaux "
+                       "balayés en une ligne, anomalies détaillées",
+        "version": "1.0.0",
+        "file": "dicte.jinja2",
+        "changelog": [
+            {
+                "version": "1.0.0",
+                "date": "2026-09-09",
+                "changes": [
+                    "Proposition : style dicté du service, sans liste à puces hors conclusion",
+                    "split_morpho / split_autopsie / split_radio / split_fixe / "
+                    "split_prenatal / split_fdr pour la bascule normal↔anormal",
+                ],
+            },
+        ],
+    },
+    "staff": {
+        "label": "Fiche de synthèse staff / RCP",
+        "description": "Une page : contexte, corrélation prénatal↔post-mortem, "
+                       "écarts biométriques, microscopie, examens en attente",
+        "version": "1.0.0",
+        "file": "staff.jinja2",
+        "changelog": [
+            {
+                "version": "1.0.0",
+                "date": "2026-09-09",
+                "changes": [
+                    "Proposition : confrontation attendu (prénatal) / constaté (examen)",
+                    "Section « en attente » : prélèvements spéciaux, congélation, "
+                    "DNAthèque, caryotype, HPO",
+                ],
+            },
+        ],
+    },
     "soffoet": {
         "label": "CR SOFFOET (type 1)",
         "description": "Compte-rendu type SOFFOET complet",

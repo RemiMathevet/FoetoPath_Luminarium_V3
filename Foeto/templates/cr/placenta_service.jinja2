@@ -1,0 +1,44 @@
+COMPTE-RENDU D'EXAMEN PLACENTAIRE
+=================================
+Dossier : {{ numero or "#" }}
+
+RENSEIGNEMENTS CLINIQUES
+------------------------
+{% if terme_sa %}Terme : {{ terme_sa }} SA{% if terme_j %} + {{ terme_j }}j{% endif %}{% if terme_source %} ({{ terme_source }}){% endif %}.{% endif %}
+{% if indication_terme %}Indication : {{ indication_terme }}.{% endif %}
+{% if masse_foetale_g %}Nouveau-né{% if sexe %} de sexe {{ "masculin" if sexe == "M" else "féminin" if sexe == "F" else sexe }}{% endif %} pesant {{ masse_foetale_g }} g.{% endif %}
+
+EXAMEN MACROSCOPIQUE
+--------------------
+Placenta {{ forme|lower or "de forme non précisée" }}, galette {{ _completude(completude) }}{% if grand_axe_cm and petit_axe_cm %}, mesurant {{ grand_axe_cm }} × {{ petit_axe_cm }} cm{% if epaisseur_cm %} et épais de {{ epaisseur_cm }} cm{% endif %}{% endif %}{% if masse_paree_g %}, pesant paré {{ masse_paree_g }} g{% if zscore and zscore.masse_ds is not none %} ({{ zscore.masse_ds }} DS pour {{ terme_sa }} SA, {{ zscore.percentile }} — {{ zscore.trophicite|lower }}{% if zscore.extrapolated %}, valeur extrapolée{% endif %}){% endif %}{% endif %}.
+{% if zscore and zscore.ratio_fp %}Ratio fœto-placentaire {{ zscore.ratio_fp }}{% if zscore.ratio_ds is not none %} ({{ zscore.ratio_ds }} DS, réf. Redline){% endif %}.{% endif %}
+
+Le cordon {% if cordon %}est d'insertion {{ cordon.insertion|lower or "non précisée" }}{% if cordon.longueur_cm %}, long de {{ cordon.longueur_cm }} cm{% endif %}{% if cordon.vaisseaux %}, comporte {{ cordon.vaisseaux }}{% endif %}{% if cordon.spiralisation %}, de spiralisation {{ cordon.spiralisation|lower }}{% endif %}{% if cordon.palmure_amniotique %}, avec palmure amniotique{% endif %}{% if cordon.striction %}, avec striction{% endif %}{% else %}n'a pas été évalué{% endif %}.{% if cordon.remarques %} {{ cordon.remarques }}.{% endif %}
+Les membranes {% if membranes %}sont d'insertion {{ membranes.insertion|lower or "non précisée" }}{% if membranes.marginee_pct %} sur {{ membranes.marginee_pct }} % de la circonférence{% endif %}{% if membranes.aspect %}, d'aspect {{ membranes.aspect|lower }}{% endif %}{% else %}n'ont pas été évaluées{% endif %}.{% if membranes.remarques %} {{ membranes.remarques }}.{% endif %}
+La plaque choriale : {{ _plaque_short(plaque_choriale)|lower }}. La plaque basale : {{ _plaque_short(plaque_basale)|lower }}.
+{% if plaque_choriale.remarques %}Plaque choriale — {{ plaque_choriale.remarques }}.{% endif %}
+{% if plaque_basale.remarques %}Plaque basale — {{ plaque_basale.remarques }}.{% endif %}
+
+Les tranches de section{% if nb_tranches_groups %} ({{ nb_tranches_groups }} groupe(s) de 3){% endif %} {% if lesions %}montrent :
+{% for l in lesions %}      {{ l.lesion }}{% if l.cassette %} (cassette {{ l.cassette }}){% endif %}{% if l.description %} : {{ l.description }}{% endif %}
+{% endfor %}{% else %}ne montrent pas de lésion focale.
+{% endif %}{% if tranches_commentaire %}{{ tranches_commentaire }}
+{% endif %}
+EXAMEN MICROSCOPIQUE
+--------------------
+{% if composite_micro_text %}Au microscope, {{ composite_micro_text }}
+{% elif labellisation_table %}Au microscope :
+{% for row in labellisation_table %}{{ row.organe }} : {% for f in row.findings %}{{ f.text }}{% if f.nb_lames > 2 %} (diffus, {{ f.nb_lames }} lames){% endif %}{% if not loop.last %} {% endif %}{% endfor %}
+{% endfor %}{% elif labellisation_micro_text %}Au microscope, {{ labellisation_micro_text }}
+{% elif viewer_micro_text %}Au microscope, {{ viewer_micro_text }}
+{% elif micro_text %}Au microscope, {{ micro_text }}
+{% else %}En attente.
+{% endif %}
+CONCLUSION
+----------
+{% if zscore and zscore.trophicite and zscore.masse_ds is not none %}Placenta {{ zscore.trophicite|lower }} ({{ zscore.masse_ds }} DS){% else %}Placenta de {{ terme_sa or "#" }} SA{% endif %}{% if completude %}, galette {{ _completude(completude) }}{% endif %}.
+{% for d in (composite_conclusion_items or viewer_conclusion_items or []) %}{{ d }}
+{% endfor %}{% for l in lesions %}{{ l.lesion }}{% if l.description %} ({{ l.description }}){% endif %}
+{% endfor %}
+{% set _neg = [] %}{% for row in (labellisation_table or []) %}{% if row.statut != 'patho' %}{% set _ = _neg.append(row.organe|lower) %}{% endif %}{% endfor %}{% if _neg %}Absence de lésion : {{ _neg|join(", ") }}.
+{% endif %}

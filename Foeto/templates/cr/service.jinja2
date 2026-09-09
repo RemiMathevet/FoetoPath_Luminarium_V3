@@ -1,0 +1,74 @@
+COMPTE-RENDU D'EXAMEN FŒTOPATHOLOGIQUE
+======================================
+Dossier : {{ numero or "#" }}{% if case.numero_placenta %} — Placenta : {{ case.numero_placenta }}{% endif %}
+
+RENSEIGNEMENTS CLINIQUES
+------------------------
+{{ type_issue or "IMG" }}{% if terme_sa %} à {{ terme_sa }} SA{% if terme_j %} + {{ terme_j }}j{% endif %}{% endif %}{% if age_mere %} chez une patiente de {{ age_mere }}{% endif %}{% if atcd_mat.gestite %}, G{{ atcd_mat.gestite }}P{{ atcd_mat.parite or "?" }}{% endif %}.
+{% if indication %}Indication : {{ indication }}.{% endif %}
+{% if atcd_mat.atcd_medicaux %}Antécédents maternels : {{ atcd_mat.atcd_medicaux }}.{% endif %}
+{% set fdr = split_fdr() %}{% if fdr.positifs %}Facteurs de risque : {{ fdr.positifs|join(", ")|lower }}.{% endif %}
+{% set pren = split_prenatal() %}{% if pren.anormaux %}Prénatal : {{ pren.anormaux|join(" ; ") }}.{% endif %}
+{% if date_deces %}Dernière preuve de vie / décès : {{ date_deces }}.{% endif %}
+
+EXAMEN MACROSCOPIQUE
+--------------------
+Examen externe :
+
+Fœtus de sexe : {{ "masculin" if sexe == "M" else "féminin" if sexe == "F" else "indéterminé" }}
+Etat : {{ etat|lower or "non fixé" }}
+Macération : {% if maceration and maceration.maroun_score %}cotée {{ maceration.maroun_score }} (Maroun){% if genest_retention() %}, rétention estimée {{ genest_retention() }} (critères de Genest){% endif %}{% else %}absente{% endif %}
+{% if bio.masse %}Masse : {{ bio.masse }} g
+{% endif %}Mensurations : {% set _m = [] %}{% if bio.vt %}{% set _ = _m.append("VT " ~ bio.vt ~ " mm") %}{% endif %}{% if bio.vc %}{% set _ = _m.append("VC " ~ bio.vc ~ " mm") %}{% endif %}{% if bio.pc %}{% set _ = _m.append("PC " ~ bio.pc ~ " mm") %}{% endif %}{% if bio.bip %}{% set _ = _m.append("BIP " ~ bio.bip ~ " mm") %}{% endif %}{% if bio.fo %}{% set _ = _m.append("FO " ~ bio.fo ~ " mm") %}{% endif %}{% if bio.fpd or bio.fpg %}{% set _ = _m.append("fente palpébrale " ~ (bio.fpd or bio.fpg) ~ " mm") %}{% endif %}{% if bio.dici %}{% set _ = _m.append("distance intercanthale interne " ~ bio.dici ~ " mm") %}{% endif %}{% if bio.dice %}{% set _ = _m.append("distance intercanthale externe " ~ bio.dice ~ " mm") %}{% endif %}{% if bio.pt %}{% set _ = _m.append("PT " ~ bio.pt ~ " mm") %}{% endif %}{% if bio.pa %}{% set _ = _m.append("PA " ~ bio.pa ~ " mm") %}{% endif %}{% if bio.dim %}{% set _ = _m.append("distance inter-mamelonnaire " ~ bio.dim ~ " mm") %}{% endif %}{% if bio.sternum %}{% set _ = _m.append("sternum " ~ bio.sternum ~ " mm") %}{% endif %}{% if bio.pied %}{% set _ = _m.append("longueur du pied " ~ bio.pied ~ " mm") %}{% endif %}{{ _m|join(", ") }}.
+
+{% set _bas = [] %}{% set _haut = [] %}{% for k, v in (calc_bio or {}).items() %}{% if v.ds is not none and v.ds < -2 %}{% set _ = _bas.append(k) %}{% elif v.ds is not none and v.ds > 2 %}{% set _ = _haut.append(k) %}{% endif %}{% endfor %}{% if _bas or _haut %}Pour le terme de {{ terme_sa or "#" }} SA{% if _bas %}, {{ _bas|join(", ") }} {{ "est" if _bas|length == 1 else "sont" }} inférieur{{ "" if _bas|length == 1 else "s" }} au 5e percentile{% endif %}{% if _haut %}{% if _bas %} et{% endif %} {{ _haut|join(", ") }} {{ "est" if _haut|length == 1 else "sont" }} supérieur{{ "" if _haut|length == 1 else "s" }} au 95e percentile{% endif %} (selon Guihard-Costa et al., 2002). Trophicité : {{ trophicite|lower }}.
+{% else %}Les biométries externes sont conformes au terme de {{ terme_sa or "#" }} SA (selon Guihard-Costa et al., 2002). Trophicité : {{ trophicite|lower }}.
+{% endif %}
+{% set m = split_morpho() %}{% if m.anomalies %}Ce fœtus présente{% if maceration and maceration.maroun_score %}, sous réserve de la macération,{% endif %} :
+{% for a in m.anomalies %}      {{ a }}
+{% endfor %}{% else %}Ce fœtus ne présente pas de malformation apparente.
+{% endif %}{% if commentaire_frais %}{{ commentaire_frais }}
+{% endif %}
+Examen interne :
+
+{% if ouverture.situs %}Situs viscéral {{ ouverture.situs|lower }}{% endif %}{% if ouverture.diaphragme %}, coupoles diaphragmatiques {{ ouverture.diaphragme|lower }}{% endif %}{% if ouverture.epanchements %}{% set ep = ouverture.epanchements %}{% if ep.pleural_d or ep.pleural_g or ep.pericarde or ep.peritoine %} ; épanchement{% if ep.pleural_d or ep.pleural_g %} pleural (D {{ ep.pleural_d or 0 }} mL, G {{ ep.pleural_g or 0 }} mL){% endif %}{% if ep.pericarde %}, péricardique {{ ep.pericarde }} mL{% endif %}{% if ep.peritoine %}, péritonéal {{ ep.peritoine }} mL{% endif %}{% endif %}{% endif %}.
+{% set a = split_autopsie() %}{% if a.normales %}Sont sans particularité : {{ a.normales|join(", ")|lower }}.
+{% endif %}{% if a.anomalies %}On note :
+{% for x in a.anomalies %}      {{ x }}
+{% endfor %}{% endif %}{% if poumons.docimasie %}Docimasie pulmonaire {{ poumons.docimasie|lower }}{% if lbwr.valeur %}, LBWR {{ "%.4f"|format(lbwr.valeur) }}{% if lbwr.alerte %} ({{ lbwr.alerte|lower }}){% endif %}{% endif %}.
+{% endif %}
+Masses viscérales : {% set _o = [] %}{% for k, o in (calc_org or {}).items() %}{% set _ = _o.append(o.label ~ " " ~ o.valeur ~ " g (" ~ "%+.2f"|format(o.ds) ~ " DS)") %}{% endfor %}{{ _o|join(", ") if _o else "non pesées" }}.
+{% if alertes %}Sont hors normes pour le terme : {{ alertes|join(" ; ") }}.
+{% endif %}{% if commentaire_autopsie %}{{ commentaire_autopsie }}
+{% endif %}{% set fx = split_fixe() %}{% if fx.anomalies %}
+Après fixation : {{ fx.anomalies|join(" ; ") }}.
+{% endif %}{% if prelevements.annexes or prelevements.speciaux %}
+Prélèvements : {% if prelevements.annexes %}{{ prelevements.annexes|join(", ")|lower }}{% endif %}{% if prelevements.speciaux %} ; prélèvements spéciaux : {{ prelevements.speciaux|join(", ")|lower }}{% if prelevements.speciaux_det %} ({{ prelevements.speciaux_det }}){% endif %}{% endif %}{% if prelevements.congelation %} ; congélation {{ prelevements.congelation }}{% endif %}{% if prelevements.dnatheque %} ; DNAthèque {{ prelevements.dnatheque }}{% endif %}.
+{% endif %}
+{% if radio %}EXAMEN RADIOLOGIQUE
+-------------------
+Radiographies du squelette complet, face et profil.
+{% set r = split_radio() %}{% if r.normales %}Sont sans particularité : {{ r.normales|join(", ")|lower }}.
+{% endif %}{% if r.anomalies %}On note :
+{% for x in r.anomalies %}      {{ x }}
+{% endfor %}{% endif %}{% if rad_scores.hadlock_sa or rad_scores.adalian_sa %}Âge statural estimé à {% if rad_scores.hadlock_sa %}{{ rad_scores.hadlock_sa }} SA (Hadlock){% endif %}{% if rad_scores.adalian_sa %}{% if rad_scores.hadlock_sa %} et {% endif %}{{ rad_scores.adalian_sa }} SA (Adalian){% endif %}{% if rad_terme_sa %}, maturation osseuse compatible avec {{ rad_terme_sa }} SA{% endif %}.
+{% endif %}{% if rad_remarques %}{{ rad_remarques }}
+{% endif %}{% endif %}
+EXAMEN MICROSCOPIQUE
+--------------------
+{% if composite_micro_text %}Au microscope, {{ composite_micro_text }}
+{% elif labellisation_table %}Au microscope :
+{% for row in labellisation_table %}{{ row.organe }} : {% for f in row.findings %}{{ f.text }}{% if f.nb_lames > 2 %} (diffus, {{ f.nb_lames }} lames){% endif %}{% if not loop.last %} {% endif %}{% endfor %}
+{% endfor %}{% elif labellisation_micro_text %}Au microscope, {{ labellisation_micro_text }}
+{% else %}En attente.
+{% endif %}
+CONCLUSION
+----------
+Fœtus de sexe {{ "masculin" if sexe == "M" else "féminin" if sexe == "F" else "indéterminé" }}{% if not all_anomalies %} non malformé{% endif %}{% if trophicite %} {{ trophicite|lower }}{% endif %} de développement conforme à un terme de {{ terme_sa or "#" }} SA{% if maceration and maceration.maroun_score and maceration.maroun_score > 0 %}, macéré{% if genest_retention() %} (rétention estimée {{ genest_retention() }}){% endif %}{% endif %}{% if all_anomalies or composite_conclusion_items %}, présentant :
+{% for x in all_anomalies %}      {{ x }}
+{% endfor %}{% for d in composite_conclusion_items %}      {{ d }}
+{% endfor %}{% else %}.
+{% endif %}
+{% set _neg = [] %}{% for row in (labellisation_table or []) %}{% if row.statut != 'patho' %}{% set _ = _neg.append(row.organe|lower) %}{% endif %}{% endfor %}{% if _neg %}Absence de lésion : {{ _neg|join(", ") }}.
+{% endif %}{% if case.numero_placenta %}Le placenta est examiné séparément (dossier {{ case.numero_placenta }}).
+{% endif %}

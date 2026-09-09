@@ -1,0 +1,46 @@
+COMPTE-RENDU D'EXAMEN FŒTOPATHOLOGIQUE — {{ numero or "#" }}
+=============================================================
+
+RENSEIGNEMENTS CLINIQUES
+------------------------
+Il s'agit {% if type_issue %}d'une {{ type_issue|lower }}{% else %}d'une interruption médicale de grossesse{% endif %}{% if terme_sa %} à {{ terme_sa }} SA{% if terme_j %} + {{ terme_j }}j{% endif %}{% endif %}, chez une patiente {% if age_mere %}de {{ age_mere }}{% else %}dont l'âge n'est pas précisé{% endif %}{% if atcd_mat.gestite %}, G{{ atcd_mat.gestite }}P{{ atcd_mat.parite or "?" }}{% endif %}{% if atcd_mat.atcd_medicaux %}, aux antécédents de {{ atcd_mat.atcd_medicaux|lower }}{% endif %}.
+{% set fdr = split_fdr() %}{% if fdr.positifs %}On retient comme facteurs de risque : {{ fdr.positifs|join(", ")|lower }}.{% endif %}
+{% if indication %}L'examen est demandé pour {{ indication|lower }}.{% endif %}
+{% set pren = split_prenatal() %}{% if pren.anormaux %}La surveillance prénatale a montré : {{ pren.anormaux|join(" ; ")|lower }}.{% endif %}{% if pren.normaux %} Le reste du bilan prénatal ({{ pren.normaux|join(", ")|lower }}) est sans particularité.{% endif %}
+
+EXAMEN MACROSCOPIQUE
+--------------------
+Le fœtus est adressé à l'état {{ etat|lower or "frais" }}{% if maceration and maceration.maroun_score %}, avec une macération cotée {{ maceration.maroun_score }} selon Maroun{% if genest_retention() %} (rétention estimée à {{ genest_retention() }} selon Genest){% endif %}{% endif %}. Il est de sexe {{ "masculin" if sexe == "M" else "féminin" if sexe == "F" else "indéterminé" }} et {{ trophicite|lower }}{% if calc_bio.masse %} pour une masse de {{ calc_bio.masse.valeur if calc_bio.masse.valeur is defined else "" }} g{% endif %}.
+{% set m = split_morpho() %}{% if m.normales %}L'examen externe est sans particularité en ce qui concerne : {{ m.normales|join(", ")|lower }}.{% endif %}
+{% if m.anomalies %}En revanche, on note {% for a in m.anomalies %}{{ a|lower }}{% if not loop.last %} ; {% endif %}{% endfor %}.{% else %}Il n'existe pas de dysmorphie ni de malformation externe.{% endif %}
+{% if commentaire_frais %}{{ commentaire_frais }}{% endif %}
+Les biométries externes sont rapportées aux courbes de Guihard-Costa 2002 : masse {{ _ds('masse') }}, vertex-talon {{ _ds('VT') }}, périmètre crânien {{ _ds('PC') }}, longueur du pied {{ _ds('pied') }}.
+
+{% if radio %}L'examen radiologique du squelette complet{% if rad_terme_sa %} situe le terme osseux à {{ rad_terme_sa }} SA{% endif %}{% set r = split_radio() %}{% if r.normales %} et est sans particularité pour : {{ r.normales|join(", ")|lower }}{% endif %}.{% if r.anomalies %} On retient {{ r.anomalies|join(" ; ")|lower }}.{% endif %}{% if rad_scores.hadlock_sa or rad_scores.adalian_sa %} L'âge statural est estimé à {% if rad_scores.hadlock_sa %}{{ rad_scores.hadlock_sa }} SA (Hadlock){% endif %}{% if rad_scores.adalian_sa %}{% if rad_scores.hadlock_sa %} et {% endif %}{{ rad_scores.adalian_sa }} SA (Adalian){% endif %}.{% endif %}{% if rad_remarques %} {{ rad_remarques }}{% endif %}
+{% endif %}
+À l'ouverture, {% if ouverture.situs %}le situs viscéral est {{ ouverture.situs|lower }}{% else %}le situs est habituel{% endif %}{% if ouverture.diaphragme %}, les coupoles diaphragmatiques sont {{ ouverture.diaphragme|lower }}{% endif %}{% if ouverture.epanchements %}{% set ep = ouverture.epanchements %}{% if ep.pleural_d or ep.pleural_g or ep.pericarde or ep.peritoine %}, avec un épanchement {% if ep.pleural_d or ep.pleural_g %}pleural ({{ ep.pleural_d or 0 }} mL à droite, {{ ep.pleural_g or 0 }} mL à gauche){% endif %}{% if ep.pericarde %}, péricardique de {{ ep.pericarde }} mL{% endif %}{% if ep.peritoine %}, péritonéal de {{ ep.peritoine }} mL{% endif %}{% endif %}{% endif %}.
+{% set a = split_autopsie() %}{% if a.normales %}Sont d'aspect normal : {{ a.normales|join(", ")|lower }}.{% endif %}
+{% if a.anomalies %}On note {% for x in a.anomalies %}{{ x|lower }}{% if not loop.last %} ; {% endif %}{% endfor %}.{% endif %}
+{% if poumons.docimasie %}La docimasie pulmonaire est {{ poumons.docimasie|lower }}{% if lbwr.valeur %}, avec un LBWR à {{ "%.4f"|format(lbwr.valeur) }}{% if lbwr.alerte %} ({{ lbwr.alerte|lower }}){% endif %}{% endif %}.{% endif %}
+Les poids d'organes sont en accord avec le terme{% if alertes %}, à l'exception de {{ alertes|join(", ")|lower }}{% endif %}.
+{% if commentaire_autopsie %}{{ commentaire_autopsie }}{% endif %}
+{% set fx = split_fixe() %}{% if fx.anomalies %}Après fixation, {{ fx.anomalies|join(" ; ")|lower }}.{% endif %}
+
+{% if prelevements.annexes or prelevements.speciaux %}Ont été réalisés : {% if prelevements.annexes %}{{ prelevements.annexes|join(", ")|lower }}{% endif %}{% if prelevements.speciaux %}, ainsi que {{ prelevements.speciaux|join(", ")|lower }}{% if prelevements.speciaux_det %} ({{ prelevements.speciaux_det }}){% endif %}{% endif %}{% if prelevements.congelation %}, une congélation ({{ prelevements.congelation }}){% endif %}{% if prelevements.dnatheque %}, un prélèvement pour DNAthèque ({{ prelevements.dnatheque }}){% endif %}. {% endif %}{{ (photos_frais|length) + (photos_autopsie|length) }} clichés numériques ont été enregistrés.
+
+EXAMEN MICROSCOPIQUE
+--------------------
+{% if composite_micro_text %}{{ composite_micro_text }}
+{% elif labellisation_table %}{% for row in labellisation_table %}{{ row.organe }} : {% for f in row.findings %}{{ f.text }}{% if f.nb_lames > 2 %} (diffus, {{ f.nb_lames }} lames){% endif %}{% if not loop.last %} {% endif %}{% endfor %}.
+{% endfor %}{% elif labellisation_micro_text %}{{ labellisation_micro_text }}
+{% elif histo_lesions %}{{ histo_lesions|join(" ; ") }}.
+{% else %}En attente.
+{% endif %}
+
+CONCLUSION
+----------
+Fœtus de {{ terme_sa or "#" }} SA de sexe {{ "masculin" if sexe == "M" else "féminin" if sexe == "F" else "indéterminé" }}, {% if maceration and maceration.maroun_score and maceration.maroun_score > 0 %}macéré{% else %}non macéré{% endif %}, {{ trophicite|lower }}.
+{% if all_anomalies %}{% for x in all_anomalies %}  - {{ x }}
+{% endfor %}{% else %}Examen fœtopathologique sans anomalie morphologique décelable.
+{% endif %}{% if composite_conclusion_items %}{% for d in composite_conclusion_items %}  - {{ d }}
+{% endfor %}{% endif %}

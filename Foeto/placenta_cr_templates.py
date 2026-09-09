@@ -648,6 +648,51 @@ def _format_etats(etats):
 # ══════════════════════════════════════════════════════════════════════════
 
 TEMPLATES = {
+    "service": {
+        "label": "CR calqué sur les CR du service",
+        "description": "Mise en forme relevée sur le corpus anonymisé 07/2026 "
+                       "(1783 CR placenta) : macroscopie en prose, micro préfixée "
+                       "« Au microscope, », conclusion en lignes brèves",
+        "version": "1.0.0",
+        "file": "placenta_service.jinja2",
+        "changelog": [
+            {
+                "version": "1.0.0",
+                "date": "2026-09-09",
+                "changes": [
+                    "Calage sur le corpus anonymise du service (1783 CR placenta)",
+                    "Macro en phrases (galette, cordon, membranes, plaques) au lieu "
+                    "de champs en colonne",
+                    "Micro préfixée « Au microscope, » — le balayage ordonné des "
+                    "compartiments vient de composite_micro_text (foeto_structures)",
+                    "Conclusion en lignes brèves (trophicité, puis une entité par "
+                    "ligne) + « Absence de lésion : » DB-driven",
+                ],
+            },
+        ],
+    },
+    "integral": {
+        "label": "CR intégral placenta",
+        "description": "Toutes les données saisies : biométrie + Z-score Redline, "
+                       "plaques, cordon, membranes, tranches, et TOUTES les sources "
+                       "de microscopie cumulées (composite, FOETO, viewer, grille)",
+        "version": "1.0.0",
+        "file": "placenta_integral.jinja2",
+        "changelog": [
+            {
+                "version": "1.0.0",
+                "date": "2026-09-09",
+                "changes": [
+                    "Proposition : les sources micro s'additionnent au lieu de "
+                    "s'exclure (le standard les met en elif et en perd)",
+                    "Ajout statut, terme_source, vaisseaux du cordon, lésions "
+                    "focales reprises en conclusion",
+                    "Référentiels nommés en pied de conclusion (Redline / Amsterdam), "
+                    "constatations hors cadre rapportées telles quelles",
+                ],
+            },
+        ],
+    },
     "standard": {
         "label": "CR Standard (Amsterdam)",
         "description": "Compte-rendu macro placentaire complet",

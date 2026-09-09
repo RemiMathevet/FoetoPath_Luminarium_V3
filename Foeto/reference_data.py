@@ -28,13 +28,14 @@ GC_MACRO = {
     "25-26": {"masse": {"moy": 773.9, "sd": 134.9}, "VT": {"moy": 340, "sd": 20.2}, "VC": {"moy": 233.8, "sd": 14.6}, "PC": {"moy": 233.4, "sd": 14}, "pied": {"moy": 48, "sd": 3.8}},
     "27-28": {"masse": {"moy": 1038.2, "sd": 168.6}, "VT": {"moy": 369.3, "sd": 21}, "VC": {"moy": 254.4, "sd": 15.1}, "PC": {"moy": 252.7, "sd": 14.4}, "pied": {"moy": 53, "sd": 3.9}},
     "29-30": {"masse": {"moy": 1350.4, "sd": 206.1}, "VT": {"moy": 397, "sd": 21.8}, "VC": {"moy": 273.9, "sd": 15.5}, "PC": {"moy": 270.5, "sd": 14.8}, "pied": {"moy": 58, "sd": 4.1}},
-    "31-32": {"masse": {"moy": 1702.5, "sd": 247.6}, "VT": {"moy": 432.2, "sd": 22.6}, "VC": {"moy": 292.4, "sd": 16}, "PC": {"moy": 287, "sd": 15.1}, "pied": {"moy": 63, "sd": 4.2}},
+    "31-32": {"masse": {"moy": 1702.5, "sd": 247.6}, "VT": {"moy": 423.2, "sd": 22.6}, "VC": {"moy": 292.4, "sd": 16}, "PC": {"moy": 287, "sd": 15.1}, "pied": {"moy": 63, "sd": 4.2}},
     "33-34": {"masse": {"moy": 2080.2, "sd": 292.9}, "VT": {"moy": 447.8, "sd": 23.4}, "VC": {"moy": 309.9, "sd": 16.5}, "PC": {"moy": 302.1, "sd": 15.5}, "pied": {"moy": 67, "sd": 4.4}},
     "35-36": {"masse": {"moy": 2460.8, "sd": 342.1}, "VT": {"moy": 470.9, "sd": 24.2}, "VC": {"moy": 326.5, "sd": 17}, "PC": {"moy": 315.8, "sd": 15.9}, "pied": {"moy": 71, "sd": 4.6}},
     "37-38": {"masse": {"moy": 2813.1, "sd": 395.3}, "VT": {"moy": 492.5, "sd": 24.9}, "VC": {"moy": 342, "sd": 17.5}, "PC": {"moy": 328.1, "sd": 16.2}, "pied": {"moy": 74, "sd": 4.7}},
-    "39-40": {"masse": {"moy": 3095.1, "sd": 452.2}, "VT": {"moy": 512.5, "sd": 25.7}, "VC": {"moy": 356, "sd": 17.9}, "PC": {"moy": 339.1, "sd": 16.6}, "pied": {"moy": 76, "sd": 4.9}},
-    "41-42": {"masse": {"moy": 3254.9, "sd": 531.1}, "VT": {"moy": 530.9, "sd": 26.5}, "VC": {"moy": 370, "sd": 18.4}, "PC": {"moy": 348.6, "sd": 17}, "pied": {"moy": 77, "sd": 5.1}},
+    "39-40": {"masse": {"moy": 3095.1, "sd": 452.2}, "VT": {"moy": 512.5, "sd": 25.7}, "VC": {"moy": 356.5, "sd": 17.9}, "PC": {"moy": 339.1, "sd": 16.6}, "pied": {"moy": 76, "sd": 4.9}},
+    "41-42": {"masse": {"moy": 3254.9, "sd": 513.1}, "VT": {"moy": 530.9, "sd": 26.5}, "VC": {"moy": 370, "sd": 18.4}, "PC": {"moy": 348.6, "sd": 17}, "pied": {"moy": 77, "sd": 5.1}},
 }
+
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -43,22 +44,23 @@ GC_MACRO = {
 # ══════════════════════════════════════════════════════════════════════════
 
 GC_ORGANES = {
-    "13-14": {"thymus": {"moy": 0.09, "sd": 0.07}, "coeur": {"moy": 0.24, "sd": 0.13}, "poumons": {"moy": 1.26, "sd": 0.25}, "foie": {"moy": 3.09, "sd": 0.27}, "rate": {"moy": 0.06, "sd": 0.04}, "pancreas": {"moy": 0.09, "sd": 0.01}, "surrenales": {"moy": 0.29, "sd": 0.06}, "reins": {"moy": 0.41, "sd": 0.11}},
-    "15-16": {"thymus": {"moy": 0.17, "sd": 0.12}, "coeur": {"moy": 0.82, "sd": 0.23}, "poumons": {"moy": 2.99, "sd": 0.54}, "foie": {"moy": 5.81, "sd": 1.71}, "rate": {"moy": 0.12, "sd": 0.08}, "pancreas": {"moy": 0.28, "sd": 0.08}, "surrenales": {"moy": 0.56, "sd": 0.10}, "reins": {"moy": 0.71, "sd": 0.18}},
-    "17-18": {"thymus": {"moy": 0.31, "sd": 0.19}, "coeur": {"moy": 1.44, "sd": 0.37}, "poumons": {"moy": 5.09, "sd": 0.91}, "foie": {"moy": 9.39, "sd": 3.33}, "rate": {"moy": 0.23, "sd": 0.13}, "pancreas": {"moy": 0.42, "sd": 0.16}, "surrenales": {"moy": 0.91, "sd": 0.16}, "reins": {"moy": 1.38, "sd": 0.27}},
-    "19-20": {"thymus": {"moy": 0.53, "sd": 0.3}, "coeur": {"moy": 2.21, "sd": 0.56}, "poumons": {"moy": 7.68, "sd": 1.34}, "foie": {"moy": 14.33, "sd": 5.15}, "rate": {"moy": 0.38, "sd": 0.2}, "pancreas": {"moy": 0.57, "sd": 0.24}, "surrenales": {"moy": 1.32, "sd": 0.23}, "reins": {"moy": 2.41, "sd": 0.38}},
-    "21-22": {"thymus": {"moy": 0.87, "sd": 0.45}, "coeur": {"moy": 3.23, "sd": 0.79}, "poumons": {"moy": 10.84, "sd": 1.84}, "foie": {"moy": 21, "sd": 7.15}, "rate": {"moy": 0.62, "sd": 0.29}, "pancreas": {"moy": 0.78, "sd": 0.34}, "surrenales": {"moy": 1.79, "sd": 0.32}, "reins": {"moy": 3.84, "sd": 0.53}},
-    "23-24": {"thymus": {"moy": 1.35, "sd": 0.64}, "coeur": {"moy": 4.55, "sd": 1.07}, "poumons": {"moy": 14.65, "sd": 2.39}, "foie": {"moy": 29.63, "sd": 9.35}, "rate": {"moy": 0.96, "sd": 0.42}, "pancreas": {"moy": 1.08, "sd": 0.45}, "surrenales": {"moy": 2.33, "sd": 0.41}, "reins": {"moy": 5.64, "sd": 0.70}},
-    "25-26": {"thymus": {"moy": 2.01, "sd": 0.89}, "coeur": {"moy": 6.21, "sd": 1.39}, "poumons": {"moy": 19.09, "sd": 2.98}, "foie": {"moy": 40.27, "sd": 11.75}, "rate": {"moy": 1.44, "sd": 0.59}, "pancreas": {"moy": 1.47, "sd": 0.57}, "surrenales": {"moy": 2.92, "sd": 0.51}, "reins": {"moy": 7.78, "sd": 0.90}},
-    "27-28": {"thymus": {"moy": 2.92, "sd": 1.21}, "coeur": {"moy": 8.2, "sd": 1.76}, "poumons": {"moy": 24.15, "sd": 3.61}, "foie": {"moy": 52.89, "sd": 14.33}, "rate": {"moy": 2.09, "sd": 0.8}, "pancreas": {"moy": 1.98, "sd": 0.7}, "surrenales": {"moy": 3.57, "sd": 0.61}, "reins": {"moy": 10.22, "sd": 1.12}},
-    "29-30": {"thymus": {"moy": 4.14, "sd": 1.61}, "coeur": {"moy": 10.48, "sd": 2.17}, "poumons": {"moy": 29.79, "sd": 4.27}, "foie": {"moy": 67.29, "sd": 17.1}, "rate": {"moy": 2.95, "sd": 1.06}, "pancreas": {"moy": 2.58, "sd": 0.84}, "surrenales": {"moy": 4.3, "sd": 0.72}, "reins": {"moy": 12.9, "sd": 1.37}},
-    "31-32": {"thymus": {"moy": 5.72, "sd": 2.1}, "coeur": {"moy": 12.98, "sd": 2.63}, "poumons": {"moy": 35.9, "sd": 4.94}, "foie": {"moy": 83.1, "sd": 20.07}, "rate": {"moy": 4.08, "sd": 1.39}, "pancreas": {"moy": 3.26, "sd": 0.98}, "surrenales": {"moy": 5.08, "sd": 0.82}, "reins": {"moy": 15.73, "sd": 1.65}},
-    "33-34": {"thymus": {"moy": 7.75, "sd": 2.7}, "coeur": {"moy": 15.6, "sd": 3.14}, "poumons": {"moy": 42.36, "sd": 5.62}, "foie": {"moy": 99.87, "sd": 23.23}, "rate": {"moy": 5.53, "sd": 1.78}, "pancreas": {"moy": 3.97, "sd": 1.14}, "surrenales": {"moy": 5.93, "sd": 0.92}, "reins": {"moy": 18.62, "sd": 1.96}},
-    "35-36": {"thymus": {"moy": 10.33, "sd": 3.42}, "coeur": {"moy": 18.21, "sd": 3.69}, "poumons": {"moy": 48.98, "sd": 6.30}, "foie": {"moy": 116.97, "sd": 26.58}, "rate": {"moy": 7.35, "sd": 2.25}, "pancreas": {"moy": 4.66, "sd": 1.31}, "surrenales": {"moy": 6.83, "sd": 1.01}, "reins": {"moy": 21.46, "sd": 2.29}},
-    "37-38": {"thymus": {"moy": 13.54, "sd": 4.27}, "coeur": {"moy": 20.63, "sd": 4.28}, "poumons": {"moy": 55.59, "sd": 6.98}, "foie": {"moy": 133.64, "sd": 30.12}, "rate": {"moy": 9.63, "sd": 2.82}, "pancreas": {"moy": 5.26, "sd": 1.49}, "surrenales": {"moy": 7.79, "sd": 1.09}, "reins": {"moy": 24.12, "sd": 2.65}},
-    "39-40": {"thymus": {"moy": 17.5, "sd": 5.27}, "coeur": {"moy": 22.68, "sd": 4.92}, "poumons": {"moy": 61.94, "sd": 7.64}, "foie": {"moy": 148.97, "sd": 33.85}, "rate": {"moy": 12.43, "sd": 3.48}, "pancreas": {"moy": 5.71, "sd": 1.67}, "surrenales": {"moy": 8.83, "sd": 1.17}, "reins": {"moy": 26.45, "sd": 3.04}},
-    "41-42": {"thymus": {"moy": 22.34, "sd": 6.44}, "coeur": {"moy": 24.49, "sd": 5.58}, "poumons": {"moy": 67.6, "sd": 8.28}, "foie": {"moy": 161.94, "sd": 37.78}, "rate": {"moy": 15.85, "sd": 4.25}, "pancreas": {"moy": 5.9, "sd": 1.87}, "surrenales": {"moy": 9.92, "sd": 1.22}, "reins": {"moy": 28.28, "sd": 3.45}},
+    "13-14": {"thymus": {"moy": 0.09, "sd": 0.07}, "coeur": {"moy": 0.24, "sd": 0.13}, "poumons": {"moy": 1.26, "sd": 0.5}, "foie": {"moy": 3.09, "sd": 0.27}, "rate": {"moy": 0.06, "sd": 0.04}, "pancreas": {"moy": 0.09, "sd": 0.01}, "surrenales": {"moy": 0.29, "sd": 0.11}, "reins": {"moy": 0.41, "sd": 0.22}},
+    "15-16": {"thymus": {"moy": 0.17, "sd": 0.12}, "coeur": {"moy": 0.82, "sd": 0.23}, "poumons": {"moy": 2.99, "sd": 1.08}, "foie": {"moy": 5.81, "sd": 1.71}, "rate": {"moy": 0.12, "sd": 0.08}, "pancreas": {"moy": 0.28, "sd": 0.08}, "surrenales": {"moy": 0.56, "sd": 0.19}, "reins": {"moy": 0.71, "sd": 0.35}},
+    "17-18": {"thymus": {"moy": 0.31, "sd": 0.19}, "coeur": {"moy": 1.44, "sd": 0.37}, "poumons": {"moy": 5.09, "sd": 1.81}, "foie": {"moy": 9.39, "sd": 3.33}, "rate": {"moy": 0.23, "sd": 0.13}, "pancreas": {"moy": 0.42, "sd": 0.16}, "surrenales": {"moy": 0.91, "sd": 0.31}, "reins": {"moy": 1.38, "sd": 0.53}},
+    "19-20": {"thymus": {"moy": 0.53, "sd": 0.3}, "coeur": {"moy": 2.21, "sd": 0.56}, "poumons": {"moy": 7.68, "sd": 2.68}, "foie": {"moy": 14.33, "sd": 5.15}, "rate": {"moy": 0.38, "sd": 0.2}, "pancreas": {"moy": 0.57, "sd": 0.24}, "surrenales": {"moy": 1.32, "sd": 0.46}, "reins": {"moy": 2.41, "sd": 0.76}},
+    "21-22": {"thymus": {"moy": 0.87, "sd": 0.45}, "coeur": {"moy": 3.23, "sd": 0.79}, "poumons": {"moy": 10.84, "sd": 3.67}, "foie": {"moy": 21, "sd": 7.15}, "rate": {"moy": 0.62, "sd": 0.29}, "pancreas": {"moy": 0.78, "sd": 0.34}, "surrenales": {"moy": 1.79, "sd": 0.63}, "reins": {"moy": 3.84, "sd": 1.05}},
+    "23-24": {"thymus": {"moy": 1.35, "sd": 0.64}, "coeur": {"moy": 4.55, "sd": 1.07}, "poumons": {"moy": 14.65, "sd": 4.75}, "foie": {"moy": 29.63, "sd": 9.35}, "rate": {"moy": 0.96, "sd": 0.42}, "pancreas": {"moy": 1.08, "sd": 0.45}, "surrenales": {"moy": 2.33, "sd": 0.81}, "reins": {"moy": 5.64, "sd": 1.4}},
+    "25-26": {"thymus": {"moy": 2.01, "sd": 0.89}, "coeur": {"moy": 6.21, "sd": 1.39}, "poumons": {"moy": 19.09, "sd": 5.92}, "foie": {"moy": 40.27, "sd": 11.75}, "rate": {"moy": 1.44, "sd": 0.59}, "pancreas": {"moy": 1.47, "sd": 0.57}, "surrenales": {"moy": 2.92, "sd": 1.01}, "reins": {"moy": 7.78, "sd": 1.79}},
+    "27-28": {"thymus": {"moy": 2.92, "sd": 1.21}, "coeur": {"moy": 8.2, "sd": 1.76}, "poumons": {"moy": 24.15, "sd": 7.16}, "foie": {"moy": 52.89, "sd": 14.33}, "rate": {"moy": 2.09, "sd": 0.8}, "pancreas": {"moy": 1.98, "sd": 0.7}, "surrenales": {"moy": 3.57, "sd": 1.22}, "reins": {"moy": 10.22, "sd": 2.24}},
+    "29-30": {"thymus": {"moy": 4.14, "sd": 1.61}, "coeur": {"moy": 10.48, "sd": 2.17}, "poumons": {"moy": 29.79, "sd": 8.47}, "foie": {"moy": 67.29, "sd": 17.1}, "rate": {"moy": 2.95, "sd": 1.06}, "pancreas": {"moy": 2.58, "sd": 0.84}, "surrenales": {"moy": 4.3, "sd": 1.43}, "reins": {"moy": 12.9, "sd": 2.74}},
+    "31-32": {"thymus": {"moy": 5.72, "sd": 2.1}, "coeur": {"moy": 12.98, "sd": 2.63}, "poumons": {"moy": 35.9, "sd": 9.8}, "foie": {"moy": 83.1, "sd": 20.07}, "rate": {"moy": 4.08, "sd": 1.39}, "pancreas": {"moy": 3.26, "sd": 0.98}, "surrenales": {"moy": 5.08, "sd": 1.63}, "reins": {"moy": 15.73, "sd": 3.3}},
+    "33-34": {"thymus": {"moy": 7.75, "sd": 2.7}, "coeur": {"moy": 15.6, "sd": 3.14}, "poumons": {"moy": 42.36, "sd": 11.17}, "foie": {"moy": 99.87, "sd": 23.23}, "rate": {"moy": 5.53, "sd": 1.78}, "pancreas": {"moy": 3.97, "sd": 1.14}, "surrenales": {"moy": 5.93, "sd": 1.83}, "reins": {"moy": 18.62, "sd": 3.92}},
+    "35-36": {"thymus": {"moy": 10.33, "sd": 3.42}, "coeur": {"moy": 18.21, "sd": 3.69}, "poumons": {"moy": 48.98, "sd": 12.54}, "foie": {"moy": 116.97, "sd": 26.58}, "rate": {"moy": 7.35, "sd": 2.25}, "pancreas": {"moy": 4.66, "sd": 1.31}, "surrenales": {"moy": 6.83, "sd": 2.01}, "reins": {"moy": 21.46, "sd": 4.58}},
+    "37-38": {"thymus": {"moy": 13.54, "sd": 4.27}, "coeur": {"moy": 20.63, "sd": 4.28}, "poumons": {"moy": 55.59, "sd": 13.9}, "foie": {"moy": 133.64, "sd": 30.12}, "rate": {"moy": 9.63, "sd": 2.82}, "pancreas": {"moy": 5.26, "sd": 1.49}, "surrenales": {"moy": 7.79, "sd": 2.18}, "reins": {"moy": 24.12, "sd": 5.29}},
+    "39-40": {"thymus": {"moy": 17.5, "sd": 5.27}, "coeur": {"moy": 22.68, "sd": 4.92}, "poumons": {"moy": 61.94, "sd": 15.25}, "foie": {"moy": 148.97, "sd": 33.85}, "rate": {"moy": 12.43, "sd": 3.48}, "pancreas": {"moy": 5.71, "sd": 1.67}, "surrenales": {"moy": 8.83, "sd": 2.33}, "reins": {"moy": 26.45, "sd": 6.07}},
+    "41-42": {"thymus": {"moy": 22.34, "sd": 6.44}, "coeur": {"moy": 24.49, "sd": 5.58}, "poumons": {"moy": 67.6, "sd": 16.55}, "foie": {"moy": 161.94, "sd": 37.78}, "rate": {"moy": 15.85, "sd": 4.25}, "pancreas": {"moy": 5.9, "sd": 1.87}, "surrenales": {"moy": 9.92, "sd": 2.45}, "reins": {"moy": 28.28, "sd": 6.89}},
 }
+
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -72,23 +74,107 @@ GC_ORGANES = {
 
 import math as _math
 
-def _derive_individual(combined_table: dict, organ_key: str) -> dict:
-    """Dérive les références individuelles depuis les combinées (moy/2, sd/√2)."""
-    result = {}
-    for classe, organs in combined_table.items():
-        if organ_key in organs:
-            ref = organs[organ_key]
-            result[classe] = {
-                "moy": round(ref["moy"] / 2, 4),
-                "sd": round(ref["sd"] / _math.sqrt(2), 4),
-            }
-    return result
+# ══════════════════════════════════════════════════════════════════════════
+# Organes pairs, CÔTÉ PAR CÔTÉ — Guihard-Costa 2002, table 2
+# L'article publie poumons, reins et surrénales gauche et droite séparément :
+# ces tables sont relevées, pas dérivées de la paire. La paire ci-dessus vaut
+# moy = G + D et sd = σG + σD (et non √((σG²+σD²)/2), qui décrit UN organe et
+# double le z de la paire).
+# ══════════════════════════════════════════════════════════════════════════
 
-# Organes pairs dérivés — remplacer par les vraies données quand disponibles
-GC_POUMON_INDIVIDUEL = _derive_individual(GC_ORGANES, "poumons")
-GC_REIN_INDIVIDUEL = _derive_individual(GC_ORGANES, "reins")
-GC_SURRENALE_INDIVIDUELLE = _derive_individual(GC_ORGANES, "surrenales")
+GC_POUMON_INDIVIDUEL = {
+    "13-14": {"D": {"moy": 0.56, "sd": 0.25}, "G": {"moy": 0.7, "sd": 0.25}},
+    "15-16": {"D": {"moy": 1.47, "sd": 0.53}, "G": {"moy": 1.52, "sd": 0.55}},
+    "17-18": {"D": {"moy": 2.67, "sd": 0.93}, "G": {"moy": 2.42, "sd": 0.88}},
+    "19-20": {"D": {"moy": 4.15, "sd": 1.42}, "G": {"moy": 3.53, "sd": 1.26}},
+    "21-22": {"D": {"moy": 5.92, "sd": 2.0}, "G": {"moy": 4.92, "sd": 1.67}},
+    "23-24": {"D": {"moy": 7.98, "sd": 2.63}, "G": {"moy": 6.67, "sd": 2.12}},
+    "25-26": {"D": {"moy": 10.32, "sd": 3.32}, "G": {"moy": 8.77, "sd": 2.6}},
+    "27-28": {"D": {"moy": 12.95, "sd": 4.03}, "G": {"moy": 11.2, "sd": 3.13}},
+    "29-30": {"D": {"moy": 15.87, "sd": 4.77}, "G": {"moy": 13.92, "sd": 3.7}},
+    "31-32": {"D": {"moy": 19.08, "sd": 5.5}, "G": {"moy": 16.82, "sd": 4.3}},
+    "33-34": {"D": {"moy": 22.57, "sd": 6.23}, "G": {"moy": 19.79, "sd": 4.94}},
+    "35-36": {"D": {"moy": 26.34, "sd": 6.92}, "G": {"moy": 22.64, "sd": 5.62}},
+    "37-38": {"D": {"moy": 30.41, "sd": 7.56}, "G": {"moy": 25.18, "sd": 6.34}},
+    "39-40": {"D": {"moy": 34.76, "sd": 8.15}, "G": {"moy": 27.18, "sd": 7.1}},
+    "41-42": {"D": {"moy": 39.24, "sd": 8.66}, "G": {"moy": 28.36, "sd": 7.89}},
+}
 
+GC_REIN_INDIVIDUEL = {
+    "13-14": {"D": {"moy": 0.22, "sd": 0.1}, "G": {"moy": 0.19, "sd": 0.12}},
+    "15-16": {"D": {"moy": 0.34, "sd": 0.17}, "G": {"moy": 0.37, "sd": 0.18}},
+    "17-18": {"D": {"moy": 0.67, "sd": 0.27}, "G": {"moy": 0.71, "sd": 0.26}},
+    "19-20": {"D": {"moy": 1.2, "sd": 0.39}, "G": {"moy": 1.21, "sd": 0.37}},
+    "21-22": {"D": {"moy": 1.93, "sd": 0.54}, "G": {"moy": 1.91, "sd": 0.51}},
+    "23-24": {"D": {"moy": 2.83, "sd": 0.72}, "G": {"moy": 2.81, "sd": 0.68}},
+    "25-26": {"D": {"moy": 3.89, "sd": 0.92}, "G": {"moy": 3.89, "sd": 0.87}},
+    "27-28": {"D": {"moy": 5.08, "sd": 1.15}, "G": {"moy": 5.14, "sd": 1.09}},
+    "29-30": {"D": {"moy": 6.38, "sd": 1.4}, "G": {"moy": 6.52, "sd": 1.34}},
+    "31-32": {"D": {"moy": 7.74, "sd": 1.68}, "G": {"moy": 7.99, "sd": 1.62}},
+    "33-34": {"D": {"moy": 9.14, "sd": 1.99}, "G": {"moy": 9.48, "sd": 1.93}},
+    "35-36": {"D": {"moy": 10.52, "sd": 2.32}, "G": {"moy": 10.94, "sd": 2.26}},
+    "37-38": {"D": {"moy": 11.85, "sd": 2.67}, "G": {"moy": 12.27, "sd": 2.62}},
+    "39-40": {"D": {"moy": 13.07, "sd": 3.06}, "G": {"moy": 13.38, "sd": 3.01}},
+    "41-42": {"D": {"moy": 14.12, "sd": 3.47}, "G": {"moy": 14.16, "sd": 3.42}},
+}
+
+GC_SURRENALE_INDIVIDUELLE = {
+    "13-14": {"D": {"moy": 0.16, "sd": 0.08}, "G": {"moy": 0.13, "sd": 0.03}},
+    "15-16": {"D": {"moy": 0.28, "sd": 0.09}, "G": {"moy": 0.28, "sd": 0.1}},
+    "17-18": {"D": {"moy": 0.44, "sd": 0.13}, "G": {"moy": 0.47, "sd": 0.18}},
+    "19-20": {"D": {"moy": 0.63, "sd": 0.2}, "G": {"moy": 0.69, "sd": 0.26}},
+    "21-22": {"D": {"moy": 0.86, "sd": 0.29}, "G": {"moy": 0.93, "sd": 0.34}},
+    "23-24": {"D": {"moy": 1.12, "sd": 0.39}, "G": {"moy": 1.21, "sd": 0.42}},
+    "25-26": {"D": {"moy": 1.41, "sd": 0.5}, "G": {"moy": 1.51, "sd": 0.51}},
+    "27-28": {"D": {"moy": 1.73, "sd": 0.62}, "G": {"moy": 1.84, "sd": 0.6}},
+    "29-30": {"D": {"moy": 2.09, "sd": 0.74}, "G": {"moy": 2.21, "sd": 0.69}},
+    "31-32": {"D": {"moy": 2.48, "sd": 0.85}, "G": {"moy": 2.6, "sd": 0.78}},
+    "33-34": {"D": {"moy": 2.91, "sd": 0.95}, "G": {"moy": 3.02, "sd": 0.88}},
+    "35-36": {"D": {"moy": 3.36, "sd": 1.03}, "G": {"moy": 3.47, "sd": 0.98}},
+    "37-38": {"D": {"moy": 3.84, "sd": 1.1}, "G": {"moy": 3.95, "sd": 1.08}},
+    "39-40": {"D": {"moy": 4.36, "sd": 1.14}, "G": {"moy": 4.47, "sd": 1.19}},
+    "41-42": {"D": {"moy": 4.91, "sd": 1.15}, "G": {"moy": 5.01, "sd": 1.3}},
+}
+
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# MULLER-BROCHUT 2018 — Pediatr Dev Pathol, table 4 — 12 à 20 SA
+# Comble le trou de Guihard-Costa sous 13 SA et donne poumons et reins
+# côté par côté aux termes précoces. Masses en g, longueurs en cm
+# (Cerebellum en mm). Une cellule sans écart-type est omise : l'article y
+# laisse un blanc, et un z sur sd=0 n'a pas de sens.
+# ══════════════════════════════════════════════════════════════════════════
+
+
+# Table 4, relevée dans l'article (masses en g).
+MB_ORGANES = {
+    12: {"Placenta": {"moy": 39.02, "sd": 42.32}, "Adrenals": {"moy": 0.1, "sd": 0.06}, "Kidneys": {"moy": 0.2, "sd": 0.13}, "Spleen": {"moy": 0.05, "sd": 0.07}, "Liver": {"moy": 1.15, "sd": 0.43}, "Thymus": {"moy": 0.07, "sd": 0.05}, "Lungs": {"moy": 0.49, "sd": 0.24}, "Heart": {"moy": 0.15, "sd": 0.09}, "Brain": {"moy": 3.6, "sd": 2.03}, "Fetus": {"moy": 17.86, "sd": 4.8}},
+    13: {"Placenta": {"moy": 43.86, "sd": 14.91}, "Adrenals": {"moy": 0.14, "sd": 0.06}, "Left_Kidney": {"moy": 0.1, "sd": 0.03}, "Right_Kidney": {"moy": 0.1, "sd": 0.03}, "Kidneys": {"moy": 0.21, "sd": 0.07}, "Spleen": {"moy": 0.03, "sd": 0.03}, "Liver": {"moy": 1.49, "sd": 0.3}, "Thymus": {"moy": 0.03, "sd": 0.01}, "Left_Lung": {"moy": 0.39, "sd": 0.14}, "Right_Lung": {"moy": 0.45, "sd": 0.16}, "Lungs": {"moy": 0.89, "sd": 0.29}, "Heart": {"moy": 0.21, "sd": 0.06}, "Brain": {"moy": 5.26, "sd": 1.14}, "Fetus": {"moy": 28.11, "sd": 6.41}},
+    14: {"Placenta": {"moy": 51.64, "sd": 21.53}, "Adrenals": {"moy": 0.25, "sd": 0.08}, "Left_Kidney": {"moy": 0.18, "sd": 0.07}, "Right_Kidney": {"moy": 0.18, "sd": 0.08}, "Kidneys": {"moy": 0.36, "sd": 0.13}, "Spleen": {"moy": 0.05, "sd": 0.04}, "Liver": {"moy": 2.36, "sd": 0.52}, "Thymus": {"moy": 0.08, "sd": 0.11}, "Left_Lung": {"moy": 0.67, "sd": 0.2}, "Right_Lung": {"moy": 0.81, "sd": 0.23}, "Lungs": {"moy": 1.52, "sd": 0.43}, "Heart": {"moy": 0.33, "sd": 0.12}, "Brain": {"moy": 7.96, "sd": 2.03}, "Fetus": {"moy": 45.88, "sd": 10.58}},
+    15: {"Placenta": {"moy": 63.44, "sd": 17.18}, "Adrenals": {"moy": 0.35, "sd": 0.12}, "Left_Kidney": {"moy": 0.25, "sd": 0.06}, "Right_Kidney": {"moy": 0.25, "sd": 0.05}, "Kidneys": {"moy": 0.53, "sd": 0.15}, "Spleen": {"moy": 0.07, "sd": 0.06}, "Liver": {"moy": 3.37, "sd": 0.66}, "Thymus": {"moy": 0.09, "sd": 0.06}, "Left_Lung": {"moy": 0.99, "sd": 0.3}, "Right_Lung": {"moy": 1.23, "sd": 0.39}, "Lungs": {"moy": 2.34, "sd": 0.58}, "Heart": {"moy": 0.46, "sd": 0.15}, "Brain": {"moy": 11.33, "sd": 2.21}, "Fetus": {"moy": 69.41, "sd": 13.07}},
+    16: {"Placenta": {"moy": 74.24, "sd": 18.09}, "Adrenals": {"moy": 0.44, "sd": 0.09}, "Left_Kidney": {"moy": 0.37, "sd": 0.1}, "Right_Kidney": {"moy": 0.35, "sd": 0.08}, "Kidneys": {"moy": 0.71, "sd": 0.19}, "Spleen": {"moy": 0.09, "sd": 0.06}, "Liver": {"moy": 4.63, "sd": 0.78}, "Thymus": {"moy": 0.12, "sd": 0.04}, "Left_Lung": {"moy": 1.44, "sd": 0.25}, "Right_Lung": {"moy": 1.69, "sd": 0.32}, "Lungs": {"moy": 3.04, "sd": 0.55}, "Heart": {"moy": 0.64, "sd": 0.12}, "Brain": {"moy": 15.48, "sd": 3.19}, "Fetus": {"moy": 98.6, "sd": 11.6}},
+    17: {"Placenta": {"moy": 80.97, "sd": 24.08}, "Adrenals": {"moy": 0.61, "sd": 0.17}, "Left_Kidney": {"moy": 0.56, "sd": 0.17}, "Right_Kidney": {"moy": 0.55, "sd": 0.17}, "Kidneys": {"moy": 1.11, "sd": 0.33}, "Spleen": {"moy": 0.1, "sd": 0.04}, "Liver": {"moy": 6.07, "sd": 1.07}, "Thymus": {"moy": 0.22, "sd": 0.13}, "Left_Lung": {"moy": 1.77, "sd": 0.29}, "Right_Lung": {"moy": 2.13, "sd": 0.36}, "Lungs": {"moy": 3.93, "sd": 0.61}, "Heart": {"moy": 0.8, "sd": 0.19}, "Brain": {"moy": 20.13, "sd": 2.62}, "Fetus": {"moy": 125.21, "sd": 17.84}},
+    18: {"Placenta": {"moy": 91.64, "sd": 16.91}, "Adrenals": {"moy": 0.9, "sd": 0.23}, "Left_Kidney": {"moy": 0.71, "sd": 0.11}, "Right_Kidney": {"moy": 0.7, "sd": 0.1}, "Kidneys": {"moy": 1.43, "sd": 0.2}, "Spleen": {"moy": 0.15, "sd": 0.04}, "Liver": {"moy": 7.92, "sd": 1.21}, "Thymus": {"moy": 0.24, "sd": 0.06}, "Left_Lung": {"moy": 2.24, "sd": 0.35}, "Right_Lung": {"moy": 2.67, "sd": 0.45}, "Lungs": {"moy": 4.89, "sd": 0.76}, "Heart": {"moy": 1.14, "sd": 0.36}, "Brain": {"moy": 26.26, "sd": 4.48}, "Fetus": {"moy": 172.04, "sd": 25.16}},
+    19: {"Placenta": {"moy": 120.83, "sd": 29.96}, "Adrenals": {"moy": 1.05, "sd": 0.24}, "Left_Kidney": {"moy": 0.86, "sd": 0.29}, "Right_Kidney": {"moy": 0.88, "sd": 0.35}, "Kidneys": {"moy": 1.76, "sd": 0.51}, "Spleen": {"moy": 0.2, "sd": 0.08}, "Liver": {"moy": 10.77, "sd": 1.45}, "Thymus": {"moy": 0.35, "sd": 0.04}, "Left_Lung": {"moy": 2.79, "sd": 0.14}, "Right_Lung": {"moy": 3.37, "sd": 0.09}, "Lungs": {"moy": 6.09, "sd": 0.25}, "Heart": {"moy": 1.65, "sd": 0.43}, "Brain": {"moy": 34.58, "sd": 5.02}, "Fetus": {"moy": 228.47, "sd": 43.37}},
+    20: {"Placenta": {"moy": 116.0, "sd": 22.98}, "Adrenals": {"moy": 1.27, "sd": 0.32}, "Left_Kidney": {"moy": 1.12, "sd": 0.16}, "Right_Kidney": {"moy": 1.22, "sd": 0.17}, "Kidneys": {"moy": 2.63, "sd": 0.63}, "Spleen": {"moy": 0.35, "sd": 0.05}, "Liver": {"moy": 12.76, "sd": 1.23}, "Thymus": {"moy": 0.45, "sd": 0.14}, "Left_Lung": {"moy": 2.97, "sd": 0.74}, "Right_Lung": {"moy": 3.63, "sd": 0.95}, "Lungs": {"moy": 6.64, "sd": 1.15}, "Heart": {"moy": 1.99, "sd": 0.18}, "Brain": {"moy": 46.0, "sd": 0.57}, "Fetus": {"moy": 306.5, "sd": 26.71}},
+}
+
+
+# Biométries de la même table. Longueurs en CENTIMÈTRES, sauf
+# Cerebellum en mm — les modules stockent des mm, d'où la conversion
+# dans biometrics.py.
+MB_BIOMETRIE = {
+    12: {"CRL": {"moy": 6.82, "sd": 0.73}, "CFL": {"moy": 8.85, "sd": 1}, "HC": {"moy": 7.03, "sd": 0.69}, "TC": {"moy": 5.97, "sd": 0.68}, "AC": {"moy": 5.32, "sd": 0.76}, "Foot": {"moy": 0.9, "sd": 0.12}, "Hand": {"moy": 0.84, "sd": 0.14}, "BPD": {"moy": 2, "sd": 1}, "FOD": {"moy": 2.72, "sd": 0.32}, "T5": {"moy": 1.59, "sd": 0.15}, "Humerus": {"moy": 0.71, "sd": 0.11}, "Femur": {"moy": 0.71, "sd": 0.12}, "Cerebellum": {"moy": 9.9, "sd": 1.41}},
+    13: {"CRL": {"moy": 7.99, "sd": 0.78}, "CFL": {"moy": 11.11, "sd": 1.02}, "HC": {"moy": 7.99, "sd": 0.82}, "TC": {"moy": 6.72, "sd": 0.57}, "AC": {"moy": 5.51, "sd": 0.72}, "Foot": {"moy": 1.15, "sd": 0.11}, "Hand": {"moy": 1, "sd": 0.11}, "BPD": {"moy": 2.24, "sd": 0.19}, "FOD": {"moy": 2.85, "sd": 0.23}, "T5": {"moy": 1.85, "sd": 0.18}, "Humerus": {"moy": 0.93, "sd": 0.13}, "Femur": {"moy": 0.89, "sd": 0.15}, "Cerebellum": {"moy": 11.8, "sd": 0.49}},
+    14: {"CRL": {"moy": 9.51, "sd": 0.82}, "CFL": {"moy": 13.2, "sd": 1.19}, "HC": {"moy": 9.2, "sd": 0.89}, "TC": {"moy": 7.81, "sd": 0.62}, "AC": {"moy": 6.56, "sd": 0.8}, "Foot": {"moy": 1.42, "sd": 0.19}, "Hand": {"moy": 1.27, "sd": 0.16}, "BPD": {"moy": 2.55, "sd": 0.19}, "FOD": {"moy": 3.31, "sd": 0.17}, "T5": {"moy": 2.19, "sd": 0.16}, "Humerus": {"moy": 1.25, "sd": 0.14}, "Femur": {"moy": 1.21, "sd": 0.15}, "Cerebellum": {"moy": 13.01, "sd": 1.09}},
+    15: {"CRL": {"moy": 10.67, "sd": 0.83}, "CFL": {"moy": 15.34, "sd": 1.2}, "HC": {"moy": 10.78, "sd": 1.21}, "TC": {"moy": 9.08, "sd": 0.79}, "AC": {"moy": 7.83, "sd": 1.36}, "Foot": {"moy": 1.72, "sd": 0.19}, "Hand": {"moy": 1.52, "sd": 0.19}, "BPD": {"moy": 3.04, "sd": 0.25}, "FOD": {"moy": 3.71, "sd": 0.24}, "T5": {"moy": 2.47, "sd": 0.18}, "Humerus": {"moy": 1.56, "sd": 0.15}, "Femur": {"moy": 1.55, "sd": 0.15}, "Cerebellum": {"moy": 13.84, "sd": 0.88}},
+    16: {"CRL": {"moy": 11.53, "sd": 1.03}, "CFL": {"moy": 16.77, "sd": 1.21}, "HC": {"moy": 12.01, "sd": 0.72}, "TC": {"moy": 10.29, "sd": 0.66}, "AC": {"moy": 8.42, "sd": 0.99}, "Foot": {"moy": 2.03, "sd": 0.12}, "Hand": {"moy": 1.75, "sd": 0.21}, "BPD": {"moy": 3.42, "sd": 0.2}, "FOD": {"moy": 4.19, "sd": 0.22}, "T5": {"moy": 2.75, "sd": 0.15}, "Humerus": {"moy": 1.85, "sd": 0.14}, "Femur": {"moy": 1.83, "sd": 0.15}, "Cerebellum": {"moy": 14.96, "sd": 0.86}},
+    17: {"CRL": {"moy": 12.73, "sd": 0.55}, "CFL": {"moy": 18.55, "sd": 0.9}, "HC": {"moy": 13.27, "sd": 0.79}, "TC": {"moy": 11.11, "sd": 0.79}, "AC": {"moy": 8.56, "sd": 1.05}, "Foot": {"moy": 2.34, "sd": 0.14}, "Hand": {"moy": 1.97, "sd": 0.16}, "BPD": {"moy": 3.63, "sd": 0.23}, "FOD": {"moy": 4.33, "sd": 0.28}, "T5": {"moy": 2.98, "sd": 0.23}, "Humerus": {"moy": 2.12, "sd": 0.13}, "Femur": {"moy": 2.13, "sd": 0.13}, "Cerebellum": {"moy": 16.25, "sd": 0.88}},
+    18: {"CRL": {"moy": 13.89, "sd": 0.66}, "CFL": {"moy": 20.49, "sd": 0.65}, "HC": {"moy": 14.58, "sd": 0.97}, "TC": {"moy": 11.9, "sd": 0.88}, "AC": {"moy": 9.45, "sd": 0.76}, "Foot": {"moy": 2.62, "sd": 0.21}, "Hand": {"moy": 2.32, "sd": 0.2}, "BPD": {"moy": 3.89, "sd": 0.36}, "FOD": {"moy": 4.93, "sd": 0.22}, "T5": {"moy": 3.24, "sd": 0.25}, "Humerus": {"moy": 2.41, "sd": 0.12}, "Femur": {"moy": 2.45, "sd": 0.17}, "Cerebellum": {"moy": 17.65, "sd": 0.5}},
+    19: {"CRL": {"moy": 15.18, "sd": 0.71}, "CFL": {"moy": 22.88, "sd": 1.58}, "HC": {"moy": 15.82, "sd": 1.35}, "TC": {"moy": 12.64, "sd": 0.47}, "AC": {"moy": 10.34, "sd": 1.3}, "Foot": {"moy": 2.95, "sd": 0.18}, "Hand": {"moy": 2.42, "sd": 0.08}, "BPD": {"moy": 4.3, "sd": 0.28}, "FOD": {"moy": 5.44, "sd": 0.32}, "T5": {"moy": 3.4, "sd": 0.2}, "Humerus": {"moy": 2.75, "sd": 0.12}, "Femur": {"moy": 2.9, "sd": 0.21}, "Cerebellum": {"moy": 19.25, "sd": 0.35}},
+    20: {"CRL": {"moy": 16.67, "sd": 0.46}, "CFL": {"moy": 25.48, "sd": 1.23}, "HC": {"moy": 16.88, "sd": 0.68}, "TC": {"moy": 14.23, "sd": 0.13}, "AC": {"moy": 11.97, "sd": 1.12}, "Foot": {"moy": 3.31, "sd": 0.18}, "Hand": {"moy": 2.72, "sd": 0.15}, "BPD": {"moy": 4.38, "sd": 0.04}, "FOD": {"moy": 5.93, "sd": 0.04}, "T5": {"moy": 3.63, "sd": 0.08}, "Humerus": {"moy": 3, "sd": 0.11}, "Femur": {"moy": 3.1, "sd": 0.14}},
+}
 
 # ══════════════════════════════════════════════════════════════════════════
 # MAROUN 2017 — par SA, stratifié par macération (0-1, 2, 3)
@@ -96,8 +182,8 @@ GC_SURRENALE_INDIVIDUELLE = _derive_individual(GC_ORGANES, "surrenales")
 # ══════════════════════════════════════════════════════════════════════════
 
 MAROUN = {
-    12: {"Mean": {"FL": 9, "CR": 7.4, "CH": 9.8, "HDC": 7.1, "Body": 29.6, "brain": 4.8, "heart": 0.1, "lungs 0 1": 0.6, "lungs 2 3": 0.9, "liver 0 1": 1.5, "liver 2": 1.4, "liver 3": 1.3, "thymus 0 1": 0.03, "thymus 2": 0.01, "thymus 3": 0.25, "spleen 0 1": 0.19, "spleen 2 3": 0.04, "kidneys 0 1": 0.11, "kidneys 2 3": None, "adrenals 0 1": None, "adrenals 2 3": None}, "SD": {"FL": 3, "CR": 1.1, "CH": 1.7, "HDC": 1.1, "Body": 14.9, "brain": 1.4, "heart": 0.14, "lungs 0 1": 0.9, "lungs 2 3": 0.9, "liver 0 1": 1.2, "liver 2": 1.2, "liver 3": 1.2, "thymus 0 1": 0.06, "thymus 2": 0.02, "thymus 3": 0.15, "spleen 0 1": 0.15, "spleen 2 3": 0.18, "kidneys 0 1": 0.18, "kidneys 2 3": None, "adrenals 0 1": None, "adrenals 2 3": None}},
-    13: {"Mean": {"FL": 12, "CR": 8.7, "CH": 11.8, "HDC": 8.5, "Body": 37.4, "brain": 6.5, "heart": 0.2, "lungs 0 1": 1.2, "lungs 2 3": 1.2, "liver 0 1": 2, "liver 2": 1.7, "liver 3": 1.7, "thymus 0 1": 0.04, "thymus 2": 0.02, "thymus 3": 0.08, "spleen 0 1": 0.3, "spleen 2 3": 0.2, "kidneys 0 1": 0.17, "kidneys 2 3": 0.17, "adrenals 0 1": None, "adrenals 2 3": None}, "SD": {"FL": 3, "CR": 1.2, "CH": 1.8, "HDC": 1.2, "Body": 14.9, "brain": 1.4, "heart": 0.14, "lungs 0 1": 0.9, "lungs 2 3": 0.9, "liver 0 1": 1.2, "liver 2": 1.2, "liver 3": 1.2, "thymus 0 1": 0.06, "thymus 2": 0.03, "thymus 3": 0.03, "spleen 0 1": 0.1, "spleen 2 3": 0.1, "kidneys 0 1": 0.18, "kidneys 2 3": 0.18, "adrenals 0 1": None, "adrenals 2 3": None}},
+    12: {"Mean": {"FL": 9, "CR": 7.4, "CH": 9.8, "HDC": 7.1, "Body": 29.6, "brain": 4.8, "heart": 0.1, "lungs 0 1": 0.6, "lungs 2 3": 0.9, "liver 0 1": 1.5, "liver 2": 1.4, "liver 3": 1.3, "thymus 0 1": 0.03, "thymus 2": 0.01, "thymus 3": 0.25, "spleen 0 1": 0.01, "spleen 2 3": 0.04, "kidneys 0 1": 0.25, "kidneys 2 3": 0.19, "adrenals 0 1": 0.04, "adrenals 2 3": 0.11}, "SD": {"FL": 3, "CR": 1.1, "CH": 1.7, "HDC": 1.1, "Body": 14.9, "brain": 1.4, "heart": 0.14, "lungs 0 1": 0.9, "lungs 2 3": 0.9, "liver 0 1": 1.2, "liver 2": 1.2, "liver 3": 1.2, "thymus 0 1": 0.06, "thymus 2": 0.02, "thymus 3": 0.15, "spleen 0 1": 0.02, "spleen 2 3": 0.18, "kidneys 0 1": 0.15, "kidneys 2 3": 0.15, "adrenals 0 1": 0.18, "adrenals 2 3": 0.18}},
+    13: {"Mean": {"FL": 12, "CR": 8.7, "CH": 11.8, "HDC": 8.5, "Body": 37.4, "brain": 6.5, "heart": 0.2, "lungs 0 1": 1.2, "lungs 2 3": 1.2, "liver 0 1": 2, "liver 2": 1.7, "liver 3": 1.7, "thymus 0 1": 0.04, "thymus 2": 0.02, "thymus 3": 0.08, "spleen 0 1": 0.02, "spleen 2 3": 0.08, "kidneys 0 1": 0.3, "kidneys 2 3": 0.2, "adrenals 0 1": 0.17, "adrenals 2 3": 0.17}, "SD": {"FL": 3, "CR": 1.2, "CH": 1.8, "HDC": 1.2, "Body": 14.9, "brain": 1.4, "heart": 0.14, "lungs 0 1": 0.9, "lungs 2 3": 0.9, "liver 0 1": 1.2, "liver 2": 1.2, "liver 3": 1.2, "thymus 0 1": 0.06, "thymus 2": 0.03, "thymus 3": 0.03, "spleen 0 1": 0.03, "spleen 2 3": 0.03, "kidneys 0 1": 0.1, "kidneys 2 3": 0.1, "adrenals 0 1": 0.18, "adrenals 2 3": 0.18}},
     14: {"Mean": {"FL": 15, "CR": 9.9, "CH": 13.7, "HDC": 9.8, "Body": 53, "brain": 9.1, "heart": 0.3, "lungs 0 1": 2, "lungs 2 3": 1.5, "liver 0 1": 2.9, "liver 2": 2.4, "liver 3": 2.3, "thymus 0 1": 0.05, "thymus 2": 0.07, "thymus 3": 0.05, "spleen 0 1": 0.04, "spleen 2 3": 0.14, "kidneys 0 1": 0.4, "kidneys 2 3": 0.3, "adrenals 0 1": 0.3, "adrenals 2 3": 0.2}, "SD": {"FL": 3, "CR": 1.2, "CH": 1.8, "HDC": 1.2, "Body": 14.9, "brain": 2.5, "heart": 0.1, "lungs 0 1": 0.9, "lungs 2 3": 0.9, "liver 0 1": 1.2, "liver 2": 1.2, "liver 3": 1.2, "thymus 0 1": 0.06, "thymus 2": 0.06, "thymus 3": 0.06, "spleen 0 1": 0.04, "spleen 2 3": 0.04, "kidneys 0 1": 0.1, "kidneys 2 3": 0.1, "adrenals 0 1": 0.2, "adrenals 2 3": 0.2}},
     15: {"Mean": {"FL": 18, "CR": 11.1, "CH": 15.6, "HDC": 11.1, "Body": 76.5, "brain": 12.7, "heart": 0.5, "lungs 0 1": 2.9, "lungs 2 3": 2.1, "liver 0 1": 4.2, "liver 2": 3.3, "liver 3": 3.2, "thymus 0 1": 0.07, "thymus 2": 0.08, "thymus 3": 0.06, "spleen 0 1": 0.06, "spleen 2 3": 0.17, "kidneys 0 1": 0.6, "kidneys 2 3": 0.5, "adrenals 0 1": 0.5, "adrenals 2 3": 0.3}, "SD": {"FL": 3, "CR": 1.2, "CH": 1.8, "HDC": 1.2, "Body": 18.5, "brain": 3.9, "heart": 0.1, "lungs 0 1": 0.9, "lungs 2 3": 0.9, "liver 0 1": 1.2, "liver 2": 1.2, "liver 3": 1.2, "thymus 0 1": 0.06, "thymus 2": 0.06, "thymus 3": 0.06, "spleen 0 1": 0.06, "spleen 2 3": 0.06, "kidneys 0 1": 0.3, "kidneys 2 3": 0.3, "adrenals 0 1": 0.2, "adrenals 2 3": 0.2}},
     16: {"Mean": {"FL": 21, "CR": 12.4, "CH": 17.5, "HDC": 12.4, "Body": 108, "brain": 17.3, "heart": 0.8, "lungs 0 1": 3.9, "lungs 2 3": 2.7, "liver 0 1": 5.9, "liver 2": 4.5, "liver 3": 4.2, "thymus 0 1": 0.11, "thymus 2": 0.12, "thymus 3": 0.09, "spleen 0 1": 0.09, "spleen 2 3": 0.17, "kidneys 0 1": 0.9, "kidneys 2 3": 0.8, "adrenals 0 1": 0.6, "adrenals 2 3": 0.4}, "SD": {"FL": 3, "CR": 1.3, "CH": 1.8, "HDC": 1.3, "Body": 41, "brain": 5.4, "heart": 0.2, "lungs 0 1": 1.2, "lungs 2 3": 1.2, "liver 0 1": 1.5, "liver 2": 1.5, "liver 3": 1.5, "thymus 0 1": 0.06, "thymus 2": 0.06, "thymus 3": 0.06, "spleen 0 1": 0.08, "spleen 2 3": 0.08, "kidneys 0 1": 0.4, "kidneys 2 3": 0.4, "adrenals 0 1": 0.3, "adrenals 2 3": 0.3}},
@@ -129,6 +215,7 @@ MAROUN = {
     42: {"Mean": {"FL": 86, "CR": 38.6, "CH": 54.1, "HDC": 35.5, "Body": 3678, "brain": 481, "heart": 22.5, "lungs 0 1": 80.1, "lungs 2 3": 63.4, "liver 0 1": 203, "liver 2": 142, "liver 3": 101, "thymus 0 1": 12.2, "thymus 2": 10, "thymus 3": 6.2, "spleen 0 1": 15, "spleen 2 3": 11.5, "kidneys 0 1": 39.6, "kidneys 2 3": 33.3, "adrenals 0 1": 9.9, "adrenals 2 3": 8.4}, "SD": {"FL": 5, "CR": 2, "CH": 2.5, "HDC": 2, "Body": 524, "brain": 44, "heart": 4, "lungs 0 1": 20.9, "lungs 2 3": 20.9, "liver 0 1": 40, "liver 2": 40, "liver 3": 40, "thymus 0 1": 5.6, "thymus 2": 5.6, "thymus 3": 5.6, "spleen 0 1": 4, "spleen 2 3": 4, "kidneys 0 1": 8.9, "kidneys 2 3": 8.9, "adrenals 0 1": 2.6, "adrenals 2 3": 2.6}},
     43: {"Mean": {"FL": 88, "CR": 39.4, "CH": 55, "HDC": 36, "Body": 3922, "brain": 512, "heart": 24, "lungs 0 1": 84.9, "lungs 2 3": 67.4, "liver 0 1": 216, "liver 2": 151, "liver 3": 107, "thymus 0 1": 13.1, "thymus 2": 10.7, "thymus 3": 6.6, "spleen 0 1": 16.4, "spleen 2 3": 12.2, "kidneys 0 1": 42.2, "kidneys 2 3": 35.5, "adrenals 0 1": 10.4, "adrenals 2 3": 8.9}, "SD": {"FL": 5, "CR": 2, "CH": 2.5, "HDC": 2, "Body": 551, "brain": 45, "heart": 4.2, "lungs 0 1": 21.9, "lungs 2 3": 21.9, "liver 0 1": 42, "liver 2": 42, "liver 3": 42, "thymus 0 1": 6, "thymus 2": 6, "thymus 3": 6, "spleen 0 1": 4.2, "spleen 2 3": 4.2, "kidneys 0 1": 9.4, "kidneys 2 3": 9.4, "adrenals 0 1": 2.7, "adrenals 2 3": 2.7}},
 }
+
 
 
 # ══════════════════════════════════════════════════════════════════════════
