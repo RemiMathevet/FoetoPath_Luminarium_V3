@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cas Divers — FoetoPath Hub</title>
+<style>
+  :root {
+    --bg: #0f1117; --bg2: #161b27; --bg3: #1e2435; --bg4: #252d42;
+    --border: #2e3854; --border2: #3d4f75;
+    --text: #e2e8f8; --text2: #8892aa; --text3: #556080;
+    --blue: #4f8ef7; --blue-dim: #1e3a6e; --blue-text: #93b8fa;
+    --green: #2dca72; --green-dim: #0f3d25; --green-text: #6ee8a2;
+    --amber: #f5a623; --amber-dim: #3d2800; --amber-text: #fbc85c;
+    --red: #e8445a; --red-dim: #3d1018; --red-text: #f88a9a;
+    --purple: #9b72f5; --purple-dim: #251850; --purple-text: #c4a8ff;
+    --radius: 8px; --radius-lg: 12px;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+  .app { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .header { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+  .header-icon { width: 36px; height: 36px; background: var(--purple-dim); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .header h1 { font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+  .header small { font-size: 12px; color: var(--text3); display: block; font-weight: 400; margin-top: 1px; }
+  .header-back { color: var(--text3); font-size: 12px; text-decoration: none; margin-left: auto; transition: color 0.15s; }
+  .header-back:hover { color: var(--text2); }
+
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 2rem; }
+  .type-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1.5rem; text-decoration: none; color: var(--text); transition: all 0.2s;
+    border-left: 3px solid var(--border);
+  }
+  .type-card:hover { border-color: var(--border2); background: var(--bg3); transform: translateY(-1px); }
+  .type-card-icon { font-size: 28px; margin-bottom: 10px; }
+  .type-card-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .type-card-desc { font-size: 12px; color: var(--text2); margin-bottom: 10px; line-height: 1.5; }
+  .type-card-btn {
+    display: inline-block; font-size: 12px; font-weight: 500; padding: 6px 14px;
+    border-radius: var(--radius); transition: all 0.15s;
+  }
+
+  .card-curetage { border-left-color: var(--blue); }
+  .card-curetage .type-card-title { color: var(--blue-text); }
+  .card-curetage .type-card-btn { background: var(--blue-dim); color: var(--blue-text); border: 1px solid var(--blue); }
+  .card-curetage:hover .type-card-btn { background: var(--blue); color: #fff; }
+
+  .card-gemellaire { border-left-color: var(--purple); }
+  .card-gemellaire .type-card-title { color: var(--purple-text); }
+  .card-gemellaire .type-card-btn { background: var(--purple-dim); color: var(--purple-text); border: 1px solid var(--purple); }
+  .card-gemellaire:hover .type-card-btn { background: var(--purple); color: #fff; }
+
+  .section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+  .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .cas-table { width: 100%; border-collapse: collapse; }
+  .cas-table th {
+    text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text3); padding: 8px 10px; border-bottom: 1px solid var(--border); font-weight: 600;
+  }
+  .cas-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .cas-table tr { cursor: pointer; transition: background 0.12s; }
+  .cas-table tbody tr:hover { background: var(--bg3); }
+  .cas-table .id-cell { font-family: var(--mono); font-size: 12px; color: var(--text3); }
+  .type-badge {
+    font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 500;
+    display: inline-block;
+  }
+  .badge-curetage { background: var(--blue-dim); color: var(--blue-text); border: 1px solid var(--blue); }
+  .badge-gemellaire { background: var(--purple-dim); color: var(--purple-text); border: 1px solid var(--purple); }
+
+  .empty-state { text-align: center; padding: 2rem; color: var(--text3); font-size: 13px; }
+  .empty-state-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.5; }
+
+  .filters { display: flex; gap: 8px; margin-bottom: 12px; }
+  .filter-btn {
+    font-size: 11px; padding: 5px 12px; border-radius: var(--radius); border: 1px solid var(--border);
+    background: transparent; color: var(--text2); cursor: pointer; font-family: inherit; transition: all 0.15s;
+  }
+  .filter-btn.active { background: var(--blue-dim); border-color: var(--blue); color: var(--blue-text); }
+  .filter-btn:hover:not(.active) { background: var(--bg4); }
+
+  @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-icon">&#9877;</div>
+    <div>
+      <h1>Cas sp&eacute;ciaux</h1>
+      <small>FoetoPath Hub &middot; Curetage, Placenta g&eacute;mellaire</small>
+    </div>
+    <a href="/" class="header-back">&larr; Hub principal</a>
+  </div>
+
+  <div class="cards">
+    <a href="/divers/curetage" class="type-card card-curetage">
+      <div class="type-card-icon">&#128203;</div>
+      <div class="type-card-title">Curetage</div>
+      <div class="type-card-desc">Produit de curetage : IVG, FCS spontan&eacute;e, r&eacute;tention post-partum, suspicion de m&ocirc;le hydatiforme</div>
+      <span class="type-card-btn">Nouveau cas</span>
+    </a>
+    <a href="/divers/gemellaire" class="type-card card-gemellaire">
+      <div class="type-card-icon">&#128101;</div>
+      <div class="type-card-title">Placenta G&eacute;mellaire</div>
+      <div class="type-card-desc">Grossesse multiple : MCDA, DCDA, MCMA, STT, TAPS, RCIU s&eacute;lectif</div>
+      <span class="type-card-btn">Nouveau cas</span>
+    </a>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Cas r&eacute;cents</div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterCas('',this)">Tous</button>
+      <button class="filter-btn" onclick="filterCas('curetage',this)">Curetage</button>
+      <button class="filter-btn" onclick="filterCas('gemellaire',this)">G&eacute;mellaire</button>
+    </div>
+
+    <div id="cas-list">
+      {% if cas_recents and cas_recents|length > 0 %}
+      <table class="cas-table">
+        <thead>
+          <tr><th>#</th><th>Dossier</th><th>Type</th><th>Indication</th><th>Date</th></tr>
+        </thead>
+        <tbody id="cas-tbody">
+          {% for cas in cas_recents %}
+          <tr onclick="openCas('{{ cas.type_cas }}', {{ cas.id }})" data-type="{{ cas.type_cas }}">
+            <td class="id-cell">#{{ cas.id }}</td>
+            <td>{{ cas.dossier or '—' }}</td>
+            <td>
+              {% if cas.type_cas == 'curetage' %}
+              <span class="type-badge badge-curetage">Curetage</span>
+              {% else %}
+              <span class="type-badge badge-gemellaire">Gémellaire</span>
+              {% endif %}
+            </td>
+            <td>{{ cas.indication or '—' }}</td>
+            <td>{{ cas.created_at[:10] if cas.created_at else '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">&#128196;</div>
+        <div>Aucun cas enregistr&eacute; pour le moment.</div>
+        <div style="margin-top:4px">S&eacute;lectionnez un type ci-dessus pour commencer.</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+<script>
+function openCas(type, id) {
+  window.location.href = '/divers/' + type + '?id=' + id;
+}
+function filterCas(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var rows = document.querySelectorAll('#cas-tbody tr');
+  rows.forEach(function(row) {
+    row.style.display = (!type || row.dataset.type === type) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

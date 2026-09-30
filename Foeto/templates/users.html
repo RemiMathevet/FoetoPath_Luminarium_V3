@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Gestion Utilisateurs</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181a23;
+  --surface2: #1e2130;
+  --hover: #262a3d;
+  --border: #2a2d3e;
+  --text: #e8eaf0;
+  --text2: #9498ab;
+  --muted: #5f6378;
+  --accent: #7c6aef;
+  --accent-dim: rgba(124,106,239,0.12);
+  --success: #4ade80;
+  --success-dim: rgba(74,222,128,0.12);
+  --warning: #fbbf24;
+  --warning-dim: rgba(251,191,36,0.12);
+  --danger: #f87171;
+  --danger-dim: rgba(248,113,113,0.12);
+  --info: #4a90d9;
+  --info-dim: rgba(74,144,217,0.12);
+  --radius: 8px;
+  --font: 'DM Sans', -apple-system, sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Topbar ── */
+.topbar {
+  height: 44px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 20px; gap: 12px;
+  font-size: 13px;
+}
+.topbar a {
+  color: var(--text2); text-decoration: none;
+  padding: 5px 10px; border-radius: 6px;
+}
+.topbar a:hover { background: var(--hover); color: var(--text); }
+.topbar a.active { background: var(--accent-dim); color: var(--accent); }
+.topbar .spacer { flex:1; }
+.topbar .user-info {
+  font-size: 12px; color: var(--muted);
+}
+.topbar .user-info strong { color: var(--text2); }
+
+/* ── Main ── */
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+.main h1 {
+  font-size: 22px; font-weight: 700; margin-bottom: 24px;
+}
+
+/* ── Create form ── */
+.create-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;
+}
+.create-form .field {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.create-form label {
+  font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+}
+.create-form input, .create-form select {
+  padding: 9px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+.create-form input:focus, .create-form select:focus {
+  border-color: var(--accent);
+}
+.btn {
+  padding: 9px 18px;
+  border: none; border-radius: 6px;
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #6b5ad6; }
+.btn-danger { background: var(--danger-dim); color: var(--danger); }
+.btn-danger:hover { background: rgba(248,113,113,0.25); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+/* ── User table ── */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.user-table th, .user-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.user-table th {
+  background: var(--surface2);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.user-table tr:last-child td { border-bottom: none; }
+.user-table tr:hover td { background: var(--hover); }
+
+.role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.role-admin        { background: var(--danger-dim); color: var(--danger); }
+.role-admin_centre { background: var(--warning-dim); color: var(--warning); }
+.role-user         { background: var(--info-dim); color: var(--info); }
+.role-spectator    { background: rgba(100,100,120,0.15); color: var(--muted); }
+
+.inactive { opacity: 0.45; }
+
+.actions { display: flex; gap: 6px; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--surface2); color: var(--text); border: 1px solid var(--border);
+  padding: 10px 20px; border-radius: var(--radius); font-size: 13px;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.toast.show { opacity: 1; pointer-events: auto; }
+.toast.error { border-color: var(--danger); color: var(--danger); }
+
+/* ── Modal ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 100;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 28px; width: 400px; max-width: 90vw;
+}
+.modal h2 { font-size: 18px; margin-bottom: 20px; }
+.modal .field { margin-bottom: 14px; }
+.modal label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+.modal input, .modal select {
+  width: 100%; padding: 9px 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-size: 14px; font-family: inherit; outline: none;
+}
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+</style>
+<link rel="stylesheet" href="/static/themes.css">
+</head>
+<body>
+<script>
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+
+<div class="topbar">
+  <a href="/" data-i18n="nav.home">Hub</a>
+  <a href="/admin" data-i18n="nav.admin_foetus">Admin Foetus</a>
+  <a href="/admin/placenta" data-i18n="nav.admin_placenta">Admin Placentas</a>
+  <a href="/admin/users" class="active" data-i18n="nav.users">Utilisateurs</a>
+  <a href="/admin/settings" data-i18n="nav.settings">Paramètres</a>
+  <div class="spacer"></div>
+  <div class="user-info" id="userInfo"></div>
+  <a href="/auth/logout" data-i18n="nav.logout">Déconnexion</a>
+</div>
+
+<div class="main">
+  <h1 data-i18n="users.page_title">Gestion des utilisateurs</h1>
+
+  <!-- Formulaire de creation -->
+  <div class="create-form" id="createForm">
+    <div class="field">
+      <label data-i18n="users.identifier">Identifiant</label>
+      <input type="text" id="newUsername" data-i18n-placeholder="users.placeholder_username" placeholder="nom_utilisateur" style="width:160px">
+    </div>
+    <div class="field">
+      <label data-i18n="users.display_name">Nom affiché</label>
+      <input type="text" id="newDisplayName" data-i18n-placeholder="users.placeholder_display_name" placeholder="Prénom Nom" style="width:180px">
+    </div>
+    <div class="field">
+      <label data-i18n="users.password">Mot de passe</label>
+      <input type="password" id="newPassword" placeholder="••••••" style="width:140px">
+    </div>
+    <div class="field">
+      <label data-i18n="users.role">Rôle</label>
+      <select id="newRole" style="width:150px">
+        <!-- Rempli dynamiquement selon les droits -->
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="createUser()" data-i18n="users.create_btn">Créer</button>
+  </div>
+
+  <!-- Table -->
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th data-i18n="users.identifier">Identifiant</th>
+        <th data-i18n="users.display_name">Nom</th>
+        <th data-i18n="users.role">Rôle</th>
+        <th data-i18n="users.created_by">Créé par</th>
+        <th data-i18n="users.last_login">Dernière connexion</th>
+        <th>2FA</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="userBody"></tbody>
+  </table>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Modal edition -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h2 data-i18n="users.edit_title">Modifier l'utilisateur</h2>
+    <input type="hidden" id="editId">
+    <div class="field">
+      <label data-i18n="users.display_name">Nom affiché</label>
+      <input type="text" id="editDisplayName">
+    </div>
+    <div class="field">
+      <label data-i18n="users.role">Rôle</label>
+      <select id="editRole"></select>
+    </div>
+    <div class="field">
+      <label data-i18n="users.new_password">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+      <input type="password" id="editPassword" placeholder="••••••">
+    </div>
+    <div class="field">
+      <label data-i18n="users.active">Actif</label>
+      <select id="editActive">
+        <option value="1" data-i18n="users.active_yes">Oui</option>
+        <option value="0" data-i18n="users.active_no">Non (désactivé)</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" style="background:var(--surface2);color:var(--text2)" onclick="closeModal()" data-i18n="users.cancel">Annuler</button>
+      <button class="btn btn-primary" onclick="saveEdit()" data-i18n="users.save">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/i18n.js"></script>
+<script>
+const API = '/auth/api';
+let currentUser = null;
+
+function toast(msg, err = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (err ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+async function loadMe() {
+  try {
+    const r = await fetch(`${API}/me`);
+    if (!r.ok) { window.location = '/auth/login'; return; }
+    currentUser = await r.json();
+    document.getElementById('userInfo').innerHTML =
+      `<strong>${currentUser.display_name || currentUser.username}</strong> (${currentUser.role})`;
+    populateRoleSelects();
+  } catch { window.location = '/auth/login'; }
+}
+
+function populateRoleSelects() {
+  const roles = currentUser.permissions.can_create_roles || [];
+  for (const sel of [document.getElementById('newRole'), document.getElementById('editRole')]) {
+    sel.innerHTML = '';
+    roles.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r; opt.textContent = r;
+      sel.appendChild(opt);
+    });
+  }
+  // Masquer le formulaire de création si pas de droits
+  if (roles.length === 0) {
+    document.getElementById('createForm').style.display = 'none';
+  }
+}
+
+async function loadUsers() {
+  const r = await fetch(`${API}/users`);
+  if (!r.ok) return;
+  const { users } = await r.json();
+  const tbody = document.getElementById('userBody');
+  tbody.innerHTML = users.map(u => `
+    <tr class="${u.active ? '' : 'inactive'}">
+      <td style="color:var(--muted);font-size:12px">${u.id}</td>
+      <td style="font-weight:600">${esc(u.username)}</td>
+      <td>${esc(u.display_name || '')}</td>
+      <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+      <td style="color:var(--muted);font-size:13px">${esc(u.created_by || '—')}</td>
+      <td style="color:var(--muted);font-size:13px">${u.last_login ? formatDate(u.last_login) : '—'}</td>
+      <td>
+        ${u.totp_enabled
+          ? '<span style="color:var(--success);font-size:12px;font-weight:600">&#x2714; Actif</span>'
+          : '<span style="color:var(--muted);font-size:12px">Inactif</span>'}
+      </td>
+      <td class="actions">
+        ${canEdit(u) ? `<button class="btn btn-sm" style="background:var(--accent-dim);color:var(--accent)" onclick="openEdit(${u.id})">Modifier</button>` : ''}
+        ${u.totp_enabled && canDelete(u) ? `<button class="btn btn-sm" style="background:var(--warning-dim);color:var(--warning)" onclick="resetTotp(${u.id},'${esc(u.username)}')">Reset 2FA</button>` : ''}
+        ${canDelete(u) ? `<button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id},'${esc(u.username)}')">Supprimer</button>` : ''}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function canEdit(u) {
+  if (!currentUser) return false;
+  if (currentUser.role === 'admin') return true;
+  if (currentUser.role === 'admin_centre' && u.role !== 'admin') return true;
+  return false;
+}
+function canDelete(u) {
+  return currentUser && currentUser.role === 'admin';
+}
+
+async function createUser() {
+  const username = document.getElementById('newUsername').value.trim();
+  const password = document.getElementById('newPassword').value;
+  const role = document.getElementById('newRole').value;
+  const display_name = document.getElementById('newDisplayName').value.trim();
+
+  if (!username || !password) { toast(t('users.required_fields'), true); return; }
+
+  const r = await fetch(`${API}/users`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ username, password, role, display_name }),
+  });
+  const d = await r.json();
+  if (!r.ok) { toast(d.error || 'Erreur', true); return; }
+
+  toast(t('users.user_created', {username: username}));
+  document.getElementById('newUsername').value = '';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('newDisplayName').value = '';
+  loadUsers();
+}
+
+let editUsersCache = [];
+async function openEdit(id) {
+  const r = await fetch(`${API}/users`);
+  const { users } = await r.json();
+  const u = users.find(x => x.id === id);
+  if (!u) return;
+
+  document.getElementById('editId').value = id;
+  document.getElementById('editDisplayName').value = u.display_name || '';
+  document.getElementById('editRole').value = u.role;
+  document.getElementById('editPassword').value = '';
+  document.getElementById('editActive').value = u.active ? '1' : '0';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+}
+
+async function saveEdit() {
+  const id = document.getElementById('editId').value;
+  const data = {
+    display_name: document.getElementById('editDisplayName').value.trim(),
+    role: document.getElementById('editRole').value,
+    active: parseInt(document.getElementById('editActive').value),
+  };
+  const pw = document.getElementById('editPassword').value;
+  if (pw) data.password = pw;
+
+  const r = await fetch(`${API}/users/${id}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data),
+  });
+  const d = await r.json();
+  if (!r.ok) { toast(d.error || 'Erreur', true); return; }
+
+  toast(t('users.user_modified'));
+  closeModal();
+  loadUsers();
+}
+
+async function resetTotp(id, username) {
+  if (!confirm(t('users.confirm_reset_totp', {username: username}))) return;
+  try {
+    const r = await fetch(`${API}/users/${id}/totp-reset`, { method: 'POST' });
+    const d = await r.json();
+    if (!r.ok) { toast(d.error || 'Erreur reset 2FA', true); return; }
+    toast(t('users.totp_reset_msg', {username: username}));
+    loadUsers();
+  } catch { toast(t('users.network_error'), true); }
+}
+
+async function deleteUser(id, username) {
+  if (!confirm(t('users.confirm_delete', {username: username}))) return;
+  const r = await fetch(`${API}/users/${id}`, { method: 'DELETE' });
+  const d = await r.json();
+  if (!r.ok) { toast(d.error || 'Erreur', true); return; }
+  toast(t('users.user_deleted', {username: username}));
+  loadUsers();
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+  } catch { return iso; }
+}
+
+// Init
+i18nInit().then(function() {
+  i18nApply();
+  loadMe().then(() => loadUsers());
+});
+</script>
+<script src="/static/idle-timeout.js"></script>
+</body>
+</html>

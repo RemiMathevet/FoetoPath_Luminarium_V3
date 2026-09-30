@@ -1,0 +1,55 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║  {{ t('cr.placenta_macroscopic_title') }}
+╠══════════════════════════════════════════════════════════════════════╣
+║  Dossier   : {{ numero or "#" }}
+{% if terme_sa %}║  Terme     : {{ terme_sa }} SA{% if terme_j %} + {{ terme_j }}j{% endif %}{% if terme_source %} ({{ terme_source }}){% endif %}
+{% endif %}{% if indication_terme %}║  Indication: {{ indication_terme }}
+{% endif %}{% if masse_foetale_g %}║  Fœtus     : {{ masse_foetale_g }} g — sexe {{ sexe or "non précisé" }}
+{% endif %}╚══════════════════════════════════════════════════════════════════════╝
+
+┌─ {{ t('cr.placental_disc') }} ─────────────────────────────
+Forme : {{ forme or "#" }}.{% if completude %} Complétude : {{ _completude(completude) }}.{% endif %}
+
+{% if grand_axe_cm and petit_axe_cm %}Dimensions : {{ grand_axe_cm }} × {{ petit_axe_cm }} cm{% if epaisseur_cm %}, épaisseur {{ epaisseur_cm }} cm{% endif %}.
+{% endif %}{% if masse_paree_g %}Masse parée (cordon et membranes retirés) : {{ masse_paree_g }} g.
+{% endif %}{% if zscore and zscore.masse_ds is not none %}Z-score masse : {{ zscore.masse_ds }} DS ({{ zscore.percentile }}, {{ zscore.trophicite|lower }}) — réf. {{ zscore.ref.moyenne }}g ±{{ zscore.ref.sd }} à {{ terme_sa }} SA{% if zscore.extrapolated %} [extrapolé]{% endif %}.
+{% endif %}{% if zscore and zscore.ratio_fp %}Ratio F/P : {{ zscore.ratio_fp }}{% if zscore.ratio_ds is not none %} ({{ zscore.ratio_ds }} DS — réf. Redline){% endif %}.
+{% endif %}
+┌─ {{ t('cr.umbilical_cord') }} ─────────────────────────────
+{% if cordon %}{% if cordon.insertion %}Insertion : {{ cordon.insertion|lower }}.{% endif %}{% if cordon.longueur_cm %} Longueur : {{ cordon.longueur_cm }} cm.{% endif %}{% if cordon.spiralisation %} Spiralisation : {{ cordon.spiralisation|lower }}.{% endif %}{% if cordon.palmure_amniotique or cordon.striction or cordon.remarques %}
+{% if cordon.palmure_amniotique %}Palmure amniotique présente. {% endif %}{% if cordon.striction %}Striction présente. {% endif %}{% if cordon.remarques %}Note : {{ cordon.remarques }}.{% endif %}{% endif %}{% else %}Non évalué.{% endif %}
+
+┌─ {{ t('cr.membranes') }} ─────────────────────────────
+{% if membranes %}{% if membranes.insertion %}Insertion : {{ membranes.insertion|lower }}{% if membranes.marginee_pct %} ({{ membranes.marginee_pct }}% de la circonférence){% endif %}.{% endif %}{% if membranes.aspect %} Aspect : {{ membranes.aspect|lower }}.{% endif %}{% if membranes.remarques %}
+Note : {{ membranes.remarques }}.{% endif %}{% else %}Non évaluées.{% endif %}
+
+┌─ {{ t('cr.chorionic_plate') }} ─────────────────────────────
+{{ _plaque(plaque_choriale) }}
+
+┌─ {{ t('cr.basal_plate') }} ─────────────────────────────
+{{ _plaque(plaque_basale) }}
+
+{% if nb_tranches_groups > 0 or lesions or tranches_commentaire %}┌─ {{ t('cr.section_slices') }} ─────────────────────────────
+{% if nb_tranches_groups > 0 %}{{ nb_tranches_groups }} groupe(s) de 3 tranches examiné(s).
+{% endif %}{% for l in lesions %}  • Lésion {{ l.lesion }}{% if l.cassette %} — cassette {{ l.cassette }}{% endif %}{% if l.description %} : {{ l.description }}{% endif %}.
+{% endfor %}{% if not lesions %}Pas de lésion focale identifiée.
+{% endif %}{% if tranches_commentaire %}{{ tranches_commentaire }}
+{% endif %}{% endif %}
+Photographies numériques : {{ (photos_frais|length) + (photos_tranches|length) }} clichés.
+
+{% if composite_micro_text or labellisation_table or micro_text or viewer_micro_text or labellisation_micro_text %}┌─ {{ t('cr.microscopy') }} ─────────────────────────────
+{% if composite_micro_text %}{{ composite_micro_text }}
+{% elif labellisation_table %}{% for row in labellisation_table %}{{ row.organe }} : {% for f in row.findings %}{{ f.text }}{% if f.nb_lames > 2 %} (diffus, {{ f.nb_lames }} lames){% endif %}{% if not loop.last %} {% endif %}{% endfor %}{% if row.notes %} — Note : {{ row.notes | join('; ') }}{% endif %}
+{% endfor %}{% elif labellisation_micro_text %}{{ labellisation_micro_text }}
+{% elif viewer_micro_text %}{{ viewer_micro_text }}
+{% endif %}{% if micro_text %}{{ micro_text }}
+{% endif %}{% endif %}
+╔══════════════════════════════════════════════════════════════════════╗
+║  {{ t('cr.conclusion') }}
+╚══════════════════════════════════════════════════════════════════════╝
+{% if completude %}Galette {{ _completude(completude) }}{% else %}Galette{% endif %}{% if zscore and zscore.trophicite %} {{ zscore.trophicite|lower }} ({{ zscore.masse_ds }} DS){% endif %}
+{% if composite_conclusion_items %}{% for d in composite_conclusion_items %}  • {{ d }}
+{% endfor %}{% elif labellisation_table %}{% for row in labellisation_table %}{% if row.statut == 'patho' %}{% for f in row.findings %}  • {{ row.organe }} : {{ f.text }}{% if f.nb_lames > 2 %} (diffus).{% endif %}
+{% endfor %}{% endif %}{% endfor %}{% elif viewer_conclusion_items %}{{ viewer_conclusion_items }}{% else %}{% if lesions %}  • Lésion(s) focale(s) : {{ lesions|length }}
+{% endif %}{% if micro_text %}  • Anomalies microscopiques : voir ci-dessus
+{% endif %}{% endif %}

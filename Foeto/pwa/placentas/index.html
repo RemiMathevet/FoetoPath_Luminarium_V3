@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>Macro Placenta – Dossier</title>
+<link rel="manifest" href="/pwa/placentas/manifest.json">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b22;
+    --surface-hover: #1c2230;
+    --border: #2a3140;
+    --border-focus: #4a90d9;
+    --text: #e2e8f0;
+    --text-muted: #8b95a5;
+    --accent: #4a90d9;
+    --accent-dim: rgba(74, 144, 217, 0.15);
+    --danger: #e55b5b;
+    --success: #3ddc84;
+    --success-dim: rgba(61, 220, 132, 0.15);
+    --warning: #f0a850;
+    --warning-dim: rgba(240, 168, 80, 0.15);
+    --radius: 10px;
+    --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .dossier-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+  .logo-icon { font-size: 3.2rem; margin-bottom: 8px; }
+  .dossier-screen h2 {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .dossier-screen .subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 28px;
+  }
+
+  .dossier-input-wrap {
+    width: 100%;
+    max-width: 320px;
+  }
+  .dossier-input-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: var(--text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.05em;
+    outline: none;
+    transition: border-color 0.2s;
+    font-variant-numeric: tabular-nums;
+  }
+  .dossier-input-wrap input:focus { border-color: var(--accent); }
+  .dossier-input-wrap input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 1rem;
+  }
+
+  .dossier-status {
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    min-height: 2.8em;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .status-new { color: var(--accent); }
+  .status-existing { color: var(--success); }
+
+  .dossier-btn {
+    width: 100%;
+    max-width: 320px;
+    margin-top: 16px;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .dossier-btn:active { transform: scale(0.98); }
+  .dossier-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-frais {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-tranches {
+    background: var(--success);
+    color: #0e1117;
+  }
+
+  .btn-row {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  /* Connectivity badge */
+  .conn-badge {
+    position: fixed; top: 12px; right: 12px;
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 0.7rem; font-weight: 600;
+  }
+  .conn-badge.online { background: var(--success-dim); color: var(--success); }
+  .conn-badge.offline { background: var(--warning-dim); color: var(--warning); }
+</style>
+</head>
+<body>
+
+<div class="conn-badge" id="conn-badge">●</div>
+
+<div class="dossier-screen">
+  <img src="logo.png" alt="Placenta" style="width:80px;height:80px;border-radius:16px;margin-bottom:8px;" onerror="this.style.display='none'">
+  <h2 data-i18n="pwa.placenta.title">Macro Placenta</h2>
+  <p class="subtitle" data-i18n="pwa.placenta.enter_dossier">Saisir le numéro de dossier</p>
+
+  <div class="dossier-input-wrap" style="margin-bottom:12px;">
+    <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;text-align:center;" data-i18n="pwa.common.user_label">Utilisateur</div>
+    <input type="text" id="pwa-user-input" placeholder="(non identifié)"
+           autocomplete="off" style="font-size:0.95rem;font-weight:400;letter-spacing:0;padding:10px 14px;opacity:0.8;"
+           oninput="savePwaUser(this.value)">
+  </div>
+
+  <div class="dossier-input-wrap">
+    <input type="text" id="dossier-input" placeholder="Ex : 25P1234"
+           autocomplete="off" inputmode="text" data-i18n-placeholder="pwa.placenta.dossier_placeholder">
+  </div>
+
+  <div class="dossier-status" id="dossier-status"></div>
+
+  <div class="btn-row" id="btn-row">
+    <!-- Buttons injected dynamically -->
+  </div>
+</div>
+
+<script>
+// ═══════ HUB URL (auto-detect) ═══════
+const HUB = window.location.origin;
+
+// ═══════ PWA User (identification soumissions) ═══════
+function _getCookie(name) {
+  var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : '';
+}
+function syncPwaUserFromCookie() {
+  var cookieUser = _getCookie('pwa_username');
+  if (cookieUser) {
+    try {
+      var stored = localStorage.getItem('placenta_pwa_user');
+      if (stored !== cookieUser) {
+        localStorage.setItem('placenta_pwa_user', cookieUser);
+      }
+    } catch(e) {}
+  }
+}
+function getPwaUser() {
+  syncPwaUserFromCookie();
+  try { return localStorage.getItem('placenta_pwa_user') || ''; } catch(e) { return ''; }
+}
+function savePwaUser(val) {
+  try { localStorage.setItem('placenta_pwa_user', (val || '').trim()); } catch(e) {}
+}
+// Sync cookie → localStorage puis pré-remplir le champ
+syncPwaUserFromCookie();
+document.addEventListener('DOMContentLoaded', function() {
+  var u = document.getElementById('pwa-user-input');
+  if (u) u.value = getPwaUser();
+});
+
+// ═══════ PWA Registration ═══════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/placentas/sw.js').catch(() => {});
+}
+
+// ═══════ Connectivity ═══════
+function updateConn() {
+  const badge = document.getElementById('conn-badge');
+  if (navigator.onLine) {
+    badge.className = 'conn-badge online';
+    badge.textContent = '● En ligne';
+  } else {
+    badge.className = 'conn-badge offline';
+    badge.textContent = '● Hors ligne';
+  }
+}
+window.addEventListener('online', updateConn);
+window.addEventListener('offline', updateConn);
+updateConn();
+
+// ═══════ Format dossier placenta (aaPnnnn) ═══════
+/**
+ * Normalise un numéro de dossier placenta :
+ *  - Force le 'P' en majuscule (ex: 25p1234 → 25P1234)
+ *  - Format attendu : 2 chiffres + P + chiffres (ex: 25P1234, 26P03)
+ */
+function normalizeDossier(val) {
+  // Remplacer tout 'p' par 'P' (uniquement après des chiffres)
+  return val.replace(/^(\d{2})p/i, '$1P');
+}
+
+/**
+ * Vérifie que le numéro de dossier correspond au format aaPnnnn
+ * Retourne true si valide, false sinon.
+ */
+function isValidDossierFormat(val) {
+  return /^\d{2}P\d+$/.test(val);
+}
+
+// ═══════ Dossier check ═══════
+const input = document.getElementById('dossier-input');
+const status = document.getElementById('dossier-status');
+const btnRow = document.getElementById('btn-row');
+
+let debounceTimer = null;
+
+// Auto-normalisation à la saisie : force le P majuscule en temps réel
+input.addEventListener('input', () => {
+  const pos = input.selectionStart;
+  const before = input.value;
+  const after = normalizeDossier(before);
+  if (before !== after) {
+    input.value = after;
+    input.setSelectionRange(pos, pos);
+  }
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(updateUI, 300);
+});
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && input.value.trim()) {
+    checkAndGo();
+  }
+});
+
+async function dossierExists(id) {
+  // Toujours vérifier localStorage (données hors-ligne non synchronisées)
+  try {
+    if (localStorage.getItem(`placenta_${id}`) || localStorage.getItem(`placenta_tranches_${id}`)) {
+      return true;
+    }
+  } catch (e) {}
+
+  try {
+    const resp = await fetch(`${HUB}/placenta/api/cases/check?numero=${encodeURIComponent(id)}`);
+    if (resp.ok) {
+      const data = await resp.json();
+      return data.exists;
+    }
+  } catch (e) {
+    // Offline — on a déjà vérifié localStorage ci-dessus
+  }
+  return false;
+}
+
+async function updateUI() {
+  const val = input.value.trim();
+  if (!val) {
+    status.innerHTML = '';
+    btnRow.innerHTML = '';
+    return;
+  }
+
+  // Validation du format aaPnnnn
+  if (!isValidDossierFormat(val)) {
+    status.innerHTML = '<span style="color:#f87171;font-size:0.85rem;">Format attendu : <b>aaPnnnn</b> (ex: 25P1234)</span>';
+    btnRow.innerHTML = '';
+    return;
+  }
+
+  const exists = await dossierExists(val);
+
+  if (exists) {
+    status.innerHTML = '<span class="status-existing" data-i18n="pwa.placenta.existing_case">● Dossier existant</span>';
+    btnRow.innerHTML = `
+      <button class="dossier-btn btn-tranches" onclick="goTranches()" data-i18n="pwa.placenta.go_tranches">Tranches de section →</button>
+      <button class="dossier-btn btn-frais" onclick="goFrais()" style="opacity:0.7; font-size:0.85rem;" data-i18n="pwa.placenta.resume_frais">Reprendre macro frais</button>
+    `;
+  } else {
+    status.innerHTML = '<span class="status-new" data-i18n="pwa.placenta.new_case">● Nouveau dossier</span>';
+    btnRow.innerHTML = `
+      <button class="dossier-btn btn-frais" onclick="goFrais()" data-i18n="pwa.placenta.go_frais">Macro état frais →</button>
+    `;
+  }
+}
+
+async function checkAndGo() {
+  const val = normalizeDossier(input.value.trim());
+  if (!val || !isValidDossierFormat(val)) return;
+  input.value = val;
+  const exists = await dossierExists(val);
+  if (exists) goTranches();
+  else goFrais();
+}
+
+function goFrais() {
+  const dossier = normalizeDossier(input.value.trim());
+  if (!dossier || !isValidDossierFormat(dossier)) return;
+  window.location.href = `/pwa/placentas/macro_frais.html?dossier=${encodeURIComponent(dossier)}`;
+}
+
+function goTranches() {
+  const dossier = normalizeDossier(input.value.trim());
+  if (!dossier || !isValidDossierFormat(dossier)) return;
+  window.location.href = `/pwa/placentas/tranches_section.html?dossier=${encodeURIComponent(dossier)}`;
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>
+  i18nInit(window.location.origin).then(function() { i18nApply(); }).catch(function() {});
+</script>
+</body>
+</html>

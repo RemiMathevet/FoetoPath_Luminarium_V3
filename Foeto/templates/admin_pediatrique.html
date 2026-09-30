@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Admin Pédiatrique</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/admin.css">
+<link rel="stylesheet" href="/static/themes.css">
+</head>
+<body>
+<script>
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+<nav style="height:40px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:4px;font-size:13px;font-family:var(--font);">
+  <a href="/" style="color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Hub</a>
+  <a href="/admin" style="color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Admin Fœtus</a>
+  <a href="/admin/placenta" style="color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Admin Placentas</a>
+  <a href="/pediatrique" style="color:var(--accent);text-decoration:none;padding:4px 10px;border-radius:6px;background:rgba(124,106,239,0.1);">Pédiatrique</a>
+  <a href="/admin/settings" style="color:var(--text2);text-decoration:none;padding:4px 10px;border-radius:6px;">Paramètres</a>
+  <span style="flex:1"></span>
+  <span id="navUserInfo" style="color:var(--text3);font-size:12px;"></span>
+  <a href="/auth/logout" style="color:var(--text3);text-decoration:none;padding:4px 10px;border-radius:6px;font-size:12px;">Déconnexion</a>
+</nav>
+<script>
+fetch('/auth/api/me').then(r=>r.json()).then(u=>{
+  document.getElementById('navUserInfo').textContent=`${u.display_name||u.username} (${u.role})`;
+}).catch(()=>{});
+</script>
+<div class="app" style="height:calc(100vh - 40px);">
+
+<!-- ── Sidebar ───────────────────────────────── -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Foeto<span>Path</span>
+            <span style="font-size:11px;color:var(--text3);font-weight:400;margin-left:auto">Pédiatrique</span>
+        </div>
+        <div class="sidebar-search">
+            <input type="text" id="searchInput" placeholder="Rechercher..." oninput="debouncedSearch()">
+        </div>
+    </div>
+    <div class="sidebar-actions">
+        <div class="pill active" data-filter="" onclick="setFilter(this,'')">Tous</div>
+        <div class="pill" data-filter="en_cours" onclick="setFilter(this,'en_cours')">En cours</div>
+        <div class="pill" data-filter="complet" onclick="setFilter(this,'complet')">Complets</div>
+        <div class="pill" data-filter="archive" onclick="setFilter(this,'archive')">Archives</div>
+    </div>
+    <div class="case-list" id="caseList">
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            <h3>Aucun cas pédiatrique</h3>
+            <p>Créez un nouveau cas</p>
+        </div>
+    </div>
+    <div class="sidebar-footer">
+        <button class="btn btn-primary" style="flex:1" onclick="openNewCaseModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m-7-7h14"/></svg>
+            Nouveau cas
+        </button>
+    </div>
+</div>
+
+<!-- ── Main Content ─────────────────────────── -->
+<div class="main">
+    <div class="main-header" id="mainHeader">
+        <h2 id="mainTitle">Sélectionnez un cas</h2>
+        <div id="mainActions"></div>
+    </div>
+    <div class="main-body" id="mainBody">
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+            <h3>Admin Pédiatrique</h3>
+            <p>Cas de décès néonataux et pédiatriques — biométries Molina 2019</p>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ── Modal: Nouveau Cas ────────────────────── -->
+<div class="modal-overlay" id="newCaseModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modalTitle">Nouveau cas pédiatrique</h3>
+            <button class="btn btn-icon" onclick="closeModal('newCaseModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Numéro de dossier *</label>
+                    <input class="form-input" id="f_numero" placeholder="Ex: PED-2026-001" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ID externe</label>
+                    <input class="form-input" id="f_id_ext">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom enfant</label>
+                    <input class="form-input" id="f_nom_foetus">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prénom enfant</label>
+                    <input class="form-input" id="f_prenom_foetus">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sexe</label>
+                    <select class="form-select" id="f_sexe">
+                        <option value="">—</option>
+                        <option value="M">Masculin</option>
+                        <option value="F">Féminin</option>
+                        <option value="I">Indéterminé</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom mère</label>
+                    <input class="form-input" id="f_nom_mere">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prénom mère</label>
+                    <input class="form-input" id="f_prenom_mere">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">DDN mère</label>
+                    <input class="form-input" type="date" id="f_ddn_mere">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Médecin</label>
+                    <input class="form-input" id="f_medecin">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service</label>
+                    <input class="form-input" id="f_service">
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">Indication d'examen</label>
+                    <textarea class="form-textarea" id="f_indication" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal('newCaseModal')">Annuler</button>
+            <button class="btn btn-primary" onclick="saveCase()">Créer</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/pediatrique';
+let state = { cases: [], currentCase: null, currentFilter: '', pedDetails: {} };
+
+async function api(url, opts = {}) {
+    const res = await fetch(API + url, {
+        headers: { 'Content-Type': 'application/json', ...opts.headers }, ...opts,
+    });
+    return res.json();
+}
+
+function toast(msg, type = '') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast visible' + (type ? ' ' + type : '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('visible'), 4000);
+}
+
+// ── List / Filter ──
+
+let _searchTimer;
+function debouncedSearch() { clearTimeout(_searchTimer); _searchTimer = setTimeout(loadCases, 300); }
+
+function setFilter(el, f) {
+    state.currentFilter = f;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    loadCases();
+}
+
+async function loadCases() {
+    const q = document.getElementById('searchInput').value.trim();
+    const params = new URLSearchParams();
+    if (state.currentFilter) params.set('statut', state.currentFilter);
+    if (q) params.set('q', q);
+    const data = await api('/api/cases?' + params);
+    state.cases = data.cases || [];
+    renderCaseList();
+}
+
+function renderCaseList() {
+    const el = document.getElementById('caseList');
+    if (!state.cases.length) {
+        el.innerHTML = '<div class="empty-state"><p>Aucun cas</p></div>';
+        return;
+    }
+    el.innerHTML = state.cases.map(c => `
+        <div class="case-item ${state.currentCase?.id === c.id ? 'active' : ''}"
+             onclick="selectCase(${c.id})">
+            <div class="case-item-top">
+                <span class="case-number">${c.numero_dossier || '—'}</span>
+                <span class="case-badge badge-${c.statut || 'en_cours'}">${c.statut || 'en_cours'}</span>
+            </div>
+            <div class="case-item-bottom">
+                <span>${c.nom_mere || ''} ${c.prenom_mere || ''}</span>
+                <span>${c.indication_examen ? c.indication_examen.substring(0, 40) : ''}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ── Detail ──
+
+async function selectCase(id) {
+    const data = await api('/api/cases/' + id);
+    state.currentCase = data;
+    const ped = await api('/api/cases/' + id + '/pediatric-details');
+    state.pedDetails = ped.details || {};
+    renderDetail();
+    renderCaseList();
+}
+
+function _v(val, suffix = '') { return val != null && val !== '' ? val + suffix : '—'; }
+
+function renderDetail() {
+    const c = state.currentCase;
+    const p = state.pedDetails;
+    if (!c) return;
+    document.getElementById('mainTitle').textContent = c.numero_dossier || 'Sans numéro';
+    document.getElementById('mainActions').innerHTML = `
+        <button class="btn btn-sm" onclick="editPedDetails()">Détails pédia</button>
+        <button class="btn btn-sm btn-primary" onclick="computeBio()">Biométries Molina</button>
+        <button class="btn btn-sm" onclick="showCR()">Compte rendu</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteCase(${c.id})">Supprimer</button>
+    `;
+
+    const modules = c.modules_filled || [];
+    const mods = modules.map(m => `<span class="tag">${m}</span>`).join(' ') || '<span style="color:var(--text3)">aucun</span>';
+
+    document.getElementById('mainBody').innerHTML = `
+    <div style="padding:20px;display:flex;flex-direction:column;gap:20px;">
+
+        <div class="card">
+            <h4>Identité</h4>
+            <div class="detail-grid">
+                <div><span class="label">Enfant</span><span>${_v(c.prenom_foetus)} ${_v(c.nom_foetus)}</span></div>
+                <div><span class="label">Sexe</span><span>${_v(c.sexe)}</span></div>
+                <div><span class="label">Mère</span><span>${_v(c.nom_mere)} ${_v(c.prenom_mere)}</span></div>
+                <div><span class="label">DDN mère</span><span>${_v(c.ddn_mere)}</span></div>
+                <div><span class="label">Médecin</span><span>${_v(c.medecin_referent)}</span></div>
+                <div><span class="label">Service</span><span>${_v(c.service_demandeur)}</span></div>
+                <div><span class="label">Indication</span><span>${_v(c.indication_examen)}</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4>Données périnatales</h4>
+            <div class="detail-grid">
+                <div><span class="label">Naissance</span><span>${_v(p.date_naissance)} ${_v(p.heure_naissance)}</span></div>
+                <div><span class="label">Terme naissance</span><span>${_v(p.terme_naissance_sa, ' SA')}${p.terme_naissance_jours ? ' + ' + p.terme_naissance_jours + 'j' : ''}</span></div>
+                <div><span class="label">Mode accouchement</span><span>${_v(p.mode_accouchement)}</span></div>
+                <div><span class="label">Poids naissance</span><span>${_v(p.poids_naissance_g, ' g')}</span></div>
+                <div><span class="label">Taille naissance</span><span>${_v(p.taille_naissance_cm, ' cm')}</span></div>
+                <div><span class="label">PC naissance</span><span>${_v(p.pc_naissance_mm, ' mm')}</span></div>
+                <div><span class="label">Apgar</span><span>${_v(p.apgar_1)} / ${_v(p.apgar_5)} / ${_v(p.apgar_10)}</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4>Décès</h4>
+            <div class="detail-grid">
+                <div><span class="label">Date décès</span><span>${_v(p.date_deces)} ${_v(p.heure_deces)}</span></div>
+                <div><span class="label">Âge au décès</span><span>${_v(p.age_deces_jours, ' jours')}</span></div>
+                <div><span class="label">Lieu</span><span>${_v(p.lieu_deces)}</span></div>
+                <div><span class="label">Cause principale</span><span>${_v(p.cause_deces_principale)}</span></div>
+                <div><span class="label">Contexte</span><span>${_v(p.contexte_deces)}</span></div>
+                <div><span class="label">Réanimation</span><span>${p.reanimation ? 'Oui' : 'Non'}</span></div>
+                <div><span class="label">Poids décès</span><span>${_v(p.poids_deces_g, ' g')}</span></div>
+                <div><span class="label">Taille décès</span><span>${_v(p.taille_deces_cm, ' cm')}</span></div>
+                <div><span class="label">PC décès</span><span>${_v(p.pc_deces_mm, ' mm')}</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4>Modules</h4>
+            <div>${mods}</div>
+        </div>
+
+        <div class="card" id="bioResults" style="display:none;">
+            <h4>Biométries Molina 2019</h4>
+            <div id="bioContent"></div>
+        </div>
+
+    </div>`;
+
+    loadBioResults();
+}
+
+async function loadBioResults() {
+    const mod = await api('/api/cases/' + state.currentCase.id + '/modules/computed_biometrics');
+    if (!mod || !mod.data || mod.data.mode !== 'pediatrique') return;
+    const r = mod.data;
+    document.getElementById('bioResults').style.display = '';
+    let html = '';
+    if (r.age_bracket_label) html += `<p>Classe âge : <b>${r.age_bracket_label}</b></p>`;
+    if (r.taille_bracket) html += `<p>Classe taille : <b>${r.taille_bracket} cm</b></p>`;
+
+    for (const [key, title] of [['organes_age', 'Par âge'], ['organes_taille', 'Par taille']]) {
+        const section = r[key];
+        if (!section || !section.organes) continue;
+        html += `<h5>${title} (${section.reference})</h5><table class="bio-table"><tr><th>Organe</th><th>Valeur</th><th>Moy</th><th>SD</th><th>DS</th><th>Interp.</th></tr>`;
+        for (const [k, o] of Object.entries(section.organes)) {
+            const cls = o.ds != null && Math.abs(o.ds) > 2 ? ' style="color:var(--danger)"' : '';
+            html += `<tr${cls}><td>${o.label}</td><td>${o.valeur} g</td><td>${o.moyenne}</td><td>${o.sd}</td><td>${o.ds != null ? o.ds.toFixed(2) : '—'}</td><td>${o.interpretation}</td></tr>`;
+        }
+        html += '</table>';
+    }
+
+    if (r.alertes && r.alertes.length) {
+        html += '<h5 style="color:var(--danger)">Alertes</h5><ul>';
+        r.alertes.forEach(a => html += `<li>${a}</li>`);
+        html += '</ul>';
+    }
+    document.getElementById('bioContent').innerHTML = html;
+}
+
+// ── CRUD ──
+
+function openNewCaseModal() {
+    document.getElementById('newCaseModal').classList.add('visible');
+    document.getElementById('modalTitle').textContent = 'Nouveau cas pédiatrique';
+}
+function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
+
+async function saveCase() {
+    const data = {
+        numero_dossier: document.getElementById('f_numero').value.trim(),
+        nom_foetus: document.getElementById('f_nom_foetus').value.trim(),
+        prenom_foetus: document.getElementById('f_prenom_foetus').value.trim(),
+        sexe: document.getElementById('f_sexe').value,
+        nom_mere: document.getElementById('f_nom_mere').value.trim(),
+        prenom_mere: document.getElementById('f_prenom_mere').value.trim(),
+        ddn_mere: document.getElementById('f_ddn_mere').value,
+        medecin_referent: document.getElementById('f_medecin').value.trim(),
+        service_demandeur: document.getElementById('f_service').value.trim(),
+        indication_examen: document.getElementById('f_indication').value.trim(),
+        case_id_externe: document.getElementById('f_id_ext').value.trim(),
+    };
+    if (!data.numero_dossier) { toast('Numéro requis', 'error'); return; }
+    const res = await api('/api/cases', { method: 'POST', body: JSON.stringify(data) });
+    if (res.error) { toast(res.error, 'error'); return; }
+    closeModal('newCaseModal');
+    toast('Cas créé');
+    await loadCases();
+    if (res.case_id) selectCase(res.case_id);
+}
+
+async function deleteCase(id) {
+    if (!confirm('Supprimer ce cas ?')) return;
+    await api('/api/cases/' + id, { method: 'DELETE' });
+    state.currentCase = null;
+    toast('Cas supprimé');
+    loadCases();
+    document.getElementById('mainBody').innerHTML = '<div class="empty-state"><p>Sélectionnez un cas</p></div>';
+}
+
+// ── Pediatric Details Modal ──
+
+function editPedDetails() {
+    const p = state.pedDetails;
+    const c = state.currentCase;
+    const fields = [
+        { id: 'date_naissance', label: 'Date naissance', type: 'date' },
+        { id: 'heure_naissance', label: 'Heure naissance', type: 'time' },
+        { id: 'terme_naissance_sa', label: 'Terme (SA)', type: 'number' },
+        { id: 'terme_naissance_jours', label: 'Terme (jours)', type: 'number' },
+        { id: 'mode_accouchement', label: 'Mode accouchement', type: 'select', opts: ['', 'voie_basse', 'cesarienne', 'instrumentale'] },
+        { id: 'poids_naissance_g', label: 'Poids naissance (g)', type: 'number', step: '0.1' },
+        { id: 'taille_naissance_cm', label: 'Taille naissance (cm)', type: 'number', step: '0.1' },
+        { id: 'pc_naissance_mm', label: 'PC naissance (mm)', type: 'number', step: '0.1' },
+        { id: 'apgar_1', label: 'Apgar 1 min', type: 'number' },
+        { id: 'apgar_5', label: 'Apgar 5 min', type: 'number' },
+        { id: 'apgar_10', label: 'Apgar 10 min', type: 'number' },
+        { id: 'date_deces', label: 'Date décès', type: 'date' },
+        { id: 'heure_deces', label: 'Heure décès', type: 'time' },
+        { id: 'age_deces_jours', label: 'Âge décès (jours)', type: 'number' },
+        { id: 'lieu_deces', label: 'Lieu décès', type: 'text' },
+        { id: 'cause_deces_principale', label: 'Cause principale', type: 'text' },
+        { id: 'contexte_deces', label: 'Contexte', type: 'text' },
+        { id: 'reanimation', label: 'Réanimation', type: 'checkbox' },
+        { id: 'poids_deces_g', label: 'Poids décès (g)', type: 'number', step: '0.1' },
+        { id: 'taille_deces_cm', label: 'Taille décès (cm)', type: 'number', step: '0.1' },
+        { id: 'pc_deces_mm', label: 'PC décès (mm)', type: 'number', step: '0.1' },
+        { id: 'autopsie_consentement', label: 'Consentement autopsie', type: 'checkbox' },
+        { id: 'autopsie_type', label: 'Type autopsie', type: 'select', opts: ['', 'complete', 'limitee', 'refusee'] },
+    ];
+    const caseFields = [
+        { id: 'nom_mere', label: 'Nom mère', type: 'text' },
+        { id: 'prenom_mere', label: 'Prénom mère', type: 'text' },
+        { id: 'ddn_mere', label: 'DDN mère', type: 'date' },
+    ];
+
+    function renderFields(flist, src) {
+        let h = '';
+        for (const f of flist) {
+            const val = src[f.id] ?? '';
+            if (f.type === 'checkbox') {
+                h += `<div class="form-group"><label class="form-label">${f.label}</label><input type="checkbox" id="ped_${f.id}" ${val ? 'checked' : ''}></div>`;
+            } else if (f.type === 'select') {
+                const options = f.opts.map(o => `<option value="${o}" ${val == o ? 'selected' : ''}>${o || '—'}</option>`).join('');
+                h += `<div class="form-group"><label class="form-label">${f.label}</label><select class="form-select" id="ped_${f.id}">${options}</select></div>`;
+            } else {
+                h += `<div class="form-group"><label class="form-label">${f.label}</label><input class="form-input" type="${f.type}" id="ped_${f.id}" value="${val}" ${f.step ? 'step="' + f.step + '"' : ''}></div>`;
+            }
+        }
+        return h;
+    }
+    let html = '<h5 style="color:var(--text3);margin-bottom:8px">Identité maternelle</h5><div class="form-grid">' + renderFields(caseFields, c) + '</div>';
+    html += '<h5 style="color:var(--text3);margin:16px 0 8px">Données périnatales & décès</h5><div class="form-grid">' + renderFields(fields, p) + '</div>';
+
+    document.getElementById('mainBody').innerHTML = `
+    <div style="padding:20px;">
+        <h3>Détails pédiatriques — ${state.currentCase.numero_dossier}</h3>
+        ${html}
+        <div style="margin-top:16px;display:flex;gap:8px;">
+            <button class="btn btn-primary" onclick="savePedDetails()">Enregistrer</button>
+            <button class="btn" onclick="renderDetail()">Annuler</button>
+        </div>
+    </div>`;
+}
+
+async function savePedDetails() {
+    const data = {};
+    for (const f of ['date_naissance', 'heure_naissance', 'terme_naissance_sa', 'terme_naissance_jours',
+        'mode_accouchement', 'poids_naissance_g', 'taille_naissance_cm', 'pc_naissance_mm',
+        'apgar_1', 'apgar_5', 'apgar_10', 'date_deces', 'heure_deces', 'age_deces_jours', 'lieu_deces',
+        'cause_deces_principale', 'contexte_deces', 'poids_deces_g', 'taille_deces_cm',
+        'pc_deces_mm', 'autopsie_type']) {
+        const el = document.getElementById('ped_' + f);
+        data[f] = el ? el.value : '';
+    }
+    data.reanimation = document.getElementById('ped_reanimation')?.checked ? true : false;
+    data.autopsie_consentement = document.getElementById('ped_autopsie_consentement')?.checked ? true : false;
+
+    // Save mother identity on the case itself
+    const caseUpdate = {};
+    for (const f of ['nom_mere', 'prenom_mere', 'ddn_mere']) {
+        const el = document.getElementById('ped_' + f);
+        if (el) caseUpdate[f] = el.value;
+    }
+
+    await Promise.all([
+        api('/api/cases/' + state.currentCase.id + '/pediatric-details', {
+            method: 'PUT', body: JSON.stringify(data),
+        }),
+        api('/api/cases/' + state.currentCase.id, {
+            method: 'PUT', body: JSON.stringify(caseUpdate),
+        }),
+    ]);
+
+    // Auto-compute Molina
+    await api('/api/cases/' + state.currentCase.id + '/compute-pediatric', { method: 'POST' });
+
+    toast('Enregistré + biométries calculées');
+    const [ped, caseData] = await Promise.all([
+        api('/api/cases/' + state.currentCase.id + '/pediatric-details'),
+        api('/api/cases/' + state.currentCase.id),
+    ]);
+    state.pedDetails = ped.details || {};
+    if (caseData) state.currentCase = caseData;
+    renderDetail();
+}
+
+// ── Biometry compute ──
+
+async function computeBio() {
+    toast('Calcul en cours...');
+    const res = await api('/api/cases/' + state.currentCase.id + '/compute-pediatric', { method: 'POST' });
+    if (res.error) { toast(res.error, 'error'); return; }
+    toast('Biométries calculées');
+    renderDetail();
+}
+
+// ── Compte Rendu ──
+
+async function showCR() {
+    const caseId = state.currentCase.id;
+    // Load existing CR if any
+    const lastCR = await api('/api/cases/' + caseId + '/modules/last_cr').catch(() => null);
+    const crData = lastCR && lastCR.data ? lastCR.data : null;
+
+    // Load available templates
+    const tplList = await fetch('/admin/api/cr/templates').then(r => r.json()).catch(() => []);
+    const userTpls = await fetch('/admin/api/cr/user-templates').then(r => r.json()).catch(() => []);
+    const allTpls = [...(Array.isArray(tplList) ? tplList : []), ...(Array.isArray(userTpls) ? userTpls : [])];
+
+    let tplOpts = allTpls.map(t => {
+        const id = t.id || t.template_id || t.name;
+        const label = t.label || t.name || id;
+        return `<option value="${id}">${label}</option>`;
+    }).join('');
+    if (!tplOpts) tplOpts = '<option value="soffoet">Standard (SOFFOET)</option>';
+
+    let html = `<div style="padding:20px;">
+        <h3>Compte rendu — ${state.currentCase.numero_dossier}</h3>
+        <div style="display:flex;gap:8px;align-items:center;margin:12px 0;">
+            <select class="form-select" id="crTemplate" style="max-width:250px">${tplOpts}</select>
+            <button class="btn btn-primary" onclick="generateCR()">Générer</button>
+        </div>`;
+
+    if (crData && crData.html) {
+        html += `<div class="card" style="margin-top:12px;">
+            <h4>Dernier CR (${crData.template_id || '—'})</h4>
+            <div id="crContent" style="font-size:13px;line-height:1.6;">${crData.html}</div>
+            <div style="margin-top:12px;display:flex;gap:8px;">
+                <button class="btn btn-sm" onclick="copyCR()">Copier texte</button>
+                <button class="btn btn-sm" onclick="renderDetail()">Retour</button>
+            </div>
+        </div>`;
+    } else {
+        html += '<p style="color:var(--text3);margin-top:12px;">Aucun CR généré.</p>';
+        html += '<button class="btn btn-sm" onclick="renderDetail()" style="margin-top:8px;">Retour</button>';
+    }
+    html += '</div>';
+    document.getElementById('mainBody').innerHTML = html;
+}
+
+async function generateCR() {
+    const tpl = document.getElementById('crTemplate').value;
+    toast('Génération en cours…');
+    const res = await fetch('/admin/api/cases/' + state.currentCase.id + '/cr/generate', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({template_id: tpl}),
+    }).then(r => r.json());
+    if (res.error) { toast(res.error, 'error'); return; }
+    toast('CR généré');
+    showCR();
+}
+
+function copyCR() {
+    const el = document.getElementById('crContent');
+    if (!el) return;
+    const text = el.innerText || el.textContent;
+    navigator.clipboard.writeText(text).then(() => toast('Copié'));
+}
+
+// ── Init ──
+loadCases();
+</script>
+
+<style>
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; }
+.detail-grid > div { display: flex; flex-direction: column; gap: 2px; }
+.detail-grid .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.card h4 { margin: 0 0 12px; font-size: 14px; color: var(--accent); }
+.tag { display: inline-block; padding: 2px 8px; background: var(--accent-dim); color: var(--accent); border-radius: 4px; font-size: 12px; margin: 2px; }
+.bio-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+.bio-table th, .bio-table td { padding: 4px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+.bio-table th { color: var(--text3); font-weight: 500; }
+</style>
+</body>
+</html>

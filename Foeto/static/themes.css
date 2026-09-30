@@ -1,0 +1,261 @@
+/*
+ * FoetoPath — Shared Theme Definitions
+ * Applied globally via [data-theme] on <html>.
+ * Each page may use different CSS variable names, so we set ALL variants.
+ *
+ * Variable mapping:
+ *   admin.html       : --bg, --bg2, --bg3, --bg4, --text, --text2, --text3, --accent, etc.
+ *   hub/users/placenta: --bg, --surface, --surface2, --surface3, --hover, --active, --border, --text, --text2, --muted
+ *   index.html       : --bg-primary, --bg-secondary, --bg-tertiary, --bg-hover, --bg-active, --text-primary, --text-secondary, --text-muted
+ */
+
+/* ── Theme: Light ──────────────────────────────────────── */
+[data-theme="light"] {
+    /* admin.html names */
+    --bg: #f5f5f7; --bg2: #ffffff; --bg3: #eef0f4; --bg4: #dfe2e8;
+    --text: #1d1d1f; --text2: #555; --text3: #999;
+    --accent: #5b4bc4; --accent-dim: #4a3da0; --accent-bg: rgba(91,75,196,0.08);
+    --success: #1fa855; --success-bg: rgba(31,168,85,0.08);
+    --warning: #d48806; --warning-bg: rgba(212,136,6,0.08);
+    --danger: #cf3030; --danger-bg: rgba(207,48,48,0.08);
+    --info: #2870bd; --info-bg: rgba(40,112,189,0.08);
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.16);
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    /* hub / users / placenta names */
+    --surface: #ffffff; --surface2: #eef0f4; --surface3: #dfe2e8;
+    --hover: #e8eaef; --active: #dfe2e8;
+    --muted: #999;
+    --accent-dim: rgba(91,75,196,0.10);
+    --success-dim: rgba(31,168,85,0.10); --warning-dim: rgba(212,136,6,0.10);
+    --danger-dim: rgba(207,48,48,0.10); --info-dim: rgba(40,112,189,0.10);
+    /* index.html (viewer) names */
+    --bg-primary: #f5f5f7; --bg-secondary: #ffffff; --bg-tertiary: #eef0f4;
+    --bg-hover: #e8eaef; --bg-active: #dfe2e8;
+    --text-primary: #1d1d1f; --text-secondary: #555; --text-muted: #999;
+    --accent-glow: rgba(91,75,196,0.12);
+    --accent-photo: #d48806; --accent-photo-dim: #b87a3a; --accent-photo-glow: rgba(212,136,6,0.12);
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); }
+
+/* ── Theme: Malvoyant (High Contrast) ──────────────────── */
+[data-theme="highcontrast"] {
+    --bg: #000000; --bg2: #0a0a0a; --bg3: #111; --bg4: #1a1a1a;
+    --text: #ffffff; --text2: #ffff00; --text3: #cccccc;
+    --accent: #00ffff; --accent-dim: #00cccc; --accent-bg: rgba(0,255,255,0.12);
+    --success: #00ff00; --success-bg: rgba(0,255,0,0.12);
+    --warning: #ffff00; --warning-bg: rgba(255,255,0,0.12);
+    --danger: #ff3333; --danger-bg: rgba(255,51,51,0.12);
+    --info: #66ccff; --info-bg: rgba(102,204,255,0.12);
+    --border: rgba(255,255,255,0.3); --border2: rgba(255,255,255,0.5);
+    --shadow: 0 0 0 2px #fff;
+    --radius: 2px; --radius-lg: 4px;
+    --surface: #0a0a0a; --surface2: #111; --surface3: #1a1a1a;
+    --hover: #222; --active: #333;
+    --muted: #cccccc;
+    --success-dim: rgba(0,255,0,0.12); --warning-dim: rgba(255,255,0,0.12);
+    --danger-dim: rgba(255,51,51,0.12); --info-dim: rgba(102,204,255,0.12);
+    --bg-primary: #000000; --bg-secondary: #0a0a0a; --bg-tertiary: #111;
+    --bg-hover: #222; --bg-active: #333;
+    --text-primary: #ffffff; --text-secondary: #ffff00; --text-muted: #cccccc;
+    --accent-glow: rgba(0,255,255,0.15);
+    --accent-photo: #ffff00; --accent-photo-dim: #cccc00; --accent-photo-glow: rgba(255,255,0,0.15);
+}
+[data-theme="highcontrast"] { font-size: 16px !important; }
+[data-theme="highcontrast"] .btn,
+[data-theme="highcontrast"] .form-input,
+[data-theme="highcontrast"] .fselect,
+[data-theme="highcontrast"] .finput {
+    font-size: 15px !important; border-width: 2px !important;
+}
+[data-theme="highcontrast"] .case-item.active { border-left: 4px solid #00ffff !important; }
+[data-theme="highcontrast"] .tab.active { border-bottom: 3px solid #00ffff !important; }
+
+/* ── Theme: CLI (terminal vert) ────────────────────────── */
+[data-theme="cli"] {
+    --bg: #0a0a0a; --bg2: #0d0d0d; --bg3: #111; --bg4: #1a1a1a;
+    --text: #33ff33; --text2: #22cc22; --text3: #118811;
+    --accent: #33ff33; --accent-dim: #22aa22; --accent-bg: rgba(51,255,51,0.06);
+    --success: #33ff33; --success-bg: rgba(51,255,51,0.08);
+    --warning: #ccff33; --warning-bg: rgba(204,255,51,0.08);
+    --danger: #ff3333; --danger-bg: rgba(255,51,51,0.08);
+    --info: #33ccff; --info-bg: rgba(51,204,255,0.08);
+    --border: rgba(51,255,51,0.15); --border2: rgba(51,255,51,0.25);
+    --shadow: 0 0 8px rgba(51,255,51,0.1);
+    --font: 'JetBrains Mono', 'Courier New', monospace;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+    --radius: 0px; --radius-lg: 0px;
+    --surface: #0d0d0d; --surface2: #111; --surface3: #1a1a1a;
+    --hover: #1a1a1a; --active: #222;
+    --muted: #118811;
+    --success-dim: rgba(51,255,51,0.08); --warning-dim: rgba(204,255,51,0.08);
+    --danger-dim: rgba(255,51,51,0.08); --info-dim: rgba(51,204,255,0.08);
+    --bg-primary: #0a0a0a; --bg-secondary: #0d0d0d; --bg-tertiary: #111;
+    --bg-hover: #1a1a1a; --bg-active: #222;
+    --text-primary: #33ff33; --text-secondary: #22cc22; --text-muted: #118811;
+    --accent-glow: rgba(51,255,51,0.12);
+    --accent-photo: #ccff33; --accent-photo-dim: #99cc22; --accent-photo-glow: rgba(204,255,51,0.12);
+}
+[data-theme="cli"] { letter-spacing: 0.5px; }
+[data-theme="cli"] body { text-shadow: 0 0 4px rgba(51,255,51,0.3); font-family: 'JetBrains Mono', 'Courier New', monospace !important; }
+[data-theme="cli"] * { font-family: inherit; }
+[data-theme="cli"] .sidebar-brand, [data-theme="cli"] .main-header-title,
+[data-theme="cli"] .card-title, [data-theme="cli"] h3 {
+    text-transform: uppercase !important; letter-spacing: 2px;
+}
+[data-theme="cli"] .btn { text-transform: uppercase; letter-spacing: 1px; border-style: dashed !important; }
+[data-theme="cli"] .btn-primary { background: #33ff33 !important; color: #000 !important; border-style: solid !important; text-shadow: none; }
+[data-theme="cli"] .modal { border: 1px dashed #33ff33 !important; }
+[data-theme="cli"] .tab.active { border-bottom-color: #33ff33 !important; text-shadow: 0 0 8px #33ff33; }
+[data-theme="cli"] input, [data-theme="cli"] select, [data-theme="cli"] textarea {
+    background: #0a0a0a !important; color: #33ff33 !important; border-color: #33ff33 !important;
+    caret-color: #33ff33; font-family: var(--mono) !important;
+}
+[data-theme="cli"] ::placeholder { color: #118811 !important; }
+[data-theme="cli"] pre { border-color: #33ff33 !important; }
+
+/* ── Theme: Windows 98 ─────────────────────────────────── */
+[data-theme="win98"] {
+    --bg: #008080; --bg2: #c0c0c0; --bg3: #d4d0c8; --bg4: #bfbcb5;
+    --text: #000000; --text2: #333; --text3: #666;
+    --accent: #000080; --accent-dim: #000060; --accent-bg: rgba(0,0,128,0.08);
+    --success: #008000; --success-bg: rgba(0,128,0,0.08);
+    --warning: #808000; --warning-bg: rgba(128,128,0,0.08);
+    --danger: #cc0000; --danger-bg: rgba(204,0,0,0.08);
+    --info: #000080; --info-bg: rgba(0,0,128,0.08);
+    --border: #808080; --border2: #404040;
+    --shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+    --font: 'MS Sans Serif', 'Tahoma', 'Arial', sans-serif;
+    --mono: 'Fixedsys', 'Courier New', monospace;
+    --radius: 0px; --radius-lg: 0px;
+    --surface: #c0c0c0; --surface2: #d4d0c8; --surface3: #bfbcb5;
+    --hover: #d4d0c8; --active: #bfbcb5;
+    --muted: #666;
+    --success-dim: rgba(0,128,0,0.08); --warning-dim: rgba(128,128,0,0.08);
+    --danger-dim: rgba(204,0,0,0.08); --info-dim: rgba(0,0,128,0.08);
+    --bg-primary: #008080; --bg-secondary: #c0c0c0; --bg-tertiary: #d4d0c8;
+    --bg-hover: #d4d0c8; --bg-active: #bfbcb5;
+    --text-primary: #000000; --text-secondary: #333; --text-muted: #666;
+    --accent-glow: rgba(0,0,128,0.12);
+    --accent-photo: #808000; --accent-photo-dim: #606000; --accent-photo-glow: rgba(128,128,0,0.12);
+}
+[data-theme="win98"] body { background: #008080; image-rendering: pixelated; font-family: 'MS Sans Serif', 'Tahoma', 'Arial', sans-serif !important; }
+[data-theme="win98"] * { font-family: inherit; }
+[data-theme="win98"] .sidebar {
+    background: #c0c0c0 !important;
+    border-right: 2px solid #808080 !important;
+    box-shadow: inset -1px 0 #fff, inset 1px 0 #dfdfdf;
+}
+[data-theme="win98"] .main-header {
+    background: #000080 !important; color: #fff !important; font-weight: 700;
+}
+[data-theme="win98"] .main-header-title { color: #fff !important; }
+[data-theme="win98"] .btn {
+    background: #c0c0c0 !important; color: #000 !important;
+    border: none !important; font-weight: 700; font-size: 12px;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+    padding: 4px 12px;
+}
+[data-theme="win98"] .btn:hover { background: #d4d0c8 !important; }
+[data-theme="win98"] .btn:active, [data-theme="win98"] .btn-primary {
+    box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px grey, inset -2px -2px #dfdfdf !important;
+}
+[data-theme="win98"] .btn-primary { background: #c0c0c0 !important; color: #000 !important; text-decoration: underline; }
+[data-theme="win98"] .btn-danger { color: #cc0000 !important; }
+[data-theme="win98"] .card, [data-theme="win98"] .hub-card {
+    background: #c0c0c0 !important; border: none !important;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+}
+[data-theme="win98"] .hub-card:hover { transform: none; }
+[data-theme="win98"] .modal-overlay { background: rgba(0,128,128,0.6) !important; }
+[data-theme="win98"] .modal {
+    background: #c0c0c0 !important; border: none !important;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+}
+[data-theme="win98"] .modal-header {
+    background: linear-gradient(90deg, #000080, #1084d0) !important;
+    color: #fff !important; font-weight: 700; padding: 4px 8px !important;
+}
+[data-theme="win98"] .modal-header h3 { color: #fff !important; font-size: 13px !important; }
+[data-theme="win98"] input, [data-theme="win98"] select, [data-theme="win98"] textarea {
+    background: #fff !important; color: #000 !important;
+    border: none !important;
+    box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px grey, inset -2px -2px #dfdfdf;
+    font-family: var(--font) !important;
+}
+[data-theme="win98"] .tab {
+    background: #c0c0c0; border: none !important; font-weight: 700;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+    margin-right: 2px; padding: 4px 12px;
+}
+[data-theme="win98"] .tab.active {
+    background: #d4d0c8; border-bottom: 2px solid #d4d0c8 !important;
+    box-shadow: inset -1px 0 #0a0a0a, inset 1px 1px #fff, inset -2px 0 grey, inset 2px 2px #dfdfdf;
+    position: relative; top: 1px;
+}
+[data-theme="win98"] .case-item { border-left: none !important; background: #c0c0c0 !important; }
+[data-theme="win98"] .case-item.active { background: #000080 !important; color: #fff !important; }
+[data-theme="win98"] .case-item.active * { color: #fff !important; }
+[data-theme="win98"] .case-item:hover:not(.active) { background: #d4d0c8 !important; }
+[data-theme="win98"] .sidebar-header { background: #c0c0c0 !important; }
+[data-theme="win98"] pre { background: #fff !important; color: #000 !important; border: none !important; box-shadow: inset 1px 1px #808080; }
+[data-theme="win98"] ::-webkit-scrollbar { width: 16px; }
+[data-theme="win98"] ::-webkit-scrollbar-track { background: #c0c0c0; }
+[data-theme="win98"] ::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+}
+
+/* ── Hub-specific theme overrides ──────────────────────── */
+[data-theme="light"] .user-bar { background: rgba(245,245,247,0.85); }
+[data-theme="highcontrast"] .user-bar { background: rgba(0,0,0,0.95); }
+[data-theme="cli"] .user-bar { background: rgba(10,10,10,0.95); border-bottom-color: rgba(51,255,51,0.15); }
+[data-theme="win98"] .user-bar {
+    background: linear-gradient(90deg, #000080, #1084d0); height: 24px;
+}
+[data-theme="win98"] .user-bar * { color: #fff !important; }
+[data-theme="win98"] .hub-header h1 { color: #fff; }
+[data-theme="win98"] .hub-footer { color: #fff; }
+[data-theme="win98"] .topbar {
+    background: linear-gradient(90deg, #000080, #1084d0) !important;
+    border-bottom: 2px solid #000060 !important;
+}
+[data-theme="win98"] .topbar-brand,
+[data-theme="win98"] .topbar-brand span { color: #fff !important; }
+[data-theme="win98"] .topbar-nav a { color: #c0c0c0 !important; }
+[data-theme="win98"] .topbar-nav a:hover { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
+[data-theme="win98"] .topbar-nav a.active { background: rgba(255,255,255,0.25) !important; color: #fff !important; }
+[data-theme="win98"] .btn-sm.primary { background: #000080 !important; color: #fff !important; border-color: #000060 !important; }
+[data-theme="win98"] .badge-en_cours { background: #000080 !important; color: #fff !important; }
+[data-theme="win98"] .badge-complet { background: #008000 !important; color: #fff !important; }
+[data-theme="win98"] .badge-archive { background: #808080 !important; color: #fff !important; }
+/* Onglets internes (tabs d'un cas) */
+[data-theme="win98"] .tab.active { color: #000080 !important; border-bottom-color: #000080 !important; font-weight: 700; }
+[data-theme="win98"] .tab .tab-badge { background: #000080 !important; color: #fff !important; }
+/* Tissue pills */
+[data-theme="win98"] .tissue-pill.active { background: #000080 !important; border-color: #000060 !important; color: #fff !important; }
+[data-theme="win98"] .tissue-pill:hover { border-color: #000080 !important; color: #000 !important; }
+/* Progress bars & sliders dans grille micro */
+[data-theme="win98"] .progress-fill, [data-theme="win98"] input[type="range"]::-webkit-slider-thumb { background: #000080 !important; }
+/* Module chips (Données tab) */
+[data-theme="win98"] .module-chip { background: #000080 !important; color: #fff !important; }
+[data-theme="win98"] .module-chip:hover { background: #0000a0 !important; color: #fff !important; }
+/* Data toggle links */
+[data-theme="win98"] .data-toggle { color: #000080 !important; }
+/* Detail header action buttons */
+[data-theme="win98"] .btn.danger { background: #c0c0c0 !important; color: #cc0000 !important; border-color: #808080 !important; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf; }
+[data-theme="win98"] .btn.primary { background: #c0c0c0 !important; color: #000 !important; text-decoration: underline; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf; }
+/* Sidebar btn-sm */
+[data-theme="win98"] .btn-sm { background: #c0c0c0 !important; color: #000 !important; border: none !important; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf; font-weight: 700; }
+/* Card headers in win98 */
+[data-theme="win98"] .card-header { background: linear-gradient(90deg, #000080, #1084d0) !important; color: #fff !important; font-weight: 700; padding: 4px 8px !important; }
+/* Field labels & values */
+[data-theme="win98"] .field-label { color: #000 !important; }
+[data-theme="win98"] .field-value { color: #000 !important; }
+/* Accent-dim backgrounds (tissue tags, etc.) need readable text in win98 */
+[data-theme="win98"] [style*="accent-dim"] { background: #000080 !important; color: #fff !important; }
+/* JSON view in modules */
+[data-theme="win98"] .json-view { background: #fff !important; color: #000 !important; border-color: #808080 !important; }
+/* Empty state text */
+[data-theme="win98"] .empty-state { color: #000 !important; }
+[data-theme="win98"] .empty-state h3 { color: #000 !important; }
+[data-theme="win98"] .empty-state p { color: #444 !important; }

@@ -1,0 +1,166 @@
+[
+  {
+    "sa": 8,
+    "label": "Clavicules, mandibule"
+  },
+  {
+    "sa": 9,
+    "label": "Os longs des membres, maxillaire supérieur"
+  },
+  {
+    "sa": 10,
+    "label": "Ilions, côtes, omoplates, phalanges distales des mains"
+  },
+  {
+    "sa": 11,
+    "label": "Métacarpiens"
+  },
+  {
+    "sa": 12,
+    "label": "Métatarsiens, voûte crânienne, os propres du nez"
+  },
+  {
+    "sa": 12,
+    "label": "Arcs vertébraux postérieurs (à partir de la région cervicale)"
+  },
+  {
+    "sa": 12,
+    "label": "Corps vertébraux (à partir de la charnière thoraco-lombaire)"
+  },
+  {
+    "sa": 13,
+    "label": "Grandes ailes du sphénoïde"
+  },
+  {
+    "sa": 13,
+    "label": "Phalanges proximales des mains"
+  },
+  {
+    "sa": 13,
+    "label": "Arcs vertébraux postérieurs jusqu'à la région lombaire"
+  },
+  {
+    "sa": 13,
+    "label": "Corps vertébraux : derniers cervicaux → région sacrée"
+  },
+  {
+    "sa": 14,
+    "label": "Petites ailes du sphénoïde"
+  },
+  {
+    "sa": 14,
+    "label": "Épine sciatique"
+  },
+  {
+    "sa": 14,
+    "label": "Phalanges moyennes des mains (sauf 5e doigt)"
+  },
+  {
+    "sa": 16,
+    "label": "Phalange moyenne du 5e doigt"
+  },
+  {
+    "sa": 16,
+    "label": "Phalanges proximales des orteils"
+  },
+  {
+    "sa": 17,
+    "label": "Ischions"
+  },
+  {
+    "sa": 17,
+    "label": "Base du corps vertébral de C2 (axis)"
+  },
+  {
+    "sa": 18,
+    "label": "Bord supérieur de l'olécrâne convexe"
+  },
+  {
+    "sa": 18,
+    "label": "Minéralisation débutante des mastoïdes"
+  },
+  {
+    "sa": 19,
+    "label": "Branches pubiennes (inconstantes)"
+  },
+  {
+    "sa": 20,
+    "label": "Canaux semi-circulaires supérieurs"
+  },
+  {
+    "sa": 21,
+    "label": "Apophyse odontoïde"
+  },
+  {
+    "sa": 22,
+    "label": "Incisives supérieures"
+  },
+  {
+    "sa": 23,
+    "label": "Calcanéum"
+  },
+  {
+    "sa": 24,
+    "label": "Incisives inférieures"
+  },
+  {
+    "sa": 24,
+    "label": "Canaux semi-circulaires supérieurs partiellement intégrés aux rochers"
+  },
+  {
+    "sa": 25,
+    "label": "Canines inférieures"
+  },
+  {
+    "sa": 27,
+    "label": "Talus"
+  },
+  {
+    "sa": 27,
+    "label": "Premier aileron sacré"
+  },
+  {
+    "sa": 30,
+    "label": "Pointes de la 1ère molaire inférieure"
+  },
+  {
+    "sa": 32,
+    "label": "Talus ovalaire"
+  },
+  {
+    "sa": 32,
+    "label": "Première molaire"
+  },
+  {
+    "sa": 32,
+    "label": "Os hyoïde"
+  },
+  {
+    "sa": 34,
+    "label": "Pointes de la 2e molaire inférieure"
+  },
+  {
+    "sa": 36,
+    "label": "Point fémoral inférieur (de Béclard)"
+  },
+  {
+    "sa": 36,
+    "label": "Deuxième aileron sacré"
+  },
+  {
+    "sa": 37,
+    "label": "Point tibial supérieur (de Todt)"
+  },
+  {
+    "sa": 37,
+    "label": "Cuboïde (inconstant)"
+  },
+  {
+    "sa": 40,
+    "label": "Point huméral supérieur"
+  },
+  {
+    "sa": 40,
+    "label": "Cuboïde"
+  }
+]

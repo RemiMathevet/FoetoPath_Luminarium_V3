@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CR Placenta — Génération dynamique</title>
+    <style>
+        :root {
+            --color-bg-primary: #ffffff;
+            --color-bg-secondary: #f8f9fa;
+            --color-text-primary: #212529;
+            --color-text-secondary: #495057;
+            --color-text-muted: #6c757d;
+            --color-border: #dee2e6;
+            --color-accent: #0d6efd;
+            --color-accent-light: #e7f1ff;
+            --color-success: #198754;
+            --color-warning: #ffc107;
+            --color-danger: #dc3545;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            line-height: 1.5;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 1.5rem 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--color-accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Sections */
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Fields */
+        .fields-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .field-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        .field-input, .field-select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+        }
+
+        .field-input:focus, .field-select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-accent-light);
+        }
+
+        /* Toggle group (Normal/Anormal) */
+        .toggle-inline {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .toggle-inline > span {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+
+        .toggle-group {
+            display: inline-flex;
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .toggle-group input { display: none; }
+
+        .toggle-group label {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--color-text-muted);
+            border-right: 1px solid var(--color-border);
+        }
+
+        .toggle-group label:last-of-type {
+            border-right: none;
+        }
+
+        .toggle-group input:checked + label {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        .toggle-group input:checked + label.anormal-label {
+            background: var(--color-danger);
+        }
+
+        /* Checkbox grid conditionnel */
+        .anomalies-container {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: var(--color-accent-light);
+            border: 1px dashed var(--color-accent);
+            border-radius: var(--radius-sm);
+            display: none;
+        }
+
+        .anomalies-container.visible {
+            display: block;
+        }
+
+        .anomalies-container.danger {
+            background: #ffeef0;
+            border-color: var(--color-danger);
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--color-accent);
+        }
+
+        .checkbox-item:has(input:checked) {
+            border-color: var(--color-accent);
+            background: var(--color-accent-light);
+        }
+
+        .checkbox-item input {
+            accent-color: var(--color-accent);
+            margin: 0;
+        }
+
+        /* Résultat DS */
+        .ds-result {
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .ds-result.normal {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .ds-result.warning {
+            background: #fff3cd;
+            color: #664d03;
+        }
+
+        .ds-result.danger {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .ds-result.extrapolated {
+            border-left: 3px solid var(--color-warning);
+        }
+
+        /* Texte généré */
+        .generated-text {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            min-height: 300px;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .generated-text .section-label {
+            font-weight: 600;
+            color: var(--color-accent);
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .generated-text .section-label:first-child {
+            margin-top: 0;
+        }
+
+        /* Boutons */
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0b5ed7;
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border);
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Subsection titles */
+        .subsection-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin: 1rem 0 0.5rem 0;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--color-border);
+        }
+
+        .subsection-title:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        /* Sticky panel */
+        .right-panel {
+            position: sticky;
+            top: 20px;
+            align-self: start;
+        }
+
+        @media (max-width: 1200px) {
+            .right-panel {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- PANNEAU GAUCHE : SAISIE -->
+    <div class="panel">
+        <h1 class="panel-title">📋 Saisie CR Placenta</h1>
+
+        <!-- MACROSCOPIE -->
+        <div class="form-section">
+            <h2 class="section-title">🔬 Données générales & Biométrie</h2>
+            
+            <div class="fields-grid">
+                <div class="field">
+                    <label class="field-label">Terme (SA)</label>
+                    <select class="field-select" id="terme" onchange="updateText()">
+                        <option value="">— Choisir —</option>
+                        <script>
+                            for(let i = 18; i <= 42; i++) {
+                                document.write(`<option value="${i}">${i} SA</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+                <div class="field">
+                    <label class="field-label">Poids placenta (g)</label>
+                    <input type="number" class="field-input" id="masse" placeholder="g" onchange="updateText()">
+                </div>
+                <div class="field">
+                    <label class="field-label">Grand axe (cm)</label>
+                    <input type="number" step="0.1" class="field-input" id="longueur" placeholder="cm" onchange="updateText()">
+                </div>
+                <div class="field">
+                    <label class="field-label">Petit axe (cm)</label>
+                    <input type="number" step="0.1" class="field-input" id="largeur" placeholder="cm" onchange="updateText()">
+                </div>
+                <div class="field">
+                    <label class="field-label">Épaisseur (cm)</label>
+                    <input type="number" step="0.1" class="field-input" id="epaisseur" placeholder="cm" onchange="updateText()">
+                </div>
+                <div class="field">
+                    <label class="field-label">Masse fœtale (g)</label>
+                    <input type="number" class="field-input" id="masse_foetale" placeholder="g" onchange="updateText()">
+                </div>
+            </div>
+            
+            <div id="dsResult" class="ds-result" style="display:none;"></div>
+        </div>
+
+        <!-- CORDON -->
+        <div class="form-section">
+            <h2 class="section-title">🔗 Cordon ombilical</h2>
+            
+            <div class="fields-grid" style="margin-bottom: 1rem;">
+                <div class="field">
+                    <label class="field-label">Longueur cordon (cm)</label>
+                    <input type="number" step="0.1" class="field-input" id="cordon_longueur" onchange="updateText()">
+                </div>
+            </div>
+            
+            <div class="toggle-inline">
+                <span>Insertion :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="cordon_insertion" id="ins_centrale" value="centrale" onchange="updateText()">
+                    <label for="ins_centrale">Centrale</label>
+                    <input type="radio" name="cordon_insertion" id="ins_paracentrale" value="paracentrale" onchange="updateText()">
+                    <label for="ins_paracentrale">Paracentrale</label>
+                    <input type="radio" name="cordon_insertion" id="ins_marginale" value="marginale" onchange="updateText()">
+                    <label for="ins_marginale">Marginale</label>
+                    <input type="radio" name="cordon_insertion" id="ins_velamenteuse" value="velamenteuse" onchange="updateText()">
+                    <label for="ins_velamenteuse">Vélamenteuse</label>
+                </div>
+            </div>
+
+            <div class="toggle-inline">
+                <span>Spiralisation :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="cordon_spiral" id="spiral_normal" value="normal" onchange="updateText()">
+                    <label for="spiral_normal">Normale</label>
+                    <input type="radio" name="cordon_spiral" id="spiral_anormal" value="anormal" onchange="updateText()">
+                    <label for="spiral_anormal" class="anormal-label">Anormale</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEMBRANES -->
+        <div class="form-section">
+            <h2 class="section-title">🧫 Membranes</h2>
+            
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="membranes_macro" id="memb_macro_normal" value="normal" checked onchange="toggleAnomalies('membranes_macro'); updateText()">
+                    <label for="memb_macro_normal">Normal</label>
+                    <input type="radio" name="membranes_macro" id="memb_macro_anormal" value="anormal" onchange="toggleAnomalies('membranes_macro'); updateText()">
+                    <label for="memb_macro_anormal" class="anormal-label">Anormal</label>
+                </div>
+            </div>
+
+            <div id="anomalies_membranes_macro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="memb_meconium" onchange="updateText()"> Imprégnation méconiale</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_hemorragique" onchange="updateText()"> Aspect hémorragique</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_opaque" onchange="updateText()"> Opacification</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_bride" onchange="updateText()"> Bride amniotique</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_nodosum" onchange="updateText()"> Amnios nodosum</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLAQUE CHORIALE (Face fœtale) -->
+        <div class="form-section">
+            <h2 class="section-title">🔵 Plaque choriale (face fœtale)</h2>
+            
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="plaque_cho_macro" id="pcho_macro_normal" value="normal" checked onchange="toggleAnomalies('plaque_cho_macro'); updateText()">
+                    <label for="pcho_macro_normal">Normal</label>
+                    <input type="radio" name="plaque_cho_macro" id="pcho_macro_anormal" value="anormal" onchange="toggleAnomalies('plaque_cho_macro'); updateText()">
+                    <label for="pcho_macro_anormal" class="anormal-label">Anormal</label>
+                </div>
+            </div>
+
+            <div id="anomalies_plaque_cho_macro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="pcho_amnios_decolle" onchange="updateText()"> Amnios décollé</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pcho_meconial" onchange="updateText()"> Dépôt méconial</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pcho_thrombose" onchange="updateText()"> Thrombose sous-choriale</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pcho_kystes" onchange="updateText()"> Kystes</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLAQUE BASALE (Face maternelle) -->
+        <div class="form-section">
+            <h2 class="section-title">🔴 Plaque basale (face maternelle)</h2>
+            
+            <div class="toggle-inline">
+                <span>Intégrité :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="plaque_bas_integrite" id="pbas_entiere" value="entiere" onchange="updateText()">
+                    <label for="pbas_entiere">Entière</label>
+                    <input type="radio" name="plaque_bas_integrite" id="pbas_integre" value="integre" onchange="updateText()">
+                    <label for="pbas_integre">Entière et intègre</label>
+                    <input type="radio" name="plaque_bas_integrite" id="pbas_dechiree" value="dechiree" onchange="updateText()">
+                    <label for="pbas_dechiree" class="anormal-label">Déchirée</label>
+                </div>
+            </div>
+
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="plaque_bas_macro" id="pbas_macro_normal" value="normal" checked onchange="toggleAnomalies('plaque_bas_macro'); updateText()">
+                    <label for="pbas_macro_normal">Normal</label>
+                    <input type="radio" name="plaque_bas_macro" id="pbas_macro_anormal" value="anormal" onchange="toggleAnomalies('plaque_bas_macro'); updateText()">
+                    <label for="pbas_macro_anormal" class="anormal-label">Anormal</label>
+                </div>
+            </div>
+
+            <div id="anomalies_plaque_bas_macro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="pbas_infarctus" onchange="updateText()"> Infarctus</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pbas_hematome" onchange="updateText()"> Hématome rétroplacentaire</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pbas_calcifications" onchange="updateText()"> Calcifications</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pbas_fibrine" onchange="updateText()"> Dépôts de fibrine</label>
+                </div>
+                <div class="field" style="margin-top: 0.75rem;">
+                    <label class="field-label">% cotylédons manquants</label>
+                    <input type="number" class="field-input" id="pbas_cotyledons_manquants" min="0" max="100" style="width: 100px;" onchange="updateText()">
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANCHES DE SECTION -->
+        <div class="form-section">
+            <h2 class="section-title">🔪 Tranches de section (parenchyme)</h2>
+            
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="tranches_macro" id="tranches_normal" value="normal" checked onchange="toggleAnomalies('tranches_macro'); updateText()">
+                    <label for="tranches_normal">Sans particularité</label>
+                    <input type="radio" name="tranches_macro" id="tranches_lesions" value="lesions" onchange="toggleAnomalies('tranches_macro'); updateText()">
+                    <label for="tranches_lesions" class="anormal-label">Lésions</label>
+                </div>
+            </div>
+
+            <div id="anomalies_tranches_macro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="tranches_infarctus" onchange="updateText()"> Infarctus parenchymateux</label>
+                    <label class="checkbox-item"><input type="checkbox" id="tranches_hemorragie" onchange="updateText()"> Hémorragie</label>
+                    <label class="checkbox-item"><input type="checkbox" id="tranches_thrombose" onchange="updateText()"> Thrombose intervilleuse</label>
+                    <label class="checkbox-item"><input type="checkbox" id="tranches_chorioangiome" onchange="updateText()"> Chorioangiome</label>
+                </div>
+                <div class="field" style="margin-top: 0.75rem;">
+                    <label class="field-label">% parenchyme lésé (estimation)</label>
+                    <input type="number" class="field-input" id="tranches_pct_lese" min="0" max="100" style="width: 100px;" onchange="updateText()">
+                </div>
+            </div>
+        </div>
+
+        <!-- MICROSCOPIE -->
+        <div class="form-section">
+            <h2 class="section-title">🔬 Microscopie</h2>
+
+            <!-- Cordon micro -->
+            <div class="subsection-title">Cordon</div>
+            <div class="toggle-inline">
+                <span>Vaisseaux :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="cordon_vx" id="cordon_3vx" value="3" onchange="updateText()">
+                    <label for="cordon_3vx">3 vaisseaux</label>
+                    <input type="radio" name="cordon_vx" id="cordon_2vx" value="2" onchange="updateText()">
+                    <label for="cordon_2vx" class="anormal-label">2 vaisseaux</label>
+                </div>
+            </div>
+            <div class="toggle-inline">
+                <span>RIF :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="cordon_rif" id="cordon_rif0" value="0" onchange="updateText()">
+                    <label for="cordon_rif0">RIF 0</label>
+                    <input type="radio" name="cordon_rif" id="cordon_rif1" value="1" onchange="updateText()">
+                    <label for="cordon_rif1" class="anormal-label">RIF 1</label>
+                    <input type="radio" name="cordon_rif" id="cordon_rif2" value="2" onchange="updateText()">
+                    <label for="cordon_rif2" class="anormal-label">RIF 2</label>
+                    <input type="radio" name="cordon_rif" id="cordon_rif3" value="3" onchange="updateText()">
+                    <label for="cordon_rif3" class="anormal-label">RIF 3</label>
+                </div>
+            </div>
+            <div class="checkbox-grid" style="margin-top: 0.5rem;">
+                <label class="checkbox-item"><input type="checkbox" id="cordon_mavm" onchange="updateText()"> MAVM</label>
+            </div>
+
+            <!-- Membranes micro -->
+            <div class="subsection-title">Membranes</div>
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="memb_micro" id="memb_micro_normal" value="normal" checked onchange="toggleAnomalies('memb_micro'); updateText()">
+                    <label for="memb_micro_normal">Normal</label>
+                    <input type="radio" name="memb_micro" id="memb_micro_anormal" value="anormal" onchange="toggleAnomalies('memb_micro'); updateText()">
+                    <label for="memb_micro_anormal" class="anormal-label">Anormal</label>
+                </div>
+            </div>
+            <div id="anomalies_memb_micro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="memb_mfm" onchange="updateText()"> MFM</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_mfm_plus" onchange="updateText()"> MFM+</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_chorio1" onchange="updateText()"> Chorio 1</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_chorio2" onchange="updateText()"> Chorio 2</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_chorio3" onchange="updateText()"> Chorio 3</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_neclamdec" onchange="updateText()"> Nécrose lame décidue</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_decchro" onchange="updateText()"> Déciduite chronique</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_decchro_plus" onchange="updateText()"> Déciduite chronique +</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_sg" onchange="updateText()"> Saignement</label>
+                    <label class="checkbox-item"><input type="checkbox" id="memb_sidero" onchange="updateText()"> Sidérophages</label>
+                </div>
+            </div>
+
+            <!-- Plaque choriale micro -->
+            <div class="subsection-title">Plaque choriale</div>
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="pcho_micro" id="pcho_micro_normal" value="normal" checked onchange="toggleAnomalies('pcho_micro'); updateText()">
+                    <label for="pcho_micro_normal">Normal</label>
+                    <input type="radio" name="pcho_micro" id="pcho_micro_anormal" value="anormal" onchange="toggleAnomalies('pcho_micro'); updateText()">
+                    <label for="pcho_micro_anormal" class="anormal-label">Anormal</label>
+                </div>
+            </div>
+            <div id="anomalies_pcho_micro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="pcho_chorio1" onchange="updateText()"> Chorio 1</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pcho_chorio2" onchange="updateText()"> Chorio 2</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pcho_chorio3" onchange="updateText()"> Chorio 3</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pcho_rif1" onchange="updateText()"> RIF vx allanto-choriaux</label>
+                </div>
+            </div>
+
+            <!-- Villosités -->
+            <div class="subsection-title">Villosités</div>
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="villo_micro" id="villo_micro_normal" value="normal" checked onchange="toggleAnomalies('villo_micro'); updateText()">
+                    <label for="villo_micro_normal">Normal</label>
+                    <input type="radio" name="villo_micro" id="villo_micro_anormal" value="anormal" onchange="toggleAnomalies('villo_micro'); updateText()">
+                    <label for="villo_micro_anormal" class="anormal-label">Anormal</label>
+                </div>
+            </div>
+            <div id="anomalies_villo_micro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="villo_amv" onchange="updateText()"> AMV</label>
+                    <label class="checkbox-item"><input type="checkbox" id="villo_ansct" onchange="updateText()"> ANSCT</label>
+                    <label class="checkbox-item"><input type="checkbox" id="villo_hvd" onchange="updateText()"> HVD</label>
+                    <label class="checkbox-item"><input type="checkbox" id="villo_chorangio" onchange="updateText()"> Chorangiose</label>
+                    <label class="checkbox-item"><input type="checkbox" id="villo_kit" onchange="updateText()"> KIT</label>
+                    <label class="checkbox-item"><input type="checkbox" id="villo_vtf0" onchange="updateText()"> VTF (sclérose)</label>
+                    <label class="checkbox-item"><input type="checkbox" id="villo_vue_bg" onchange="updateText()"> VUE bas grade</label>
+                    <label class="checkbox-item"><input type="checkbox" id="villo_vue_hg" onchange="updateText()"> VUE haut grade</label>
+                    <label class="checkbox-item"><input type="checkbox" id="villo_caryovs" onchange="updateText()"> Caryorrhexie VS</label>
+                </div>
+            </div>
+
+            <!-- Espace intervilleux -->
+            <div class="subsection-title">Espace intervilleux</div>
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="eiv_micro" id="eiv_micro_normal" value="normal" checked onchange="toggleAnomalies('eiv_micro'); updateText()">
+                    <label for="eiv_micro_normal">Normal</label>
+                    <input type="radio" name="eiv_micro" id="eiv_micro_anormal" value="anormal" onchange="toggleAnomalies('eiv_micro'); updateText()">
+                    <label for="eiv_micro_anormal" class="anormal-label">Anormal</label>
+                </div>
+            </div>
+            <div id="anomalies_eiv_micro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="eiv_fibpv" onchange="updateText()"> Fibrine périvillositaire ↑</label>
+                    <label class="checkbox-item"><input type="checkbox" id="eiv_nidf" onchange="updateText()"> NIDF</label>
+                    <label class="checkbox-item"><input type="checkbox" id="eiv_chi" onchange="updateText()"> CHI</label>
+                    <label class="checkbox-item"><input type="checkbox" id="eiv_calcif" onchange="updateText()"> Calcifications ↑</label>
+                </div>
+            </div>
+
+            <!-- Plaque basale micro -->
+            <div class="subsection-title">Plaque basale</div>
+            <div class="toggle-inline">
+                <span>Aspect :</span>
+                <div class="toggle-group">
+                    <input type="radio" name="pbas_micro" id="pbas_micro_normal" value="normal" checked onchange="toggleAnomalies('pbas_micro'); updateText()">
+                    <label for="pbas_micro_normal">Normal</label>
+                    <input type="radio" name="pbas_micro" id="pbas_micro_anormal" value="anormal" onchange="toggleAnomalies('pbas_micro'); updateText()">
+                    <label for="pbas_micro_anormal" class="anormal-label">Anormal</label>
+                </div>
+            </div>
+            <div id="anomalies_pbas_micro" class="anomalies-container danger">
+                <div class="checkbox-grid">
+                    <label class="checkbox-item"><input type="checkbox" id="pbas_artodec" onchange="updateText()"> Artérite décidue (Artodec)</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pbas_decchro_micro" onchange="updateText()"> Déciduite chronique</label>
+                    <label class="checkbox-item"><input type="checkbox" id="pbas_abruptus" onchange="updateText()"> Abruptus</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PANNEAU DROIT : TEXTE GÉNÉRÉ -->
+    <div class="panel right-panel">
+        <h1 class="panel-title">📝 Compte-rendu généré</h1>
+        
+        <div class="actions-bar">
+            <button class="btn btn-primary" onclick="copyText()">📋 Copier</button>
+            <button class="btn btn-secondary" onclick="resetForm()">🔄 Réinitialiser</button>
+        </div>
+
+        <div id="generatedText" class="generated-text" style="margin-top: 1rem;">
+            <em style="color: var(--color-text-muted);">Le compte-rendu apparaîtra ici au fur et à mesure de la saisie...</em>
+        </div>
+    </div>
+</div>
+
+<script>
+// Données de référence pour le calcul DS (Redline et extrapolation)
+const donneesPlacenta = {
+    18: { moyenne: 107, sd: 23, P10: 52, P50: 89, P90: 181, source: 'Extrapol' },
+    19: { moyenne: 113, sd: 25, P10: 56, P50: 94, P90: 196, source: 'Extrapol' },
+    20: { moyenne: 130, sd: 26, P10: 82, P50: 110, P90: 214, source: 'Extrapol' },
+    21: { moyenne: 150, sd: 25, P10: 95, P50: 130, P90: 230, source: 'Extrapol' },
+    22: { moyenne: 189, sd: 89, P10: 107, P50: 166, P90: 285, source: 'Redline' },
+    23: { moyenne: 190, sd: 41, P10: 127, P50: 188, P90: 262, source: 'Redline' },
+    24: { moyenne: 190, sd: 42, P10: 128, P50: 192, P90: 252, source: 'Redline' },
+    25: { moyenne: 197, sd: 70, P10: 128, P50: 184, P90: 299, source: 'Redline' },
+    26: { moyenne: 226, sd: 100, P10: 138, P50: 200, P90: 281, source: 'Redline' },
+    27: { moyenne: 240, sd: 77, P10: 130, P50: 242, P90: 332, source: 'Redline' },
+    28: { moyenne: 223, sd: 66, P10: 140, P50: 214, P90: 321, source: 'Redline' },
+    29: { moyenne: 269, sd: 96, P10: 161, P50: 252, P90: 352, source: 'Redline' },
+    30: { moyenne: 324, sd: 88, P10: 208, P50: 316, P90: 433, source: 'Redline' },
+    31: { moyenne: 314, sd: 105, P10: 175, P50: 313, P90: 417, source: 'Redline' },
+    32: { moyenne: 325, sd: 77, P10: 241, P50: 318, P90: 436, source: 'Redline' },
+    33: { moyenne: 351, sd: 83, P10: 252, P50: 352, P90: 446, source: 'Redline' },
+    34: { moyenne: 381, sd: 84, P10: 283, P50: 382, P90: 479, source: 'Redline' },
+    35: { moyenne: 411, sd: 99, P10: 291, P50: 401, P90: 544, source: 'Redline' },
+    36: { moyenne: 447, sd: 110, P10: 320, P50: 440, P90: 580, source: 'Redline' },
+    37: { moyenne: 467, sd: 107, P10: 349, P50: 452, P90: 607, source: 'Redline' },
+    38: { moyenne: 493, sd: 103, P10: 365, P50: 484, P90: 629, source: 'Redline' },
+    39: { moyenne: 500, sd: 103, P10: 379, P50: 490, P90: 635, source: 'Redline' },
+    40: { moyenne: 510, sd: 100, P10: 390, P50: 501, P90: 643, source: 'Redline' },
+    41: { moyenne: 524, sd: 100, P10: 403, P50: 515, P90: 655, source: 'Redline' },
+    42: { moyenne: 532, sd: 99, P10: 412, P50: 525, P90: 658, source: 'Redline' }
+};
+
+// Ratio fœto-placentaire par SA (Redline) — valeurs en bleu = extrapolées (pas de SD)
+const ratioFP = {
+    16: { moy: 1.0,    sd: null },
+    17: { moy: 1.1867, sd: null },
+    18: { moy: 1.567,  sd: null },
+    19: { moy: 1.9359, sd: null },
+    20: { moy: 2.2934, sd: null },
+    21: { moy: 2.6395, sd: 0.8 },
+    22: { moy: 2.9742, sd: 0.8 },
+    23: { moy: 3.3,    sd: 0.7 },
+    24: { moy: 3.4,    sd: 1.0 },
+    25: { moy: 4.0,    sd: 1.4 },
+    26: { moy: 4.1,    sd: 1.2 },
+    27: { moy: 4.5,    sd: 1.1 },
+    28: { moy: 4.8,    sd: 1.0 },
+    29: { moy: 5.2,    sd: 1.4 },
+    30: { moy: 5.2,    sd: 1.1 },
+    31: { moy: 5.5,    sd: 1.1 },
+    32: { moy: 5.9,    sd: 1.2 },
+    33: { moy: 6.0,    sd: 1.1 },
+    34: { moy: 6.2,    sd: 1.0 },
+    35: { moy: 6.4,    sd: 1.2 },
+    36: { moy: 6.6,    sd: 1.1 },
+    37: { moy: 6.8,    sd: 1.1 },
+    38: { moy: 6.9,    sd: 1.1 },
+    39: { moy: 7.1,    sd: 1.1 },
+    40: { moy: 7.2,    sd: 1.1 },
+    41: { moy: 7.2,    sd: 1.1 },
+    42: { moy: 7.1,    sd: 1.1 }
+};
+
+// Descriptions pour la génération de texte
+const descriptions = {
+    // Microscopie Cordon
+    cordon_vx: {
+        "3": "Le cordon présente 3 vaisseaux sur chacune de ses coupes.",
+        "2": "Le cordon ne compte que deux vaisseaux sur chacune de ses coupes."
+    },
+    cordon_rif: {
+        "0": "Absence de processus inflammatoire funiculaire.",
+        "1": "On note la présence d'une inflammation polynucléaire neutrophile de la média de la veine ombilicale.",
+        "2": "On note la présence d'une inflammation polynucléaire neutrophile de la média de la veine ombilicale et d'une artère ombilicale.",
+        "3": "On note la présence d'une inflammation polynucléaire neutrophile de la média des 3 vaisseaux."
+    },
+    cordon_mavm: "On note une nécrose des myocytes de la média de l'un des vaisseaux.",
+    
+    // Microscopie Membranes
+    memb_micro_normal: "Les membranes sont sans particularité histologique.",
+    memb_mfm: "Les membranes présentent quelques macrophages chargés de méconium épars au chorion.",
+    memb_mfm_plus: "Les membranes présentent de très nombreux macrophages chargés de méconium épars au chorion.",
+    memb_chorio1: "Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue sans extension au chorion ni nécrose de l'amnios.",
+    memb_chorio2: "Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue avec de multiples extensions au chorion sans nécrose de l'amnios.",
+    memb_chorio3: "Les membranes présentent un infiltrat inflammatoire principalement polynucléaire neutrophile non altéré de la décidue et du chorion avec de multiples plages de nécrose de l'amnios.",
+    memb_neclamdec: "La décidue capsulaire présente de multiples plages de nécrose basale.",
+    memb_decchro: "On note la présence de quelques plasmocytes au sein de la décidue basale.",
+    memb_decchro_plus: "On note la présence de nombreux plasmocytes au sein de la décidue basale.",
+    memb_sg: "Le chorion cellulaire est souvent disséqué du chorion fibreux par de multiples effusions de sang frais.",
+    memb_sidero: "La décidue capsulaire présente de multiples sidérophages.",
+    
+    // Microscopie Plaque choriale
+    pcho_micro_normal: "La plaque choriale, les vaisseaux allanto-choriaux et le toit de la chambre intervilleuse sont sans particularité.",
+    pcho_chorio1: "Le toit de la chambre intervilleuse présente un infiltrat inflammatoire à contingent principalement polynucléaire neutrophile souvent englué de fibrine, sans extension au chorion.",
+    pcho_chorio2: "Le toit de la chambre intervilleuse présente un infiltrat inflammatoire à contingent principalement polynucléaire neutrophile souvent englué de fibrine, avec de multiples extensions au chorion.",
+    pcho_chorio3: "Le toit de la chambre intervilleuse présente un infiltrat inflammatoire à contingent principalement polynucléaire neutrophile souvent englué de fibrine, avec de multiples extensions au chorion et de la nécrose.",
+    pcho_rif1: "On note un infiltrat inflammatoire à polynucléaires neutrophiles au sein de la média de quelques gros vaisseaux allanto-choriaux.",
+    
+    // Microscopie Villosités
+    villo_micro_normal: "Les villosités sont de maturation conforme au terme, de morphologie normale.",
+    villo_amv: "On note de multiples plages d'hypoplasie villositaire distale avec importante accélération de la maturation villositaire.",
+    villo_ansct: "On note de multiples plages d'hypoplasie villositaire distale avec augmentation diffuse du nombre d'amas nucléaires syncytiotrophoblastiques.",
+    villo_hvd: "On note de multiples plages d'hypoplasie villositaire distale.",
+    villo_chorangio: "On note la présence de multiples foyers de villosités, principalement distales, hypervascularisées.",
+    villo_kit: "On note la présence de kystes d'inclusion trophoblastiques au sein du stroma de quelques villosités sans citerne ni prolifération trophoblastique anormale.",
+    villo_vtf0: "On note la présence de multiples foyers de villosités complètement sclérosées.",
+    villo_vue_bg: "On note la présence de multiples foyers de moins de 10 villosités dont le stroma et l'espace intervilleux adjacent présente un infiltrat inflammatoire lympho-histiocytaire.",
+    villo_vue_hg: "On note la présence de multiples foyers de plus de 10 villosités dont le stroma et l'espace intervilleux adjacent présente un infiltrat inflammatoire lympho-histiocytaire.",
+    villo_caryovs: "De multiples villosités non systématisées présentent une caryorrhexie vaso-stromale.",
+    
+    // Microscopie Espace intervilleux
+    eiv_micro_normal: "L'espace intervilleux est libre d'inflammation, les globules rouges maternels sont de morphologie normale.",
+    eiv_fibpv: "La fibrine périvillositaire est diffusément augmentée sans toutefois nécroser de villosités.",
+    eiv_nidf: "On note la présence de multiples travées NIDF.",
+    eiv_chi: "L'espace intervilleux présente une inflammation, principalement histiocytaire en de multiples foyers diffus.",
+    eiv_calcif: "On note une augmentation diffuse du nombre de calcifications.",
+    
+    // Microscopie Plaque basale
+    pbas_micro_normal: "La plaque basale est sans particularité.",
+    pbas_artodec: "On note une nécrose fibrinoïde de la média de quelques artères utéro-placentaires.",
+    pbas_decchro_micro: "La plaque basale présente de multiples plasmocytes épars.",
+    pbas_abruptus: "La plaque basale est déchirée par de multiples petites effusions de sang frais."
+};
+
+// Fonction pour afficher/masquer les anomalies selon l'état du toggle
+function toggleAnomalies(groupName) {
+    const normalRadio = document.querySelector(`input[name="${groupName}"][value="normal"]`);
+    const container = document.getElementById(`anomalies_${groupName}`);
+    
+    if (container) {
+        if (normalRadio && normalRadio.checked) {
+            container.classList.remove('visible');
+        } else {
+            container.classList.add('visible');
+        }
+    }
+}
+
+// Fonction principale de génération du texte
+function updateText() {
+    let macroText = [];
+    let microText = [];
+    
+    // ========== MACROSCOPIE ==========
+    
+    // Biométrie et DS
+    const terme = parseInt(document.getElementById('terme').value);
+    const masse = parseFloat(document.getElementById('masse').value);
+    const longueur = parseFloat(document.getElementById('longueur').value);
+    const largeur = parseFloat(document.getElementById('largeur').value);
+    const epaisseur = parseFloat(document.getElementById('epaisseur').value);
+    const masseF = parseFloat(document.getElementById('masse_foetale').value);
+    
+    // Variables pour le ratio (utilisées aussi en conclusion)
+    let ratioValue = null;
+    let ratioDS = null;
+    let ratioInterp = null;
+    let ratioExtrapolated = false;
+    
+    if (terme && masse) {
+        const data = donneesPlacenta[terme];
+        if (data) {
+            const ecartDS = ((masse - data.moyenne) / data.sd).toFixed(2);
+            
+            // Texte macro : adapté selon les champs remplis
+            let bioText = '';
+            if (longueur && largeur && epaisseur) {
+                const forme = (longueur === largeur) ? "circulaire" : "ovalaire";
+                bioText = `Galette placentaire ${forme} de ${longueur} × ${largeur} × ${epaisseur} cm pour ${masse} g`;
+            } else {
+                bioText = `Galette placentaire de ${masse} g`;
+            }
+            bioText += ` (${ecartDS} DS).`;
+            
+            // Calcul ratio fœto-placentaire
+            if (masseF && masse > 0) {
+                ratioValue = (masseF / masse).toFixed(2);
+                const refRatio = ratioFP[terme];
+                if (refRatio) {
+                    if (refRatio.sd !== null) {
+                        ratioDS = ((ratioValue - refRatio.moy) / refRatio.sd).toFixed(2);
+                        if (ratioDS <= -2) ratioInterp = "ratio très abaissé (hypertrophie placentaire relative)";
+                        else if (ratioDS <= -1) ratioInterp = "ratio abaissé";
+                        else if (ratioDS < 1) ratioInterp = "ratio fœto-placentaire normal";
+                        else if (ratioDS < 2) ratioInterp = "ratio élevé";
+                        else ratioInterp = "ratio très élevé (insuffisance placentaire relative)";
+                    } else {
+                        ratioExtrapolated = true;
+                        ratioInterp = "SD non disponible (terme extrapolé)";
+                    }
+                }
+            }
+            
+            // Affichage du résultat DS
+            const dsDiv = document.getElementById('dsResult');
+            let dsClass = 'normal';
+            if (Math.abs(ecartDS) > 2) dsClass = 'danger';
+            else if (Math.abs(ecartDS) > 1.5) dsClass = 'warning';
+            
+            let dsHtml = `<strong>Masse parée : ${ecartDS} DS</strong> — `;
+            dsHtml += `Attendu: ${data.moyenne}g (±${data.sd}g) | P10: ${data.P10}g | P50: ${data.P50}g | P90: ${data.P90}g`;
+            if (data.source === 'Extrapol') {
+                dsHtml += ` <em style="color: var(--color-warning);">⚠️ Donnée extrapolée</em>`;
+                dsClass += ' extrapolated';
+            }
+            
+            // Affichage ratio
+            if (ratioValue !== null) {
+                dsHtml += `<br/><strong>Ratio F/P : ${ratioValue}</strong>`;
+                if (ratioDS !== null) {
+                    let ratioClass = 'normal';
+                    if (Math.abs(ratioDS) > 2) ratioClass = 'danger';
+                    else if (Math.abs(ratioDS) > 1) ratioClass = 'warning';
+                    dsHtml += ` (<span style="color: var(--color-${ratioClass});">${ratioDS} DS</span>)`;
+                    dsHtml += ` — attendu: ${ratioFP[terme].moy} (±${ratioFP[terme].sd})`;
+                } else if (ratioExtrapolated) {
+                    dsHtml += ` <em style="color: var(--color-warning);">⚠️ Z-score non calculable (terme extrapolé, pas de SD)</em>`;
+                }
+            }
+            
+            dsDiv.innerHTML = dsHtml;
+            dsDiv.className = `ds-result ${dsClass}`;
+            dsDiv.style.display = 'block';
+            
+            macroText.push(bioText);
+        }
+    } else {
+        document.getElementById('dsResult').style.display = 'none';
+    }
+    
+    // Cordon macro
+    const cordonInsertion = document.querySelector('input[name="cordon_insertion"]:checked');
+    const cordonLongueur = document.getElementById('cordon_longueur').value;
+    const cordonSpiral = document.querySelector('input[name="cordon_spiral"]:checked');
+    
+    if (cordonInsertion || cordonLongueur) {
+        let cordonText = "Le cordon ombilical est d'insertion ";
+        if (cordonInsertion) {
+            cordonText += cordonInsertion.value;
+        }
+        if (cordonLongueur) {
+            cordonText += `, long de ${cordonLongueur} cm`;
+        }
+        if (cordonSpiral && cordonSpiral.value === 'normal') {
+            cordonText += ", normalement spiralé";
+        } else if (cordonSpiral && cordonSpiral.value === 'anormal') {
+            cordonText += ", de spiralisation anormale";
+        }
+        cordonText += ".";
+        macroText.push(cordonText);
+    }
+    
+    // Membranes macro
+    const membMacro = document.querySelector('input[name="membranes_macro"]:checked');
+    if (membMacro) {
+        if (membMacro.value === 'normal') {
+            macroText.push("Les membranes sont d'aspect et d'insertion normaux.");
+        } else {
+            let anomalies = [];
+            if (document.getElementById('memb_meconium').checked) anomalies.push("imprégnation méconiale");
+            if (document.getElementById('memb_hemorragique').checked) anomalies.push("aspect hémorragique");
+            if (document.getElementById('memb_opaque').checked) anomalies.push("opacification");
+            if (document.getElementById('memb_bride').checked) anomalies.push("bride amniotique");
+            if (document.getElementById('memb_nodosum').checked) anomalies.push("amnios nodosum");
+            
+            if (anomalies.length > 0) {
+                macroText.push(`Les membranes présentent : ${anomalies.join(", ")}.`);
+            } else {
+                macroText.push("Les membranes sont d'aspect anormal.");
+            }
+        }
+    }
+    
+    // Plaque choriale macro
+    const pchoMacro = document.querySelector('input[name="plaque_cho_macro"]:checked');
+    if (pchoMacro) {
+        if (pchoMacro.value === 'normal') {
+            macroText.push("La plaque choriale est d'aspect normal.");
+        } else {
+            let anomalies = [];
+            if (document.getElementById('pcho_amnios_decolle').checked) anomalies.push("décollement partiel de l'amnios");
+            if (document.getElementById('pcho_meconial').checked) anomalies.push("dépôt méconial");
+            if (document.getElementById('pcho_thrombose').checked) anomalies.push("thrombose sous-choriale");
+            if (document.getElementById('pcho_kystes').checked) anomalies.push("kystes");
+            
+            if (anomalies.length > 0) {
+                macroText.push(`La plaque choriale présente : ${anomalies.join(", ")}.`);
+            } else {
+                macroText.push("La plaque choriale est d'aspect anormal.");
+            }
+        }
+    }
+    
+    // Plaque basale macro
+    const pbasIntegrite = document.querySelector('input[name="plaque_bas_integrite"]:checked');
+    const pbasMacro = document.querySelector('input[name="plaque_bas_macro"]:checked');
+    
+    if (pbasIntegrite || pbasMacro) {
+        let pbasText = "La plaque basale est ";
+        
+        if (pbasIntegrite) {
+            if (pbasIntegrite.value === 'entiere') pbasText += "entière";
+            else if (pbasIntegrite.value === 'integre') pbasText += "entière et intègre";
+            else if (pbasIntegrite.value === 'dechiree') pbasText += "déchirée";
+        }
+        
+        if (pbasMacro && pbasMacro.value === 'anormal') {
+            let anomalies = [];
+            if (document.getElementById('pbas_infarctus').checked) anomalies.push("infarctus");
+            if (document.getElementById('pbas_hematome').checked) anomalies.push("hématome rétroplacentaire");
+            if (document.getElementById('pbas_calcifications').checked) anomalies.push("calcifications");
+            if (document.getElementById('pbas_fibrine').checked) anomalies.push("dépôts de fibrine");
+            
+            const cotManquants = document.getElementById('pbas_cotyledons_manquants').value;
+            if (cotManquants) {
+                anomalies.push(`environ ${cotManquants}% de cotylédons manquants`);
+            }
+            
+            if (anomalies.length > 0) {
+                pbasText += `, présentant : ${anomalies.join(", ")}`;
+            }
+        }
+        pbasText += ".";
+        macroText.push(pbasText);
+    }
+    
+    // Tranches de section
+    const tranchesMacro = document.querySelector('input[name="tranches_macro"]:checked');
+    if (tranchesMacro) {
+        if (tranchesMacro.value === 'normal') {
+            macroText.push("Les tranches de section du parenchyme sont sans particularité.");
+        } else {
+            let anomalies = [];
+            if (document.getElementById('tranches_infarctus').checked) anomalies.push("infarctus parenchymateux");
+            if (document.getElementById('tranches_hemorragie').checked) anomalies.push("hémorragie");
+            if (document.getElementById('tranches_thrombose').checked) anomalies.push("thrombose intervilleuse");
+            if (document.getElementById('tranches_chorioangiome').checked) anomalies.push("chorioangiome");
+            
+            const pctLese = document.getElementById('tranches_pct_lese').value;
+            
+            if (anomalies.length > 0) {
+                let trText = `Les tranches de section permettent la mise en évidence de : ${anomalies.join(", ")}`;
+                if (pctLese) trText += ` (environ ${pctLese}% du parenchyme lésé)`;
+                trText += ".";
+                macroText.push(trText);
+            } else {
+                macroText.push("Les tranches de section présentent des lésions.");
+            }
+        }
+    }
+    
+    // ========== MICROSCOPIE ==========
+    
+    // Cordon micro
+    const cordonVx = document.querySelector('input[name="cordon_vx"]:checked');
+    const cordonRif = document.querySelector('input[name="cordon_rif"]:checked');
+    const cordonMavm = document.getElementById('cordon_mavm').checked;
+    
+    if (cordonVx) {
+        microText.push(descriptions.cordon_vx[cordonVx.value]);
+    }
+    if (cordonRif) {
+        microText.push(descriptions.cordon_rif[cordonRif.value]);
+    }
+    if (cordonMavm) {
+        microText.push(descriptions.cordon_mavm);
+    }
+    
+    // Membranes micro
+    const membMicro = document.querySelector('input[name="memb_micro"]:checked');
+    if (membMicro) {
+        if (membMicro.value === 'normal') {
+            microText.push(descriptions.memb_micro_normal);
+        } else {
+            const membAnomalies = [
+                ['memb_mfm', 'memb_mfm'],
+                ['memb_mfm_plus', 'memb_mfm_plus'],
+                ['memb_chorio1', 'memb_chorio1'],
+                ['memb_chorio2', 'memb_chorio2'],
+                ['memb_chorio3', 'memb_chorio3'],
+                ['memb_neclamdec', 'memb_neclamdec'],
+                ['memb_decchro', 'memb_decchro'],
+                ['memb_decchro_plus', 'memb_decchro_plus'],
+                ['memb_sg', 'memb_sg'],
+                ['memb_sidero', 'memb_sidero']
+            ];
+            membAnomalies.forEach(([id, key]) => {
+                if (document.getElementById(id).checked) {
+                    microText.push(descriptions[key]);
+                }
+            });
+        }
+    }
+    
+    // Plaque choriale micro
+    const pchoMicro = document.querySelector('input[name="pcho_micro"]:checked');
+    if (pchoMicro) {
+        if (pchoMicro.value === 'normal') {
+            microText.push(descriptions.pcho_micro_normal);
+        } else {
+            const pchoAnomalies = [
+                ['pcho_chorio1', 'pcho_chorio1'],
+                ['pcho_chorio2', 'pcho_chorio2'],
+                ['pcho_chorio3', 'pcho_chorio3'],
+                ['pcho_rif1', 'pcho_rif1']
+            ];
+            pchoAnomalies.forEach(([id, key]) => {
+                if (document.getElementById(id).checked) {
+                    microText.push(descriptions[key]);
+                }
+            });
+        }
+    }
+    
+    // Villosités micro
+    const villoMicro = document.querySelector('input[name="villo_micro"]:checked');
+    if (villoMicro) {
+        if (villoMicro.value === 'normal') {
+            microText.push(descriptions.villo_micro_normal);
+        } else {
+            const villoAnomalies = [
+                ['villo_amv', 'villo_amv'],
+                ['villo_ansct', 'villo_ansct'],
+                ['villo_hvd', 'villo_hvd'],
+                ['villo_chorangio', 'villo_chorangio'],
+                ['villo_kit', 'villo_kit'],
+                ['villo_vtf0', 'villo_vtf0'],
+                ['villo_vue_bg', 'villo_vue_bg'],
+                ['villo_vue_hg', 'villo_vue_hg'],
+                ['villo_caryovs', 'villo_caryovs']
+            ];
+            villoAnomalies.forEach(([id, key]) => {
+                if (document.getElementById(id).checked) {
+                    microText.push(descriptions[key]);
+                }
+            });
+        }
+    }
+    
+    // Espace intervilleux micro
+    const eivMicro = document.querySelector('input[name="eiv_micro"]:checked');
+    if (eivMicro) {
+        if (eivMicro.value === 'normal') {
+            microText.push(descriptions.eiv_micro_normal);
+        } else {
+            const eivAnomalies = [
+                ['eiv_fibpv', 'eiv_fibpv'],
+                ['eiv_nidf', 'eiv_nidf'],
+                ['eiv_chi', 'eiv_chi'],
+                ['eiv_calcif', 'eiv_calcif']
+            ];
+            eivAnomalies.forEach(([id, key]) => {
+                if (document.getElementById(id).checked) {
+                    microText.push(descriptions[key]);
+                }
+            });
+        }
+    }
+    
+    // Plaque basale micro
+    const pbasMicro = document.querySelector('input[name="pbas_micro"]:checked');
+    if (pbasMicro) {
+        if (pbasMicro.value === 'normal') {
+            microText.push(descriptions.pbas_micro_normal);
+        } else {
+            const pbasAnomalies = [
+                ['pbas_artodec', 'pbas_artodec'],
+                ['pbas_decchro_micro', 'pbas_decchro_micro'],
+                ['pbas_abruptus', 'pbas_abruptus']
+            ];
+            pbasAnomalies.forEach(([id, key]) => {
+                if (document.getElementById(id).checked) {
+                    microText.push(descriptions[key]);
+                }
+            });
+        }
+    }
+    
+    // ========== CONCLUSION ==========
+    let conclusionItems = [];
+    
+    // Trophicité basée sur le DS
+    let trophicite = null;
+    if (terme && masse) {
+        const data = donneesPlacenta[terme];
+        if (data) {
+            const ecartDS = (masse - data.moyenne) / data.sd;
+            if (ecartDS < -1.67) {
+                trophicite = "Galette hypotrophe";
+            } else {
+                trophicite = "Galette eutrophe";
+            }
+        }
+    }
+    
+    // Ratio fœto-placentaire en conclusion
+    let ratioConclusion = null;
+    if (ratioValue !== null && ratioDS !== null) {
+        ratioConclusion = `Ratio fœto-placentaire : ${ratioValue} (${ratioDS} DS)`;
+    } else if (ratioValue !== null && ratioExtrapolated) {
+        ratioConclusion = `Ratio fœto-placentaire : ${ratioValue} (Z-score non calculable, terme extrapolé)`;
+    }
+    
+    // Cordon micro
+    if (cordonVx && cordonVx.value === '2') conclusionItems.push("Artère ombilicale unique");
+    if (cordonRif) {
+        const rifLabels = { "0": null, "1": "RIF 1", "2": "RIF 2", "3": "RIF 3" };
+        if (rifLabels[cordonRif.value]) conclusionItems.push(rifLabels[cordonRif.value]);
+    }
+    if (cordonMavm) conclusionItems.push("MAVM");
+    
+    // Membranes macro
+    if (membMacro && membMacro.value === 'anormal') {
+        if (document.getElementById('memb_meconium').checked) conclusionItems.push("Imprégnation méconiale des membranes");
+        if (document.getElementById('memb_hemorragique').checked) conclusionItems.push("Membranes hémorragiques");
+        if (document.getElementById('memb_opaque').checked) conclusionItems.push("Opacification des membranes");
+        if (document.getElementById('memb_bride').checked) conclusionItems.push("Bride amniotique");
+        if (document.getElementById('memb_nodosum').checked) conclusionItems.push("Amnios nodosum");
+    }
+    
+    // Membranes micro
+    if (membMicro && membMicro.value === 'anormal') {
+        if (document.getElementById('memb_mfm').checked) conclusionItems.push("MFM");
+        if (document.getElementById('memb_mfm_plus').checked) conclusionItems.push("MFM+");
+        if (document.getElementById('memb_chorio1').checked) conclusionItems.push("Chorioamniotite stade 1");
+        if (document.getElementById('memb_chorio2').checked) conclusionItems.push("Chorioamniotite stade 2");
+        if (document.getElementById('memb_chorio3').checked) conclusionItems.push("Chorioamniotite stade 3");
+        if (document.getElementById('memb_neclamdec').checked) conclusionItems.push("Nécrose de la lame décidue");
+        if (document.getElementById('memb_decchro').checked) conclusionItems.push("Déciduite chronique");
+        if (document.getElementById('memb_decchro_plus').checked) conclusionItems.push("Déciduite chronique marquée");
+        if (document.getElementById('memb_sg').checked) conclusionItems.push("Saignement chronique");
+        if (document.getElementById('memb_sidero').checked) conclusionItems.push("Sidérophages");
+    }
+    
+    // Plaque choriale macro
+    if (pchoMacro && pchoMacro.value === 'anormal') {
+        if (document.getElementById('pcho_amnios_decolle').checked) conclusionItems.push("Décollement amniotique");
+        if (document.getElementById('pcho_meconial').checked) conclusionItems.push("Dépôt méconial plaque choriale");
+        if (document.getElementById('pcho_thrombose').checked) conclusionItems.push("Thrombose sous-choriale");
+        if (document.getElementById('pcho_kystes').checked) conclusionItems.push("Kystes plaque choriale");
+    }
+    
+    // Plaque choriale micro
+    if (pchoMicro && pchoMicro.value === 'anormal') {
+        if (document.getElementById('pcho_chorio1').checked) conclusionItems.push("Chorioamniotite plaque choriale stade 1");
+        if (document.getElementById('pcho_chorio2').checked) conclusionItems.push("Chorioamniotite plaque choriale stade 2");
+        if (document.getElementById('pcho_chorio3').checked) conclusionItems.push("Chorioamniotite plaque choriale stade 3");
+        if (document.getElementById('pcho_rif1').checked) conclusionItems.push("RIF vaisseaux allanto-choriaux");
+    }
+    
+    // Villosités micro
+    if (villoMicro && villoMicro.value === 'anormal') {
+        if (document.getElementById('villo_amv').checked) conclusionItems.push("AMV");
+        if (document.getElementById('villo_ansct').checked) conclusionItems.push("ANSCT");
+        if (document.getElementById('villo_hvd').checked) conclusionItems.push("HVD");
+        if (document.getElementById('villo_chorangio').checked) conclusionItems.push("Chorangiose");
+        if (document.getElementById('villo_kit').checked) conclusionItems.push("KIT");
+        if (document.getElementById('villo_vtf0').checked) conclusionItems.push("VTF");
+        if (document.getElementById('villo_vue_bg').checked) conclusionItems.push("VUE bas grade");
+        if (document.getElementById('villo_vue_hg').checked) conclusionItems.push("VUE haut grade");
+        if (document.getElementById('villo_caryovs').checked) conclusionItems.push("Caryorrhexie vaso-stromale");
+    }
+    
+    // Espace intervilleux micro
+    if (eivMicro && eivMicro.value === 'anormal') {
+        if (document.getElementById('eiv_fibpv').checked) conclusionItems.push("Fibrine périvillositaire augmentée");
+        if (document.getElementById('eiv_nidf').checked) conclusionItems.push("NIDF");
+        if (document.getElementById('eiv_chi').checked) conclusionItems.push("CHI");
+        if (document.getElementById('eiv_calcif').checked) conclusionItems.push("Calcifications augmentées");
+    }
+    
+    // Plaque basale macro
+    if (pbasIntegrite && pbasIntegrite.value === 'dechiree') conclusionItems.push("Plaque basale déchirée");
+    if (pbasMacro && pbasMacro.value === 'anormal') {
+        if (document.getElementById('pbas_infarctus').checked) conclusionItems.push("Infarctus");
+        if (document.getElementById('pbas_hematome').checked) conclusionItems.push("Hématome rétroplacentaire");
+        if (document.getElementById('pbas_calcifications').checked) conclusionItems.push("Calcifications plaque basale");
+        if (document.getElementById('pbas_fibrine').checked) conclusionItems.push("Dépôts de fibrine plaque basale");
+        const cotManquants = document.getElementById('pbas_cotyledons_manquants').value;
+        if (cotManquants) conclusionItems.push(`≈${cotManquants}% cotylédons manquants`);
+    }
+    
+    // Plaque basale micro
+    if (pbasMicro && pbasMicro.value === 'anormal') {
+        if (document.getElementById('pbas_artodec').checked) conclusionItems.push("Artériose décidue");
+        if (document.getElementById('pbas_decchro_micro').checked) conclusionItems.push("Déciduite chronique plaque basale");
+        if (document.getElementById('pbas_abruptus').checked) conclusionItems.push("Abruptus");
+    }
+    
+    // Tranches de section
+    if (tranchesMacro && tranchesMacro.value !== 'normal') {
+        if (document.getElementById('tranches_infarctus').checked) conclusionItems.push("Infarctus parenchymateux");
+        if (document.getElementById('tranches_hemorragie').checked) conclusionItems.push("Hémorragie parenchymateuse");
+        if (document.getElementById('tranches_thrombose').checked) conclusionItems.push("Thrombose intervilleuse");
+        if (document.getElementById('tranches_chorioangiome').checked) conclusionItems.push("Chorioangiome");
+    }
+    
+    // ========== ASSEMBLAGE FINAL ==========
+    const outputDiv = document.getElementById('generatedText');
+    
+    if (macroText.length === 0 && microText.length === 0) {
+        outputDiv.innerHTML = '<em style="color: var(--color-text-muted);">Le compte-rendu apparaîtra ici au fur et à mesure de la saisie...</em>';
+        return;
+    }
+    
+    let html = '';
+    
+    if (macroText.length > 0) {
+        html += '<span class="section-label">MACROSCOPIE</span>';
+        html += macroText.join('\n') + '\n';
+    }
+    
+    if (microText.length > 0) {
+        html += '<span class="section-label">MICROSCOPIE</span>';
+        html += microText.join('\n') + '\n';
+    }
+    
+    if (trophicite || ratioConclusion || conclusionItems.length > 0) {
+        html += '<span class="section-label">CONCLUSION</span>';
+        let conclusionLines = [];
+        if (trophicite) conclusionLines.push(trophicite);
+        if (ratioConclusion) conclusionLines.push(ratioConclusion);
+        conclusionItems.forEach(item => conclusionLines.push(item));
+        html += '<strong>' + conclusionLines.join('\n') + '</strong>';
+    }
+    
+    outputDiv.innerHTML = html;
+}
+
+// Copier le texte dans le presse-papiers
+function copyText() {
+    const outputDiv = document.getElementById('generatedText');
+    const text = outputDiv.innerText;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Texte copié dans le presse-papiers !');
+    }).catch(err => {
+        // Fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('✅ Texte copié !');
+    });
+}
+
+// Réinitialiser le formulaire
+function resetForm() {
+    if (confirm('Voulez-vous vraiment réinitialiser le formulaire ?')) {
+        // Reset tous les inputs
+        document.querySelectorAll('input[type="number"], input[type="text"]').forEach(el => el.value = '');
+        document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+        document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+        
+        // Reset les radios aux valeurs par défaut (normal)
+        document.querySelectorAll('input[type="radio"][value="normal"]').forEach(el => {
+            el.checked = true;
+        });
+        
+        // Cacher toutes les zones d'anomalies
+        document.querySelectorAll('.anomalies-container').forEach(el => {
+            el.classList.remove('visible');
+        });
+        
+        // Reset l'affichage
+        document.getElementById('dsResult').style.display = 'none';
+        updateText();
+    }
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    // Cacher toutes les zones d'anomalies au démarrage
+    document.querySelectorAll('.anomalies-container').forEach(el => {
+        el.classList.remove('visible');
+    });
+});
+</script>
+
+</body>
+</html>

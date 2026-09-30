@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e1117">
+<title>Macro Placenta – État Frais</title>
+<link rel="manifest" href="/pwa/placentas/manifest.json">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b22;
+    --surface-hover: #1c2230;
+    --border: #2a3140;
+    --border-focus: #4a90d9;
+    --text: #e2e8f0;
+    --text-muted: #8b95a5;
+    --accent: #4a90d9;
+    --accent-dim: rgba(74, 144, 217, 0.15);
+    --danger: #e55b5b;
+    --success: #3ddc84;
+    --success-dim: rgba(61, 220, 132, 0.15);
+    --cordon: #e8a838;
+    --cordon-dim: rgba(232, 168, 56, 0.15);
+    --membrane: #6bc9a8;
+    --membrane-dim: rgba(107, 201, 168, 0.15);
+    --photo-choriale: #5b9bd5;
+    --photo-basale: #d9734a;
+    --photo-sup: #9b6dd7;
+    --radius: 10px;
+    --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
+  .dossier-badge {
+    background: var(--accent-dim); color: var(--accent);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.85rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Sections ── */
+  .content { padding: 12px 16px 100px; }
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .section-title {
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 12px 16px 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-title .section-icon { font-size: 0.9rem; }
+  .section-body { padding: 0 16px 16px; }
+
+  /* Color-coded section borders */
+  .section.section-cordon { border-left: 3px solid var(--cordon); }
+  .section.section-membrane { border-left: 3px solid var(--membrane); }
+
+  /* ── Photos ── */
+  .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .photo-slot {
+    position: relative;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    aspect-ratio: 4/3;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+  }
+  .photo-slot:active { background: var(--surface-hover); }
+  .photo-slot.has-photo { border-style: solid; }
+  .photo-slot.has-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; border-radius: calc(var(--radius) - 2px);
+  }
+  .photo-slot .label { font-size: 0.75rem; font-weight: 600; margin-top: 6px; }
+  .photo-slot .icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .photo-slot[data-type="choriale"] { border-color: var(--photo-choriale); }
+  .photo-slot[data-type="choriale"] .icon { background: rgba(91,155,213,0.2); color: var(--photo-choriale); }
+  .photo-slot[data-type="choriale"] .label { color: var(--photo-choriale); }
+  .photo-slot[data-type="basale"] { border-color: var(--photo-basale); }
+  .photo-slot[data-type="basale"] .icon { background: rgba(217,115,74,0.2); color: var(--photo-basale); }
+  .photo-slot[data-type="basale"] .label { color: var(--photo-basale); }
+  .photo-slot[data-type="sup"] { border-color: var(--photo-sup); }
+  .photo-slot[data-type="sup"] .icon { background: rgba(155,109,215,0.2); color: var(--photo-sup); }
+  .photo-slot[data-type="sup"] .label { color: var(--photo-sup); }
+  .photo-slot[data-type="cordon"] { border-color: var(--cordon); }
+  .photo-slot[data-type="cordon"] .icon { background: var(--cordon-dim); color: var(--cordon); }
+  .photo-slot[data-type="cordon"] .label { color: var(--cordon); }
+
+  .photo-slot .overlay-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 20px 8px 6px;
+    font-size: 0.7rem; font-weight: 600; text-align: center;
+  }
+  .photo-slot .remove-btn {
+    position: absolute; top: 4px; right: 4px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); color: var(--danger);
+    border: none; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 2;
+  }
+
+  .add-photo-row { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  #extra-photos-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 10px;
+  }
+  .btn-add-photo {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface-hover); border: 1px dashed var(--border);
+    border-radius: var(--radius); color: var(--photo-sup);
+    padding: 10px 16px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; width: 100%; justify-content: center;
+    transition: background 0.2s;
+  }
+  .btn-add-photo:active { background: var(--border); }
+
+  /* ── Form fields ── */
+  .field-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .field-row:last-child { margin-bottom: 0; }
+  .field { flex: 1; display: flex; flex-direction: column; }
+  .field label {
+    font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+    margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .field input[type="number"],
+  .field input[type="text"],
+  .field textarea {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    color: var(--text); font-size: 1rem;
+    font-family: var(--font); outline: none;
+    transition: border-color 0.2s; width: 100%;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--border-focus); }
+  .field .unit {
+    font-size: 0.75rem; color: var(--text-muted);
+    margin-top: 2px; text-align: right;
+  }
+  .field textarea { min-height: 60px; resize: vertical; }
+
+  /* ── Chip selects ── */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .chip {
+    padding: 8px 16px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--text-muted); font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    user-select: none; -webkit-user-select: none;
+  }
+  .chip:active { transform: scale(0.96); }
+  .chip.selected {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .chip-group.multi .chip.selected {
+    background: var(--success-dim);
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  /* ── Inline field after chip (for marginée %) ── */
+  .chip-inline-field {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .chip-inline-field.visible { display: flex; }
+  .chip-inline-field input {
+    width: 70px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px;
+    color: var(--text); font-size: 0.9rem;
+    font-family: var(--font); outline: none;
+    text-align: center;
+  }
+  .chip-inline-field input:focus { border-color: var(--border-focus); }
+  .chip-inline-field span {
+    font-size: 0.8rem; color: var(--text-muted);
+  }
+
+  /* ── Checkbox-style toggles ── */
+  .toggle-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0;
+  }
+  .toggle-row + .toggle-row { border-top: 1px solid var(--border); }
+  .toggle-switch {
+    position: relative;
+    width: 44px; height: 24px;
+    background: var(--border); border-radius: 12px;
+    cursor: pointer; transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-switch::after {
+    content: '';
+    position: absolute; top: 2px; left: 2px;
+    width: 20px; height: 20px;
+    background: var(--text-muted); border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .toggle-switch.on { background: var(--accent-dim); }
+  .toggle-switch.on::after {
+    transform: translateX(20px);
+    background: var(--accent);
+  }
+  .toggle-label { font-size: 0.85rem; color: var(--text); }
+
+  /* ── Validation badge ── */
+  .validation-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; background: var(--border);
+    vertical-align: middle; transition: background 0.3s;
+  }
+  .validation-dot.valid { background: var(--success); }
+
+  /* ── Bottom bar ── */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px; display: flex; gap: 10px; z-index: 100;
+  }
+  .btn {
+    flex: 1; padding: 14px; border: none; border-radius: var(--radius);
+    font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary {
+    background: var(--surface-hover);
+    border: 1px solid var(--border); color: var(--text);
+  }
+
+  /* ── Toast notification ── */
+  .toast {
+    position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    background: var(--success); color: #0e1117;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.3s;
+    z-index: 200; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  .toast.error { background: var(--danger); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1 data-i18n="pwa.placenta.macro_frais">Macro frais</h1>
+  <span class="dossier-badge" id="badge-dossier">—</span>
+</div>
+
+<div class="content">
+
+  <!-- ══════ TERME ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📅</span> Terme
+      <span class="validation-dot" id="dot-terme"></span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>SA</label>
+          <input type="number" id="terme_sa" step="1" min="10" max="45" inputmode="numeric"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">semaines</div>
+        </div>
+        <div class="field">
+          <label>+ Jours</label>
+          <input type="number" id="terme_jours" step="1" min="0" max="6" inputmode="numeric"
+                 placeholder="0" oninput="validate()">
+          <div class="unit">jours</div>
+        </div>
+      </div>
+      <div class="chip-group single" data-field="terme_source" style="margin-top: 10px;">
+        <div class="chip" onclick="selectChip(this)">DDR</div>
+        <div class="chip" onclick="selectChip(this)">Écho T1</div>
+        <div class="chip" onclick="selectChip(this)">Inconnu</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ CONTEXTE FŒTAL ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">👶</span> Contexte fœtal
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Masse fœtale</label>
+          <input type="number" id="masse_foetale" step="1" min="0" inputmode="numeric"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">g</div>
+        </div>
+        <div class="field">
+          <label>Sexe</label>
+          <div class="chip-group single" data-field="sexe" style="margin-top:0;">
+            <div class="chip" onclick="selectChip(this)">M</div>
+            <div class="chip" onclick="selectChip(this)">F</div>
+            <div class="chip" onclick="selectChip(this)">Ind.</div>
+          </div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:10px;">
+        <label>Indication vers le terme</label>
+        <div class="chip-group single" data-field="indication_terme">
+          <div class="chip" onclick="selectChip(this); checkIndication()">Hypotrophie</div>
+          <div class="chip" onclick="selectChip(this); checkIndication()">Anasarque</div>
+          <div class="chip" onclick="selectChip(this); checkIndication()">Malformation inexpliquée</div>
+          <div class="chip" onclick="selectChip(this); checkIndication()">Prématurité</div>
+          <div class="chip" onclick="selectChip(this); checkIndication()">Autre</div>
+        </div>
+        <div class="chip-inline-field" id="indication-autre-row">
+          <input type="text" id="indication_autre_texte" placeholder="Préciser…"
+                 style="width:100%;" oninput="saveLocal()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PHOTOS GALETTE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📷</span> <span data-i18n="pwa.placenta.photos_placenta">Photographies galette</span>
+    </div>
+    <div class="section-body">
+      <div class="photo-grid">
+        <div class="photo-slot" data-type="choriale" data-key="photo_choriale" onclick="capturePhoto(this)">
+          <div class="icon">📷</div>
+          <div class="label">Plaque choriale</div>
+        </div>
+        <div class="photo-slot" data-type="basale" data-key="photo_basale" onclick="capturePhoto(this)">
+          <div class="icon">📷</div>
+          <div class="label">Plaque basale</div>
+        </div>
+      </div>
+      <div id="extra-photos-grid"></div>
+      <div class="add-photo-row">
+        <button class="btn-add-photo" onclick="addExtraPhotoSlot()">
+          <span>＋</span> Photo supplémentaire
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ BIOMÉTRIE GALETTE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📐</span> Biométrie galette
+      <span style="font-size:0.65rem; font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-muted); margin-left:4px;">dimensions optionnelles si ArUco</span>
+      <span class="validation-dot" id="dot-biom"></span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Grand axe</label>
+          <input type="number" id="grand_axe" step="0.1" min="0" inputmode="decimal"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">cm</div>
+        </div>
+        <div class="field">
+          <label>Petit axe</label>
+          <input type="number" id="petit_axe" step="0.1" min="0" inputmode="decimal"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">cm</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Épaisseur</label>
+          <input type="number" id="epaisseur" step="0.1" min="0" inputmode="decimal"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">cm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ FORME ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🔵</span> Forme de la galette
+      <span class="validation-dot" id="dot-forme"></span>
+    </div>
+    <div class="section-body">
+      <div class="chip-group single" data-field="forme">
+        <div class="chip" onclick="selectChip(this)">Ronde</div>
+        <div class="chip" onclick="selectChip(this)">Ovale</div>
+        <div class="chip" onclick="selectChip(this)">Réniforme</div>
+        <div class="chip" onclick="selectChip(this)">Lobe succenturié</div>
+        <div class="chip" onclick="selectChip(this)">Bipartite</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ COMPLÉTUDE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">✂️</span> Complétude
+      <span class="validation-dot" id="dot-completude"></span>
+    </div>
+    <div class="section-body">
+      <div class="chip-group multi" data-field="completude">
+        <div class="chip" onclick="toggleChip(this)">Complète</div>
+        <div class="chip" onclick="toggleChip(this)">Déchirée</div>
+        <div class="chip" onclick="toggleChip(this)">Prélèvement bactério</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PLAQUE CHORIALE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🔬</span> Plaque choriale
+    </div>
+    <div class="section-body">
+      <div class="chip-group multi" data-field="etat_choriale">
+        <div class="chip" onclick="toggleChip(this)">Normale</div>
+        <div class="chip" onclick="toggleChip(this)">Opaque</div>
+        <div class="chip" onclick="toggleChip(this)">Verdâtre</div>
+        <div class="chip" onclick="toggleChip(this)">Hémorragique</div>
+        <div class="chip" onclick="toggleChip(this)">Kyste(s)</div>
+        <div class="chip" onclick="toggleChip(this)">Nodule(s)</div>
+      </div>
+      <div class="field" style="margin-top: 10px;">
+        <label>Remarques</label>
+        <textarea id="remarques_choriale" rows="2" placeholder="Texte libre…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PLAQUE BASALE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🔬</span> Plaque basale
+    </div>
+    <div class="section-body">
+      <div class="chip-group multi" data-field="etat_basale">
+        <div class="chip" onclick="toggleChip(this)">Normale</div>
+        <div class="chip" onclick="toggleChip(this)">Hématome rétroplacentaire</div>
+        <div class="chip" onclick="toggleChip(this)">Infarctus visible(s)</div>
+        <div class="chip" onclick="toggleChip(this)">Calcifications</div>
+        <div class="chip" onclick="toggleChip(this)">Fibrine</div>
+      </div>
+      <div class="field" style="margin-top: 10px;">
+        <label>Remarques</label>
+        <textarea id="remarques_basale" rows="2" placeholder="Texte libre…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ CORDON OMBILICAL ══════ -->
+  <div class="section section-cordon">
+    <div class="section-title">
+      <span class="section-icon">🪢</span> Cordon ombilical
+      <span class="validation-dot" id="dot-cordon"></span>
+    </div>
+    <div class="section-body">
+      <!-- Insertion -->
+      <div class="field" style="margin-bottom:10px;">
+        <label>Insertion</label>
+        <div class="chip-group single" data-field="cordon_insertion">
+          <div class="chip" onclick="selectChip(this)">Centrale</div>
+          <div class="chip" onclick="selectChip(this)">Paracentrale</div>
+          <div class="chip" onclick="selectChip(this)">Marginale</div>
+          <div class="chip" onclick="selectChip(this)">Vélamenteuse</div>
+          <div class="chip" onclick="selectChip(this)">Furcata</div>
+        </div>
+      </div>
+      <!-- Longueur -->
+      <div class="field-row">
+        <div class="field">
+          <label>Longueur</label>
+          <input type="number" id="cordon_longueur" step="0.5" min="0" inputmode="decimal"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">cm</div>
+        </div>
+        <div class="field">
+          <label>Spiralisation</label>
+          <div class="chip-group single" data-field="cordon_spiralisation" style="margin-top:0;">
+            <div class="chip" onclick="selectChip(this)">Normo</div>
+            <div class="chip" onclick="selectChip(this)">Hyper</div>
+            <div class="chip" onclick="selectChip(this)">Hypo</div>
+          </div>
+        </div>
+      </div>
+      <!-- Toggles -->
+      <div style="margin-top: 10px;">
+        <div class="toggle-row">
+          <div class="toggle-switch" id="toggle-palmure" onclick="toggleSwitch(this)"></div>
+          <span class="toggle-label">Palmure amniotique</span>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-switch" id="toggle-striction" onclick="toggleSwitch(this)"></div>
+          <span class="toggle-label">Striction</span>
+        </div>
+      </div>
+      <!-- Remarques -->
+      <div class="field" style="margin-top: 10px;">
+        <label>Remarques cordon</label>
+        <textarea id="remarques_cordon" rows="2" placeholder="Nœuds, aspect gélatine…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ MEMBRANES ══════ -->
+  <div class="section section-membrane">
+    <div class="section-title">
+      <span class="section-icon">🫧</span> Membranes
+      <span class="validation-dot" id="dot-membranes"></span>
+    </div>
+    <div class="section-body">
+      <!-- Insertion -->
+      <div class="field" style="margin-bottom:10px;">
+        <label>Insertion</label>
+        <div class="chip-group single" data-field="membranes_insertion">
+          <div class="chip" onclick="selectChip(this); checkMarginee()">Normale</div>
+          <div class="chip" onclick="selectChip(this); checkMarginee()">Marginée</div>
+          <div class="chip" onclick="selectChip(this); checkMarginee()">Circumvallée</div>
+        </div>
+        <div class="chip-inline-field" id="marginee-pct-row">
+          <span>sur</span>
+          <input type="number" id="membranes_marginee_pct" min="1" max="100"
+                 inputmode="numeric" placeholder="—">
+          <span>% de la circonférence</span>
+        </div>
+      </div>
+      <!-- Aspect -->
+      <div class="field">
+        <label>Aspect</label>
+        <div class="chip-group single" data-field="membranes_aspect">
+          <div class="chip" onclick="selectChip(this)">Normal</div>
+          <div class="chip" onclick="selectChip(this)">Opaques</div>
+          <div class="chip" onclick="selectChip(this)">Beiges</div>
+        </div>
+      </div>
+      <!-- Remarques -->
+      <div class="field" style="margin-top: 10px;">
+        <label>Remarques membranes</label>
+        <textarea id="remarques_membranes" rows="2" placeholder="Texte libre…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ MASSE PARÉE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">⚖️</span> Masse parée
+      <span class="validation-dot" id="dot-masse"></span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Masse parée</label>
+          <input type="number" id="masse" step="1" min="0" inputmode="numeric"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">g</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ── BOTTOM BAR ── -->
+<div class="bottom-bar">
+  <button class="btn btn-secondary" onclick="goBack()" data-i18n="pwa.common.back_dossier">← Dossier</button>
+  <button class="btn btn-primary" style="flex:1.5;" onclick="saveAndExport()" data-i18n="pwa.common.save">Enregistrer ✓</button>
+  <button class="btn btn-secondary" style="font-size:0.8rem;" onclick="goTranches()" data-i18n="pwa.placenta.go_tranches">Tranches →</button>
+</div>
+
+<!-- Hidden file input -->
+<input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none">
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════ HUB URL ═══════════
+const HUB = window.location.origin;
+
+// ═══════════ FORMAT DOSSIER (aaPnnnn) ═══════════
+function normalizeDossier(val) {
+  return val.replace(/^(\d{2})p/i, '$1P');
+}
+
+// ═══════════ INIT ═══════════
+const params = new URLSearchParams(window.location.search);
+const dossier = normalizeDossier(params.get('dossier') || '—');
+document.getElementById('badge-dossier').textContent = dossier;
+
+// ═══════════ STATE ═══════════
+let photos = {};
+let extraPhotoCount = 0;
+let currentPhotoSlot = null;
+
+// ═══════════ TOAST ═══════════
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+// ═══════════ NAVIGATION ═══════════
+function goBack() {
+  window.location.href = '/pwa/placentas/';
+}
+function goTranches() {
+  // Auto-save before navigating
+  saveLocal();
+  window.location.href = `/pwa/placentas/tranches_section.html?dossier=${encodeURIComponent(dossier)}`;
+}
+
+// ═══════════ PHOTOS ═══════════
+const fileInput = document.getElementById('photo-file-input');
+
+function capturePhoto(slot) {
+  currentPhotoSlot = slot;
+  fileInput.click();
+}
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file || !currentPhotoSlot) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const slot = currentPhotoSlot;
+    const key = slot.dataset.key;
+    const dataUrl = ev.target.result;
+    const label = slot.querySelector('.label')?.textContent || key;
+    photos[key] = { dataUrl, label, filename: file.name };
+    slot.classList.add('has-photo');
+    slot.innerHTML = `
+      <img src="${dataUrl}" alt="">
+      <button class="remove-btn" onclick="event.stopPropagation(); removePhoto(this.parentElement, '${key}')">✕</button>
+      <div class="overlay-label">${label}</div>
+    `;
+  };
+  reader.readAsDataURL(file);
+  fileInput.value = '';
+});
+
+function removePhoto(slot, key) {
+  delete photos[key];
+  const type = slot.dataset.type || 'sup';
+  const labelMap = { choriale: 'Plaque choriale', basale: 'Plaque basale' };
+  const label = key.startsWith('extra_') ? `Suppl. ${key.split('_')[1]}` : (labelMap[type] || key);
+  slot.classList.remove('has-photo');
+  slot.innerHTML = `<div class="icon">📷</div><div class="label">${label}</div>`;
+}
+
+function addExtraPhotoSlot() {
+  extraPhotoCount++;
+  const n = extraPhotoCount;
+  const grid = document.getElementById('extra-photos-grid');
+  const slot = document.createElement('div');
+  slot.className = 'photo-slot';
+  slot.dataset.type = 'sup';
+  slot.dataset.key = `extra_${n}`;
+  slot.onclick = function() { capturePhoto(this); };
+  slot.innerHTML = `<div class="icon">📷</div><div class="label">Suppl. ${n}</div>`;
+  grid.appendChild(slot);
+}
+
+// ═══════════ CHIPS ═══════════
+function selectChip(chip) {
+  const group = chip.closest('.chip-group');
+  group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+  validate();
+}
+
+function toggleChip(chip) {
+  const group = chip.closest('.chip-group');
+  const isReset = ['Normale', 'Complète'].includes(chip.textContent.trim());
+  if (isReset) {
+    group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+  } else {
+    group.querySelectorAll('.chip').forEach(c => {
+      if (['Normale', 'Complète'].includes(c.textContent.trim())) c.classList.remove('selected');
+    });
+    chip.classList.toggle('selected');
+  }
+  validate();
+}
+
+// ═══════════ TOGGLES ═══════════
+function toggleSwitch(el) {
+  el.classList.toggle('on');
+}
+
+// ═══════════ INDICATION AUTRE ═══════════
+function checkIndication() {
+  const sel = document.querySelector('[data-field="indication_terme"] .chip.selected');
+  const row = document.getElementById('indication-autre-row');
+  if (sel && sel.textContent.trim() === 'Autre') {
+    row.classList.add('visible');
+  } else {
+    row.classList.remove('visible');
+  }
+  saveLocal();
+}
+
+// ═══════════ MARGINÉE % ═══════════
+function checkMarginee() {
+  const sel = document.querySelector('[data-field="membranes_insertion"] .chip.selected');
+  const row = document.getElementById('marginee-pct-row');
+  if (sel && sel.textContent.trim() === 'Marginée') {
+    row.classList.add('visible');
+  } else {
+    row.classList.remove('visible');
+  }
+}
+
+// ═══════════ VALIDATION ═══════════
+function validate() {
+  const v = (id) => document.getElementById(id)?.value;
+  const dot = (id, ok) => document.getElementById(id)?.classList.toggle('valid', ok);
+  const sel = (f) => document.querySelector(`[data-field="${f}"] .chip.selected`);
+
+  dot('dot-terme', !!v('terme_sa'));
+  dot('dot-biom', !!v('masse'));
+  dot('dot-forme', !!sel('forme'));
+  dot('dot-completude', !!sel('completude'));
+  dot('dot-cordon', !!(sel('cordon_insertion') && v('cordon_longueur') && sel('cordon_spiralisation')));
+  dot('dot-membranes', !!(sel('membranes_insertion') && sel('membranes_aspect')));
+}
+
+// ═══════════ COLLECT ═══════════
+function getChips(field) {
+  return Array.from(document.querySelectorAll(`[data-field="${field}"] .chip.selected`))
+    .map(c => c.textContent.trim());
+}
+
+function collectData() {
+  return {
+    dossier: dossier,
+    timestamp: new Date().toISOString(),
+    type: 'macro_frais',
+    terme: {
+      sa: parseInt(document.getElementById('terme_sa').value) || null,
+      jours: parseInt(document.getElementById('terme_jours').value) || 0,
+      source: getChips('terme_source')[0] || null
+    },
+    foetus: {
+      masse_g: parseInt(document.getElementById('masse_foetale').value) || null,
+      sexe: getChips('sexe')[0] || null,
+      indication_terme: getChips('indication_terme')[0] || null,
+      indication_autre: getChips('indication_terme')[0] === 'Autre'
+        ? (document.getElementById('indication_autre_texte').value.trim() || null)
+        : null
+    },
+    biometrie: {
+      grand_axe_cm: parseFloat(document.getElementById('grand_axe').value) || null,
+      petit_axe_cm: parseFloat(document.getElementById('petit_axe').value) || null,
+      epaisseur_cm: parseFloat(document.getElementById('epaisseur').value) || null,
+      masse_paree_g: parseInt(document.getElementById('masse').value) || null
+    },
+    forme: getChips('forme')[0] || null,
+    completude: getChips('completude'),
+    plaque_choriale: {
+      etats: getChips('etat_choriale'),
+      remarques: document.getElementById('remarques_choriale').value.trim() || null
+    },
+    plaque_basale: {
+      etats: getChips('etat_basale'),
+      remarques: document.getElementById('remarques_basale').value.trim() || null
+    },
+    cordon: {
+      insertion: getChips('cordon_insertion')[0] || null,
+      longueur_cm: parseFloat(document.getElementById('cordon_longueur').value) || null,
+      spiralisation: getChips('cordon_spiralisation')[0] || null,
+      palmure_amniotique: document.getElementById('toggle-palmure').classList.contains('on'),
+      striction: document.getElementById('toggle-striction').classList.contains('on'),
+      remarques: document.getElementById('remarques_cordon').value.trim() || null
+    },
+    membranes: {
+      insertion: getChips('membranes_insertion')[0] || null,
+      marginee_pct: getChips('membranes_insertion')[0] === 'Marginée'
+        ? (parseInt(document.getElementById('membranes_marginee_pct').value) || null)
+        : null,
+      aspect: getChips('membranes_aspect')[0] || null,
+      remarques: document.getElementById('remarques_membranes').value.trim() || null
+    },
+    photos: Object.keys(photos).map(k => ({ key: k, label: photos[k].label }))
+  };
+}
+
+// ═══════════ LOCAL STORAGE ═══════════
+function saveLocal() {
+  const data = collectData();
+  try {
+    localStorage.setItem(`placenta_${dossier}`, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(`placenta_${dossier}`);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.type !== 'macro_frais') return;
+
+    // Restore fields
+    if (data.terme?.sa) document.getElementById('terme_sa').value = data.terme.sa;
+    if (data.terme?.jours) document.getElementById('terme_jours').value = data.terme.jours;
+    if (data.terme?.source) restoreChip('terme_source', data.terme.source);
+    if (data.foetus?.masse_g) document.getElementById('masse_foetale').value = data.foetus.masse_g;
+    if (data.foetus?.sexe) restoreChip('sexe', data.foetus.sexe);
+    if (data.foetus?.indication_terme) { restoreChip('indication_terme', data.foetus.indication_terme); checkIndication(); }
+    if (data.foetus?.indication_autre) document.getElementById('indication_autre_texte').value = data.foetus.indication_autre;
+    if (data.biometrie?.grand_axe_cm) document.getElementById('grand_axe').value = data.biometrie.grand_axe_cm;
+    if (data.biometrie?.petit_axe_cm) document.getElementById('petit_axe').value = data.biometrie.petit_axe_cm;
+    if (data.biometrie?.epaisseur_cm) document.getElementById('epaisseur').value = data.biometrie.epaisseur_cm;
+    if (data.biometrie?.masse_paree_g) document.getElementById('masse').value = data.biometrie.masse_paree_g;
+    if (data.forme) restoreChip('forme', data.forme);
+    if (data.completude) data.completude.forEach(c => restoreChip('completude', c, true));
+    if (data.plaque_choriale?.etats) data.plaque_choriale.etats.forEach(c => restoreChip('etat_choriale', c, true));
+    if (data.plaque_choriale?.remarques) document.getElementById('remarques_choriale').value = data.plaque_choriale.remarques;
+    if (data.plaque_basale?.etats) data.plaque_basale.etats.forEach(c => restoreChip('etat_basale', c, true));
+    if (data.plaque_basale?.remarques) document.getElementById('remarques_basale').value = data.plaque_basale.remarques;
+    if (data.cordon?.insertion) restoreChip('cordon_insertion', data.cordon.insertion);
+    if (data.cordon?.longueur_cm) document.getElementById('cordon_longueur').value = data.cordon.longueur_cm;
+    if (data.cordon?.spiralisation) restoreChip('cordon_spiralisation', data.cordon.spiralisation);
+    if (data.cordon?.palmure_amniotique) document.getElementById('toggle-palmure').classList.add('on');
+    if (data.cordon?.striction) document.getElementById('toggle-striction').classList.add('on');
+    if (data.cordon?.remarques) document.getElementById('remarques_cordon').value = data.cordon.remarques;
+    if (data.membranes?.insertion) { restoreChip('membranes_insertion', data.membranes.insertion); checkMarginee(); }
+    if (data.membranes?.marginee_pct) document.getElementById('membranes_marginee_pct').value = data.membranes.marginee_pct;
+    if (data.membranes?.aspect) restoreChip('membranes_aspect', data.membranes.aspect);
+    if (data.membranes?.remarques) document.getElementById('remarques_membranes').value = data.membranes.remarques;
+
+    validate();
+  } catch (e) {}
+}
+
+function restoreChip(field, value, multi = false) {
+  const group = document.querySelector(`[data-field="${field}"]`);
+  if (!group) return;
+  group.querySelectorAll('.chip').forEach(c => {
+    if (c.textContent.trim() === value) {
+      if (!multi) group.querySelectorAll('.chip').forEach(x => x.classList.remove('selected'));
+      c.classList.add('selected');
+    }
+  });
+}
+
+// ═══════════ EXPORT → HUB ═══════════
+function _dataUrlToBlob(dataUrl) {
+  const parts = dataUrl.split(',');
+  const mime = parts[0].match(/:(.*?);/)[1];
+  const b = atob(parts[1]);
+  const arr = new Uint8Array(b.length);
+  for (let j = 0; j < b.length; j++) arr[j] = b.charCodeAt(j);
+  return new Blob([arr], {type: mime});
+}
+
+async function saveAndExport() {
+  const data = collectData();
+  saveLocal();
+
+  // Upload photos + JSON to hub
+  try {
+    const formData = new FormData();
+    formData.append('json_data', JSON.stringify(data));
+    formData.append('dossier', dossier);
+    formData.append('module', 'macro_frais');
+    // Identifier l'utilisateur PWA
+    try { var pu = localStorage.getItem('placenta_pwa_user'); if (pu) formData.append('user', pu); } catch(e) {}
+
+    // Convert dataURL photos to blobs (avec fallback b64)
+    for (const [key, photo] of Object.entries(photos)) {
+      if (photo.dataUrl) {
+        try {
+          const blob = _dataUrlToBlob(photo.dataUrl);
+          const ext = blob.type.includes('png') ? '.png' : '.jpg';
+          formData.append('photo_' + key, blob, `${dossier}_${key}${ext}`);
+        } catch (e) {
+          // Fallback base64 si la conversion blob échoue
+          formData.append('b64_' + key, photo.dataUrl);
+        }
+      }
+      // photo.serverUrl → déjà sur le serveur, on ne re-upload pas
+    }
+
+    const resp = await fetch(`${HUB}/placenta/api/cases/submit`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (resp.ok) {
+      pwaHideSessionBanner();
+      const result = await resp.json();
+      showToast('Enregistré et synchronisé ✓\nPhotos : ' + (result.photos_saved || 0));
+    } else {
+      await pwaHandleSubmitError(resp, showToast);
+    }
+  } catch (e) {
+    showToast('Sauvé localement (hors ligne)', true);
+  }
+}
+
+// ═══════════ LOAD PHOTOS FROM SERVER ═══════════
+async function loadFromServer() {
+  if (dossier === '—') return;
+  try {
+    // 1. Vérifier si le dossier existe et récupérer case_id
+    const checkResp = await fetch(`${HUB}/placenta/api/cases/check?numero=${encodeURIComponent(dossier)}`);
+    if (!checkResp.ok) return;
+    const checkData = await checkResp.json();
+    if (!checkData.exists || !checkData.case_id) return;
+    const caseId = checkData.case_id;
+
+    // 2. Charger les données du module (champs formulaire) si pas déjà en localStorage
+    try {
+      const localRaw = localStorage.getItem(`placenta_${dossier}`);
+      if (!localRaw) {
+        const modResp = await fetch(`${HUB}/placenta/api/cases/${caseId}/modules/macro_frais`);
+        if (modResp.ok) {
+          const modResult = await modResp.json();
+          if (modResult.data) {
+            // Sauver en localStorage pour que loadLocal() puisse restaurer
+            localStorage.setItem(`placenta_${dossier}`, JSON.stringify(modResult.data));
+            loadLocal(); // Re-charger les champs depuis les données serveur
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 3. Charger les photos existantes
+    const photoResp = await fetch(`${HUB}/placenta/api/cases/${caseId}/photos?module=macro_frais`);
+    if (!photoResp.ok) return;
+    const photoData = await photoResp.json();
+    if (!photoData.photos || !photoData.photos.length) return;
+
+    for (const p of photoData.photos) {
+      const key = p.photo_key;
+      if (!key) continue;
+      // Ne pas écraser une photo fraîchement capturée (dataUrl)
+      if (photos[key] && photos[key].dataUrl) continue;
+
+      const photoUrl = `${HUB}/placenta/api/photo/serve?path=${encodeURIComponent(p.file_path)}`;
+      photos[key] = { serverUrl: photoUrl, label: p.label || key, filename: p.filename || '' };
+
+      // Créer les slots photo supplémentaires si nécessaire
+      if (key.startsWith('extra_')) {
+        const n = parseInt(key.split('_')[1]);
+        while (extraPhotoCount < n) addExtraPhotoSlot();
+      }
+
+      // Afficher la photo dans son slot
+      const slot = document.querySelector(`[data-key="${key}"]`);
+      if (slot) {
+        const label = p.label || key.replace(/_/g, ' ');
+        slot.classList.add('has-photo');
+        slot.innerHTML = `
+          <img src="${photoUrl}" alt="">
+          <button class="remove-btn" onclick="event.stopPropagation(); removePhoto(this.parentElement, '${key}')">✕</button>
+          <div class="overlay-label">${label}</div>
+        `;
+      }
+    }
+  } catch (e) {
+    // Hors ligne — on se contente du localStorage
+  }
+}
+
+// ═══════════ INIT ═══════════
+loadLocal();
+loadFromServer();
+pwaCheckSession(HUB);
+</script>
+<script>
+// ═══════ PWA Registration ═══════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/placentas/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/pwa_sync.js"></script>
+<script src="/static/i18n.js"></script>
+<script>
+  i18nInit(window.location.origin).then(function() { i18nApply(); }).catch(function() {});
+</script>
+</body>
+</html>

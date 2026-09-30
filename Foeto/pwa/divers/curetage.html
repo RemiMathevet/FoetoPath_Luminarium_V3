@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e1117">
+<title>Curetage — Macro</title>
+<link rel="manifest" href="/pwa/divers/manifest.json">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b22;
+    --surface-hover: #1c2230;
+    --border: #2a3140;
+    --border-focus: #4a90d9;
+    --text: #e2e8f0;
+    --text-muted: #8b95a5;
+    --accent: #4a90d9;
+    --accent-dim: rgba(74, 144, 217, 0.15);
+    --danger: #e55b5b;
+    --success: #3ddc84;
+    --success-dim: rgba(61, 220, 132, 0.15);
+    --warning: #f0a850;
+    --radius: 10px;
+    --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
+  .dossier-badge {
+    background: var(--accent-dim); color: var(--accent);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.85rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Sections ── */
+  .content { padding: 12px 16px 100px; }
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .section-title {
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 12px 16px 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-title .section-icon { font-size: 0.9rem; }
+  .section-body { padding: 0 16px 16px; }
+
+  /* ── Photos ── */
+  .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .photo-slot {
+    position: relative;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    aspect-ratio: 4/3;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+  }
+  .photo-slot:active { background: var(--surface-hover); }
+  .photo-slot.has-photo { border-style: solid; }
+  .photo-slot.has-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; border-radius: calc(var(--radius) - 2px);
+  }
+  .photo-slot .label { font-size: 0.75rem; font-weight: 600; margin-top: 6px; }
+  .photo-slot .icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .photo-slot[data-type="sup"] { border-color: var(--accent); }
+  .photo-slot[data-type="sup"] .icon { background: var(--accent-dim); color: var(--accent); }
+  .photo-slot[data-type="sup"] .label { color: var(--accent); }
+
+  .photo-slot .overlay-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 20px 8px 6px;
+    font-size: 0.7rem; font-weight: 600; text-align: center;
+  }
+  .photo-slot .remove-btn {
+    position: absolute; top: 4px; right: 4px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); color: var(--danger);
+    border: none; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 2;
+  }
+
+  .add-photo-row { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  #extra-photos-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 10px;
+  }
+  .btn-add-photo {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface-hover); border: 1px dashed var(--border);
+    border-radius: var(--radius); color: var(--accent);
+    padding: 10px 16px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; width: 100%; justify-content: center;
+    transition: background 0.2s;
+  }
+  .btn-add-photo:active { background: var(--border); }
+
+  /* ── Form fields ── */
+  .field-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .field-row:last-child { margin-bottom: 0; }
+  .field { flex: 1; display: flex; flex-direction: column; }
+  .field label {
+    font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+    margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .field input[type="number"],
+  .field input[type="text"],
+  .field textarea {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    color: var(--text); font-size: 1rem;
+    font-family: var(--font); outline: none;
+    transition: border-color 0.2s; width: 100%;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--border-focus); }
+  .field .unit {
+    font-size: 0.75rem; color: var(--text-muted);
+    margin-top: 2px; text-align: right;
+  }
+  .field textarea { min-height: 60px; resize: vertical; }
+
+  /* ── Chip selects ── */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .chip {
+    padding: 8px 16px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--text-muted); font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    user-select: none; -webkit-user-select: none;
+  }
+  .chip:active { transform: scale(0.96); }
+  .chip.selected {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .chip-group.multi .chip.selected {
+    background: var(--success-dim);
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  /* ── Alert Box ── */
+  .alert-box {
+    display: none;
+    background: rgba(240, 168, 80, 0.1);
+    border-left: 3px solid var(--warning);
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--warning);
+  }
+  .alert-box.visible { display: block; }
+
+  /* ── Organ Cards ── */
+  .organ-cards-grid {
+    display: grid; grid-template-columns: 1fr; gap: 10px;
+  }
+  .organ-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+  }
+  .organ-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; margin-bottom: 8px;
+  }
+  .organ-name {
+    font-size: 0.9rem; font-weight: 600; color: var(--text);
+  }
+  .organ-presence {
+    flex-shrink: 0;
+  }
+  .organ-presence .chip {
+    padding: 6px 12px; font-size: 0.8rem;
+  }
+  .organ-detail {
+    display: none;
+  }
+  .organ-detail.visible {
+    display: block; margin-top: 8px;
+  }
+  .organ-detail .field-row:first-child { margin-bottom: 8px; }
+  .organ-detail .field { flex: 1; }
+  .organ-detail .field label {
+    font-size: 0.7rem; margin-bottom: 2px;
+  }
+  .organ-detail input,
+  .organ-detail select {
+    font-size: 0.9rem; padding: 8px 10px;
+  }
+
+  /* ── Validation badge ── */
+  .validation-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; background: var(--border);
+    vertical-align: middle; transition: background 0.3s;
+  }
+  .validation-dot.valid { background: var(--success); }
+
+  /* ── Bottom bar ── */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px; display: flex; gap: 10px; z-index: 100;
+  }
+  .btn {
+    flex: 1; padding: 14px; border: none; border-radius: var(--radius);
+    font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary {
+    background: var(--surface-hover);
+    border: 1px solid var(--border); color: var(--text);
+  }
+
+  /* ── Toast notification ── */
+  .toast {
+    position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    background: var(--success); color: #0e1117;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.3s;
+    z-index: 200; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  .toast.error { background: var(--danger); color: #fff; }
+
+  /* ── Copy button in CR section ── */
+  .cr-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .cr-text {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+    color: var(--text-muted);
+  }
+  .btn-copy-cr {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--accent-dim); border: 1px solid var(--accent);
+    border-radius: 6px; color: var(--accent);
+    padding: 8px 12px; font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-copy-cr:active { transform: scale(0.96); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Curetage — Macro</h1>
+  <span class="dossier-badge" id="badge-dossier">—</span>
+</div>
+
+<div class="content">
+
+  <!-- ══════ ÉTAT & IDENTIFICATION ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📋</span> État & Identification
+      <span class="validation-dot" id="dot-etat"></span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>État</label>
+          <div class="chip-group single" data-field="etat">
+            <div class="chip" onclick="selectChip(this)">Frais</div>
+            <div class="chip" onclick="selectChip(this)">Fixé</div>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Aspect</label>
+          <div class="chip-group single" data-field="aspect">
+            <div class="chip" onclick="selectChip(this)">Conglomérat</div>
+            <div class="chip" onclick="selectChip(this)">Fragments</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ BIOMÉTRIE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📐</span> Biométrie
+      <span class="validation-dot" id="dot-biom"></span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Poids</label>
+          <input type="number" id="poids" step="0.1" min="0" inputmode="decimal"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">g</div>
+        </div>
+        <div class="field">
+          <label>Volume</label>
+          <input type="number" id="volume" step="0.1" min="0" inputmode="decimal"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">mL</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Grand axe</label>
+          <input type="number" id="grand_axe" step="0.1" min="0" inputmode="decimal"
+                 placeholder="—" oninput="validate()">
+          <div class="unit">cm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ FRAGMENTS PLACENTAIRES ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🔬</span> Fragments placentaires
+    </div>
+    <div class="section-body">
+      <div class="field" style="margin-bottom: 10px;">
+        <label>Villeux</label>
+        <div class="chip-group multi" data-field="villeux">
+          <div class="chip" onclick="toggleChip(this)">Normaux</div>
+          <div class="chip" onclick="toggleChip(this); checkMoleSuspicion()">Kystiques</div>
+          <div class="chip" onclick="toggleChip(this)">Gros kystes</div>
+          <div class="chip" onclick="toggleChip(this); checkMoleSuspicion()">Hydropiques</div>
+          <div class="chip" onclick="toggleChip(this); checkMoleSuspicion()">Vésiculeux</div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom: 10px;">
+        <label>Caduque</label>
+        <div class="chip-group single" data-field="caduque">
+          <div class="chip" onclick="selectChip(this)">Présente</div>
+          <div class="chip" onclick="selectChip(this)">Absente</div>
+          <div class="chip" onclick="selectChip(this)">Douteuse</div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom: 10px;">
+        <label>Sac gestationnel</label>
+        <div class="chip-group single" data-field="sac">
+          <div class="chip" onclick="selectChip(this)">Identifié</div>
+          <div class="chip" onclick="selectChip(this)">Non identifié</div>
+        </div>
+      </div>
+      <div class="alert-box" id="alert-mole">
+        ⚠️ Suspicion de môle trophoblastique (villeux hydropiques/vésiculeux)
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ FRAGMENTS FOETAUX ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">👶</span> Fragments foetaux
+      <span class="validation-dot" id="dot-foetaux"></span>
+    </div>
+    <div class="section-body">
+      <div class="field" style="margin-bottom: 10px;">
+        <label>Présence</label>
+        <div class="chip-group single" data-field="foetaux">
+          <div class="chip" onclick="selectChip(this); updateOrganVisibility()">Oui</div>
+          <div class="chip" onclick="selectChip(this); updateOrganVisibility()">Non</div>
+          <div class="chip" onclick="selectChip(this); updateOrganVisibility()">Partiels</div>
+        </div>
+      </div>
+      <div id="organs-section" style="display: none;">
+        <div class="organ-cards-grid" id="organ-cards-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PHOTOS ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📷</span> Photographies
+    </div>
+    <div class="section-body">
+      <div class="photo-grid">
+        <div class="photo-slot" data-type="sup" data-key="photo_1" onclick="capturePhoto(this)">
+          <div class="icon">📷</div>
+          <div class="label">Photo 1</div>
+        </div>
+        <div class="photo-slot" data-type="sup" data-key="photo_2" onclick="capturePhoto(this)">
+          <div class="icon">📷</div>
+          <div class="label">Photo 2</div>
+        </div>
+      </div>
+      <div id="extra-photos-grid"></div>
+      <div class="add-photo-row">
+        <button class="btn-add-photo" onclick="addExtraPhotoSlot()">
+          <span>＋</span> Photo supplémentaire
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ ORIENTATION DIAGNOSTIQUE ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">🔍</span> Orientation diagnostique
+    </div>
+    <div class="section-body">
+      <div class="field" style="margin-bottom: 10px;">
+        <label>Suspicion de môle</label>
+        <div class="chip-group single" data-field="mole_susp">
+          <div class="chip" onclick="selectChip(this)">Non</div>
+          <div class="chip" onclick="selectChip(this)">Partielle</div>
+          <div class="chip" onclick="selectChip(this)">Complète</div>
+          <div class="chip" onclick="selectChip(this)">Équivoque</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Prélèvements complémentaires</label>
+        <div class="chip-group single" data-field="prelev">
+          <div class="chip" onclick="selectChip(this)">Aucun</div>
+          <div class="chip" onclick="selectChip(this)">Caryotype</div>
+          <div class="chip" onclick="selectChip(this)">IHC p57</div>
+          <div class="chip" onclick="selectChip(this)">Caryotype+IHC</div>
+          <div class="chip" onclick="selectChip(this)">Génotypage</div>
+          <div class="chip" onclick="selectChip(this)">Caryotype+génotypage</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ OBSERVATIONS ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📝</span> Observations
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label>Notes libres</label>
+        <textarea id="observations" placeholder="Observations complémentaires…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ COMPTE-RENDU ══════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-icon">📄</span> Compte-rendu
+    </div>
+    <div class="section-body">
+      <div class="cr-header">
+        <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Texte généré</span>
+        <button class="btn-copy-cr" onclick="copyCR()">📋 Copier</button>
+      </div>
+      <div class="cr-text" id="cr-output">Compte-rendu généré ici…</div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ── BOTTOM BAR ── -->
+<div class="bottom-bar">
+  <button class="btn btn-secondary" onclick="goBack()">← Retour</button>
+  <button class="btn btn-primary" onclick="saveAndExport()">Enregistrer ✓</button>
+</div>
+
+<!-- Hidden file input -->
+<input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none">
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════ HUB URL ═══════════
+const HUB = window.location.origin;
+
+// ═══════════ INIT ═══════════
+const params = new URLSearchParams(window.location.search);
+const dossier = params.get('dossier') || '—';
+document.getElementById('badge-dossier').textContent = dossier;
+
+// ═══════════ STATE ═══════════
+let photos = {};
+let extraPhotoCount = 0;
+let currentPhotoSlot = null;
+
+// Organ definitions with aspect options
+const organOptions = {
+  mains: {
+    label: 'Mains',
+    aspects: ['Normales', 'Polydactylie', 'Syndactylie', 'Brachydactylie', 'Clinodactylie', 'Camptodactylie', 'Poing fermé', 'Autre']
+  },
+  pieds: {
+    label: 'Pieds',
+    aspects: ['Normaux', 'Polydactylie', 'Syndactylie', 'Pied bot', 'Pied plat', 'Brachydactylie', 'Autre']
+  },
+  neurocrane: {
+    label: 'Neurocrane',
+    aspects: ['Normal', 'Anencéphalie', 'Exencéphalie', 'Craniorachischisis', 'Déformation', 'Autre']
+  },
+  coeur: {
+    label: 'Cœur',
+    aspects: ['Normal', 'Malformation', 'Petit', 'Autre']
+  },
+  poumons: {
+    label: 'Poumons',
+    aspects: ['Normaux', 'Hypoplasiques', 'Malformation', 'Autre']
+  },
+  foie: {
+    label: 'Foie',
+    aspects: ['Normal', 'Anormal', 'Autre']
+  },
+  reins: {
+    label: 'Reins',
+    aspects: ['Normaux', 'Agénésie unilatérale', 'Polykystiques', 'Dysplasiques', 'Hydronéphrose', 'Autre']
+  },
+  surrenales: {
+    label: 'Surrénales',
+    aspects: ['Normales', 'Hypoplasiques', 'Autre']
+  },
+  thymus: {
+    label: 'Thymus',
+    aspects: ['Normal', 'Hypoplasique', 'Absent (DiGeorge)', 'Autre']
+  },
+  intestins: {
+    label: 'Intestins',
+    aspects: ['Normaux', 'Dilatation', 'Atrésie', 'Autre']
+  },
+  cordon: {
+    label: 'Cordon ombilical',
+    aspects: ['Normal (3 vaisseaux)', '2 vaisseaux', 'Court', 'Long', 'Autre']
+  },
+  rachis: {
+    label: 'Rachis',
+    aspects: ['Normal', 'Spina bifida', 'Myéloméningocèle', 'Autre']
+  }
+};
+
+// ═══════════ TOAST ═══════════
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+// ═══════════ NAVIGATION ═══════════
+function goBack() {
+  saveLocal();
+  window.location.href = '/pwa/divers/';
+}
+
+// ═══════════ PHOTOS ═══════════
+const fileInput = document.getElementById('photo-file-input');
+
+function capturePhoto(slot) {
+  currentPhotoSlot = slot;
+  fileInput.click();
+}
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file || !currentPhotoSlot) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const slot = currentPhotoSlot;
+    const key = slot.dataset.key;
+    const dataUrl = ev.target.result;
+    const label = slot.querySelector('.label')?.textContent || key;
+    photos[key] = { dataUrl, label, filename: file.name };
+    slot.classList.add('has-photo');
+    slot.innerHTML = `
+      <img src="${dataUrl}" alt="">
+      <button class="remove-btn" onclick="event.stopPropagation(); removePhoto(this.parentElement, '${key}')">✕</button>
+      <div class="overlay-label">${label}</div>
+    `;
+  };
+  reader.readAsDataURL(file);
+  fileInput.value = '';
+});
+
+function removePhoto(slot, key) {
+  delete photos[key];
+  const label = slot.querySelector('.label')?.textContent || key;
+  slot.classList.remove('has-photo');
+  slot.innerHTML = `<div class="icon">📷</div><div class="label">${label}</div>`;
+}
+
+function addExtraPhotoSlot() {
+  extraPhotoCount++;
+  const n = extraPhotoCount;
+  const grid = document.getElementById('extra-photos-grid');
+  const slot = document.createElement('div');
+  slot.className = 'photo-slot';
+  slot.dataset.type = 'sup';
+  slot.dataset.key = `extra_${n}`;
+  slot.onclick = function() { capturePhoto(this); };
+  slot.innerHTML = `<div class="icon">📷</div><div class="label">Suppl. ${n}</div>`;
+  grid.appendChild(slot);
+}
+
+// ═══════════ CHIPS ═══════════
+function selectChip(chip) {
+  const group = chip.closest('.chip-group');
+  group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+  validate();
+}
+
+function toggleChip(chip) {
+  chip.classList.toggle('selected');
+  validate();
+}
+
+// ═══════════ ORGAN MANAGEMENT ═══════════
+function initializeOrgans() {
+  const container = document.getElementById('organ-cards-container');
+  container.innerHTML = '';
+
+  for (const [key, config] of Object.entries(organOptions)) {
+    const card = document.createElement('div');
+    card.className = 'organ-card';
+    card.id = `card-${key}`;
+    card.dataset.organ = key;
+
+    let aspectOptions = config.aspects.map(a => `<option value="${a}">${a}</option>`).join('');
+
+    card.innerHTML = `
+      <div class="organ-header">
+        <span class="organ-name">${config.label}</span>
+        <div class="chip-group single organ-presence" data-field="organ_${key}">
+          <div class="chip" onclick="setOrganPresence('${key}', true, this)">Présent</div>
+          <div class="chip" onclick="setOrganPresence('${key}', false, this)">Absent</div>
+        </div>
+      </div>
+      <div class="organ-detail" id="detail-${key}">
+        <div class="field-row">
+          <div class="field">
+            <label>Taille (mm)</label>
+            <input type="number" class="organ-size" id="size-${key}" step="0.1" placeholder="—">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Aspect</label>
+            <select class="organ-aspect" id="aspect-${key}">
+              <option value="">—</option>
+              ${aspectOptions}
+            </select>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  }
+}
+
+function setOrganPresence(organ, isPresent, chip) {
+  const group = chip.closest('.chip-group');
+  group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  chip.classList.add('selected');
+
+  const detailDiv = document.getElementById(`detail-${organ}`);
+  if (detailDiv) {
+    if (isPresent) {
+      detailDiv.classList.add('visible');
+    } else {
+      detailDiv.classList.remove('visible');
+    }
+  }
+  validate();
+}
+
+function updateOrganVisibility() {
+  const foetaux = document.querySelector('[data-field="foetaux"] .chip.selected');
+  const section = document.getElementById('organs-section');
+  if (foetaux && ['Oui', 'Partiels'].includes(foetaux.textContent.trim())) {
+    section.style.display = 'block';
+  } else {
+    section.style.display = 'none';
+  }
+  validate();
+}
+
+// ═══════════ MOLE SUSPICION CHECK ═══════════
+function checkMoleSuspicion() {
+  const villeux = Array.from(document.querySelectorAll('[data-field="villeux"] .chip.selected'))
+    .map(c => c.textContent.trim());
+  const alert = document.getElementById('alert-mole');
+  if (villeux.some(v => ['Hydropiques', 'Vésiculeux'].includes(v))) {
+    alert.classList.add('visible');
+  } else {
+    alert.classList.remove('visible');
+  }
+}
+
+// ═══════════ VALIDATION ═══════════
+function validate() {
+  const v = (id) => document.getElementById(id)?.value;
+  const dot = (id, ok) => document.getElementById(id)?.classList.toggle('valid', ok);
+  const sel = (f) => document.querySelector(`[data-field="${f}"] .chip.selected`);
+
+  dot('dot-etat', !!sel('etat'));
+  dot('dot-biom', !!(v('poids') || v('volume') || v('grand_axe')));
+  dot('dot-foetaux', !!sel('foetaux'));
+}
+
+// ═══════════ COLLECT ═══════════
+function getChips(field) {
+  return Array.from(document.querySelectorAll(`[data-field="${field}"] .chip.selected`))
+    .map(c => c.textContent.trim());
+}
+
+function collectOrgans() {
+  const organs = {};
+  for (const key of Object.keys(organOptions)) {
+    const presenceChip = document.querySelector(`[data-field="organ_${key}"] .chip.selected`);
+    const isPresent = presenceChip && presenceChip.textContent.includes('Présent');
+    organs[key] = {
+      present: isPresent,
+      size: isPresent ? (document.getElementById(`size-${key}`)?.value || null) : null,
+      aspect: isPresent ? (document.getElementById(`aspect-${key}`)?.value || null) : null
+    };
+  }
+  return organs;
+}
+
+function collectData() {
+  return {
+    dossier: dossier,
+    timestamp: new Date().toISOString(),
+    type: 'divers_curetage',
+    etat: getChips('etat')[0] || null,
+    aspect: getChips('aspect')[0] || null,
+    biometrie: {
+      poids_g: parseFloat(document.getElementById('poids').value) || null,
+      volume_ml: parseFloat(document.getElementById('volume').value) || null,
+      grand_axe_cm: parseFloat(document.getElementById('grand_axe').value) || null
+    },
+    villeux: getChips('villeux'),
+    caduque: getChips('caduque')[0] || null,
+    sac: getChips('sac')[0] || null,
+    foetaux: getChips('foetaux')[0] || null,
+    organs: getChips('foetaux')[0] && ['Oui', 'Partiels'].includes(getChips('foetaux')[0]) ? collectOrgans() : {},
+    mole_susp: getChips('mole_susp')[0] || null,
+    prelev: getChips('prelev')[0] || null,
+    observations: document.getElementById('observations').value.trim() || null,
+    photos: Object.keys(photos).map(k => ({ key: k, label: photos[k].label }))
+  };
+}
+
+// ═══════════ LOCAL STORAGE ═══════════
+function saveLocal() {
+  const data = collectData();
+  try {
+    localStorage.setItem(`divers_curetage_${dossier}`, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(`divers_curetage_${dossier}`);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.type !== 'divers_curetage') return;
+
+    // Restore fields
+    if (data.etat) restoreChip('etat', data.etat);
+    if (data.aspect) restoreChip('aspect', data.aspect);
+    if (data.biometrie?.poids_g) document.getElementById('poids').value = data.biometrie.poids_g;
+    if (data.biometrie?.volume_ml) document.getElementById('volume').value = data.biometrie.volume_ml;
+    if (data.biometrie?.grand_axe_cm) document.getElementById('grand_axe').value = data.biometrie.grand_axe_cm;
+    if (data.villeux) data.villeux.forEach(v => restoreChip('villeux', v, true));
+    if (data.caduque) restoreChip('caduque', data.caduque);
+    if (data.sac) restoreChip('sac', data.sac);
+    if (data.foetaux) { restoreChip('foetaux', data.foetaux); updateOrganVisibility(); }
+    if (data.organs && Object.keys(data.organs).length > 0) {
+      for (const [key, organ] of Object.entries(data.organs)) {
+        if (organ.present) {
+          const chip = document.querySelector(`[data-field="organ_${key}"] .chip:first-child`);
+          if (chip) setOrganPresence(key, true, chip);
+          if (organ.size) document.getElementById(`size-${key}`).value = organ.size;
+          if (organ.aspect) document.getElementById(`aspect-${key}`).value = organ.aspect;
+        }
+      }
+    }
+    if (data.mole_susp) restoreChip('mole_susp', data.mole_susp);
+    if (data.prelev) restoreChip('prelev', data.prelev);
+    if (data.observations) document.getElementById('observations').value = data.observations;
+
+    checkMoleSuspicion();
+    validate();
+  } catch (e) {}
+}
+
+function restoreChip(field, value, multi = false) {
+  const group = document.querySelector(`[data-field="${field}"]`);
+  if (!group) return;
+  group.querySelectorAll('.chip').forEach(c => {
+    if (c.textContent.trim() === value) {
+      if (!multi) group.querySelectorAll('.chip').forEach(x => x.classList.remove('selected'));
+      c.classList.add('selected');
+    }
+  });
+}
+
+// ═══════════ CR GENERATION ═══════════
+function generateCR() {
+  const data = collectData();
+  const lines = [];
+
+  lines.push('COMPTE-RENDU MACROSCOPIQUE - PRODUIT DE CURETAGE');
+  lines.push('');
+  lines.push(`Dossier: ${data.dossier}`);
+  lines.push(`Date: ${new Date(data.timestamp).toLocaleDateString('fr-FR')}`);
+  lines.push('');
+
+  lines.push('ÉTAT ET ASPECT GÉNÉRAL');
+  lines.push(`  État: ${data.etat || '—'}`);
+  lines.push(`  Aspect: ${data.aspect || '—'}`);
+  lines.push('');
+
+  lines.push('BIOMÉTRIE');
+  lines.push(`  Poids: ${data.biometrie.poids_g || '—'} g`);
+  lines.push(`  Volume: ${data.biometrie.volume_ml || '—'} mL`);
+  lines.push(`  Grand axe: ${data.biometrie.grand_axe_cm || '—'} cm`);
+  lines.push('');
+
+  lines.push('FRAGMENTS PLACENTAIRES');
+  lines.push(`  Villeux: ${data.villeux.length > 0 ? data.villeux.join(', ') : '—'}`);
+  lines.push(`  Caduque: ${data.caduque || '—'}`);
+  lines.push(`  Sac gestationnel: ${data.sac || '—'}`);
+  lines.push('');
+
+  if (data.foetaux && ['Oui', 'Partiels'].includes(data.foetaux)) {
+    lines.push('FRAGMENTS FOETAUX');
+    lines.push(`  Présence: ${data.foetaux}`);
+    for (const [key, organ] of Object.entries(data.organs)) {
+      if (organ.present) {
+        const config = organOptions[key];
+        lines.push(`  ${config.label}: Présent${organ.size ? ` (${organ.size} mm)` : ''}${organ.aspect ? ` - ${organ.aspect}` : ''}`);
+      }
+    }
+  } else {
+    lines.push('FRAGMENTS FOETAUX');
+    lines.push(`  Présence: ${data.foetaux || 'Non'}`);
+  }
+  lines.push('');
+
+  lines.push('ORIENTATION DIAGNOSTIQUE');
+  lines.push(`  Suspicion de môle: ${data.mole_susp || '—'}`);
+  lines.push(`  Prélèvements: ${data.prelev || '—'}`);
+  lines.push('');
+
+  if (data.observations) {
+    lines.push('OBSERVATIONS');
+    lines.push(`  ${data.observations}`);
+    lines.push('');
+  }
+
+  return lines.join('\n');
+}
+
+function updateCR() {
+  const cr = generateCR();
+  document.getElementById('cr-output').textContent = cr;
+}
+
+function copyCR() {
+  const cr = document.getElementById('cr-output').textContent;
+  navigator.clipboard.writeText(cr).then(() => {
+    showToast('Compte-rendu copié ✓');
+  }).catch(() => {
+    showToast('Erreur de copie', true);
+  });
+}
+
+// ═══════════ SAVE & EXPORT ═══════════
+function _dataUrlToBlob(dataUrl) {
+  const parts = dataUrl.split(',');
+  const mime = parts[0].match(/:(.*?);/)[1];
+  const b = atob(parts[1]);
+  const arr = new Uint8Array(b.length);
+  for (let j = 0; j < b.length; j++) arr[j] = b.charCodeAt(j);
+  return new Blob([arr], {type: mime});
+}
+
+async function saveAndExport() {
+  const data = collectData();
+  saveLocal();
+  updateCR();
+
+  try {
+    const formData = new FormData();
+    formData.append('json_data', JSON.stringify(data));
+    formData.append('dossier', dossier);
+    formData.append('module', 'divers_curetage');
+    formData.append('cr_text', generateCR());
+    try { var pu = localStorage.getItem('placenta_pwa_user'); if (pu) formData.append('user', pu); } catch(e) {}
+
+    for (const [key, photo] of Object.entries(photos)) {
+      if (photo.dataUrl) {
+        try {
+          const blob = _dataUrlToBlob(photo.dataUrl);
+          const ext = blob.type.includes('png') ? '.png' : '.jpg';
+          formData.append('photo_' + key, blob, `${dossier}_${key}${ext}`);
+        } catch (e) {
+          formData.append('b64_' + key, photo.dataUrl);
+        }
+      }
+    }
+
+    const resp = await fetch(`${HUB}/divers/api/save`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (resp.ok) {
+      const result = await resp.json();
+      showToast('Enregistré et synchronisé ✓');
+    } else {
+      const err = await resp.json().catch(() => ({}));
+      showToast('Sync échouée : ' + (err.error || resp.status), true);
+    }
+  } catch (e) {
+    showToast('Sauvé localement (hors ligne)', true);
+  }
+}
+
+// ═══════════ LOAD FROM SERVER ═══════════
+async function loadFromServer() {
+  if (dossier === '—') return;
+  try {
+    const checkResp = await fetch(`${HUB}/divers/api/check?numero=${encodeURIComponent(dossier)}`);
+    if (!checkResp.ok) return;
+    const checkData = await checkResp.json();
+    if (!checkData.exists) return;
+
+    try {
+      const localRaw = localStorage.getItem(`divers_curetage_${dossier}`);
+      if (!localRaw) {
+        const modResp = await fetch(`${HUB}/divers/api/cases/data?dossier=${encodeURIComponent(dossier)}`);
+        if (modResp.ok) {
+          const modResult = await modResp.json();
+          if (modResult.data) {
+            localStorage.setItem(`divers_curetage_${dossier}`, JSON.stringify(modResult.data));
+            loadLocal();
+          }
+        }
+      }
+    } catch (e) {}
+
+    const photoResp = await fetch(`${HUB}/divers/api/photos?dossier=${encodeURIComponent(dossier)}`);
+    if (!photoResp.ok) return;
+    const photoData = await photoResp.json();
+    if (!photoData.photos || !photoData.photos.length) return;
+
+    for (const p of photoData.photos) {
+      const key = p.photo_key;
+      if (!key) continue;
+      if (photos[key] && photos[key].dataUrl) continue;
+
+      const photoUrl = `${HUB}/divers/api/photo/serve?path=${encodeURIComponent(p.file_path)}`;
+      photos[key] = { serverUrl: photoUrl, label: p.label || key, filename: p.filename || '' };
+
+      if (key.startsWith('extra_')) {
+        const n = parseInt(key.split('_')[1]);
+        while (extraPhotoCount < n) addExtraPhotoSlot();
+      }
+
+      const slot = document.querySelector(`[data-key="${key}"]`);
+      if (slot) {
+        const label = p.label || key.replace(/_/g, ' ');
+        slot.classList.add('has-photo');
+        slot.innerHTML = `
+          <img src="${photoUrl}" alt="">
+          <button class="remove-btn" onclick="event.stopPropagation(); removePhoto(this.parentElement, '${key}')">✕</button>
+          <div class="overlay-label">${label}</div>
+        `;
+      }
+    }
+  } catch (e) {
+    // Offline
+  }
+}
+
+// ═══════════ INIT ═══════════
+initializeOrgans();
+loadLocal();
+updateCR();
+loadFromServer();
+
+document.addEventListener('input', updateCR);
+document.addEventListener('change', updateCR);
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/divers/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>
+  i18nInit(window.location.origin).then(function() { i18nApply(); }).catch(function() {});
+</script>
+</body>
+</html>

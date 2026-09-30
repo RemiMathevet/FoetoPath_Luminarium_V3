@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Configuration 2FA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181a23;
+  --surface2: #1e2130;
+  --border: #2a2d3e;
+  --text: #e8eaf0;
+  --text2: #9498ab;
+  --muted: #5f6378;
+  --accent: #7c6aef;
+  --accent-hover: #6b5ad6;
+  --danger: #f87171;
+  --success: #34d399;
+  --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px;
+  width: 440px;
+  max-width: 95vw;
+}
+.card-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.card-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.card-header p {
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.shield-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+  display: block;
+}
+.steps {
+  margin-bottom: 24px;
+}
+.step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+.step-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 1px;
+}
+.step-text {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.qr-container {
+  text-align: center;
+  margin: 20px 0;
+  padding: 16px;
+  background: var(--surface2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.qr-container img {
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px;
+}
+.secret-manual {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.secret-manual code {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  font-family: 'DM Sans', monospace;
+  word-break: break-all;
+  user-select: all;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+.form-group input {
+  width: 100%;
+  padding: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 22px;
+  font-family: 'DM Sans', monospace;
+  text-align: center;
+  letter-spacing: 0.3em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus {
+  border-color: var(--accent);
+}
+.form-group input::placeholder {
+  font-size: 15px;
+  letter-spacing: normal;
+}
+.btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn:hover { background: var(--accent-hover); }
+.error-msg {
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.3);
+  color: var(--danger);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.mandatory-badge {
+  display: inline-block;
+  background: rgba(124,106,239,0.15);
+  border: 1px solid rgba(124,106,239,0.3);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <span class="shield-icon">&#x1F6E1;&#xFE0F;</span>
+    <h1 data-i18n="auth.totp_setup_title">Configuration 2FA</h1>
+    <p data-i18n="auth.totp_setup_subtitle">La double authentification est obligatoire.<br>Configurez-la pour sécuriser votre compte.</p>
+    <span class="mandatory-badge" data-i18n="auth.totp_mandatory">Obligatoire</span>
+  </div>
+
+  {% if error %}
+  <div class="error-msg">{{ error }}</div>
+  {% endif %}
+
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">1</span>
+      <span class="step-text" data-i18n="auth.totp_step1">Installez une application d'authentification :<br><strong>Google Authenticator</strong>, <strong>Authy</strong> ou <strong>Microsoft Authenticator</strong></span>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <span class="step-text" data-i18n="auth.totp_step2">Scannez le QR code ci-dessous avec votre application</span>
+    </div>
+  </div>
+
+  <div class="qr-container">
+    <img src="/auth/totp/qr" alt="QR Code TOTP" width="192" height="192">
+    <div class="secret-manual">
+      <span data-i18n="auth.totp_manual_entry">Saisie manuelle :</span>
+      <code>{{ totp_secret }}</code>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">3</span>
+      <span class="step-text" data-i18n="auth.totp_step3">Saisissez le code à 6 chiffres affiche dans votre application pour confirmer</span>
+    </div>
+  </div>
+
+  <form method="POST" action="/auth/totp/setup" autocomplete="off">
+    <div class="form-group">
+      <label for="code" data-i18n="auth.totp_confirm_label">Code de confirmation</label>
+      <input type="text" id="code" name="code"
+             inputmode="numeric" pattern="[0-9]{6}"
+             maxlength="6" autofocus required
+             placeholder="000 000"
+             autocomplete="one-time-code">
+    </div>
+
+    <button type="submit" class="btn" data-i18n="auth.totp_activate">Activer la 2FA</button>
+  </form>
+</div>
+
+<script src="/static/i18n.js"></script>
+<script>i18nInit().then(function() { i18nApply(); });</script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+FICHE DE SYNTHÈSE — STAFF / RCP
+===============================
+Dossier {{ numero or "#" }}{% if case.numero_placenta %} (placenta {{ case.numero_placenta }}){% endif %}{% if date_examen %} — {{ date_examen }}{% endif %}
+{% if service %}{{ service }}{% if medecin %} / {{ medecin }}{% endif %}{% endif %}
+
+1. CONTEXTE
+-----------
+{{ type_issue or "IMG" }}{% if terme_sa %} à {{ terme_sa }} SA{% if terme_j %}+{{ terme_j }}j{% endif %}{% endif %} — sexe {{ "M" if sexe == "M" else "F" if sexe == "F" else "I" }} — {{ trophicite }}{% if maceration and maceration.maroun_score %} — macération Maroun {{ maceration.maroun_score }}{% if genest_retention() %} / rétention {{ genest_retention() }}{% endif %}{% endif %}
+{% if indication %}Indication : {{ indication }}{% endif %}
+Mère{% if age_mere %} {{ age_mere }}{% endif %}{% if atcd_mat.gestite %}, G{{ atcd_mat.gestite }}P{{ atcd_mat.parite or "?" }}{% endif %}{% if atcd_mat.groupe_sanguin %}, {{ atcd_mat.groupe_sanguin }}{{ atcd_mat.rhesus or "" }}{% endif %}{% if atcd_mat.fdr_consanguinite or case.consanguinite %}, consanguinité{% endif %}
+{% set fdr = split_fdr() %}{% if fdr.positifs %}FDR : {{ fdr.positifs|join(" | ") }}{% endif %}
+{% if atcd_obs %}ATCD obstétricaux :
+{{ _table_atcd_obs() }}{% endif %}
+
+2. CORRÉLATION PRÉNATAL ↔ POST-MORTEM
+-------------------------------------
+{% set pren = split_prenatal() %}Attendu (prénatal) :
+{% if pren.anormaux %}{% for x in pren.anormaux %}  - {{ x }}
+{% endfor %}{% else %}  - aucune anomalie signalée
+{% endif %}Constaté (examen) :
+{% if all_anomalies %}{% for x in all_anomalies %}  - {{ x }}
+{% endfor %}{% else %}  - aucune anomalie morphologique
+{% endif %}{% if exam_prenataux.anomalies_confirmees %}Confirmé en prénatal : {{ exam_prenataux.anomalies_confirmees }}{% endif %}
+
+3. BIOMÉTRIES (écarts significatifs)
+------------------------------------
+Masse {{ _ds('masse') }} | VT {{ _ds('VT') }} | PC {{ _ds('PC') }} | pied {{ _ds('pied') }}
+{% if alertes %}Organes hors normes :
+{% for x in alertes %}  - {{ x }}
+{% endfor %}{% else %}Poids d'organes en accord avec le terme.
+{% endif %}{% if lbwr.valeur %}LBWR {{ "%.4f"|format(lbwr.valeur) }}{% if lbwr.alerte %} — {{ lbwr.alerte }}{% endif %}{% endif %}
+{% if rad_scores.hadlock_sa or rad_scores.adalian_sa %}Âge statural radio : {% if rad_scores.hadlock_sa %}Hadlock {{ rad_scores.hadlock_sa }} SA{% endif %}{% if rad_scores.adalian_sa %} / Adalian {{ rad_scores.adalian_sa }} SA{% endif %}{% endif %}
+
+4. MICROSCOPIE
+--------------
+{% if composite_micro_text %}{{ composite_micro_text }}
+{% elif labellisation_table %}{% for row in labellisation_table %}{{ row.organe }} : {% for f in row.findings %}{{ f.text }}{% if not loop.last %} {% endif %}{% endfor %}
+{% endfor %}{% else %}En attente.
+{% endif %}
+
+5. EN ATTENTE / À TRACER
+------------------------
+{% if prelevements.speciaux %}Prélèvements spéciaux : {{ prelevements.speciaux|join(", ") }}{% if prelevements.speciaux_det %} ({{ prelevements.speciaux_det }}){% endif %}{% endif %}
+{% if prelevements.congelation %}Congélation : {{ prelevements.congelation }}{% endif %}
+{% if prelevements.dnatheque %}DNAthèque : {{ prelevements.dnatheque }}{% endif %}
+{% if exam_prenataux.caryotype %}Caryotype : {{ exam_prenataux.caryotype }}{% endif %}
+{% if rad_hpo_codes %}HPO retenus : {% for h in rad_hpo_codes %}{{ h.term_fr or h.term or h }}{% if h.code %} ({{ h.code }}){% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}
+{% if not (prelevements.speciaux or prelevements.congelation or prelevements.dnatheque or exam_prenataux.caryotype or rad_hpo_codes) %}Rien en attente.
+{% endif %}
+6. CONCLUSION PROPOSÉE
+----------------------
+Fœtus de {{ terme_sa or "#" }} SA, {{ trophicite|lower }}, {% if maceration and maceration.maroun_score and maceration.maroun_score > 0 %}macéré{% else %}non macéré{% endif %}{% if all_anomalies %}, présentant : {{ all_anomalies|join(" ; ") }}{% else %}, sans anomalie décelable{% endif %}.
+{% if composite_conclusion_items %}{% for d in composite_conclusion_items %}  - {{ d }}
+{% endfor %}{% endif %}{% if case.notes %}
+Note : {{ case.notes }}{% endif %}

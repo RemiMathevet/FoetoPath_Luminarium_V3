@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Photos macro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg:#0f1117; --bg2:#181a24; --bg3:#1e2030; --bg4:#262940;
+    --text:#e8e6e1; --text2:#a0a0a0; --text3:#6a6a6a;
+    --accent:#7c6aef; --accent-bg:rgba(124,106,239,0.1);
+    --danger:#e74c3c; --warning:#f39c12; --success:#2ecc71; --info:#3498db;
+    --border:rgba(255,255,255,0.08); --radius:8px;
+    --font:'DM Sans',-apple-system,sans-serif; --mono:'JetBrains Mono',monospace;
+}
+[data-theme="light"] { --bg:#f5f5f7; --bg2:#fff; --bg3:#eef0f4; --bg4:#dfe2e8; --text:#1d1d1f; --text2:#555; --text3:#999; --accent:#5b4bc4; --border:rgba(0,0,0,0.1); }
+[data-theme="highcontrast"] { --bg:#000; --bg2:#0a0a0a; --bg3:#111; --text:#fff; --text2:#ffff00; --text3:#ccc; --accent:#00ffff; --border:rgba(255,255,255,0.3); }
+[data-theme="cli"] { --bg:#0a0a0a; --bg2:#0d0d0d; --bg3:#111; --text:#33ff33; --text2:#22cc22; --text3:#118811; --accent:#33ff33; --border:rgba(51,255,51,0.15); --font:'JetBrains Mono',monospace; --radius:0px; }
+[data-theme="cli"] body { text-shadow:0 0 4px rgba(51,255,51,0.3); }
+[data-theme="win98"] { --bg:#008080; --bg2:#c0c0c0; --bg3:#d4d0c8; --text:#000; --text2:#333; --text3:#666; --accent:#000080; --border:#808080; --font:'Tahoma',sans-serif; --radius:0px; }
+[data-theme="win98"] .topbar { background:#c0c0c0 !important; border-bottom:2px solid #808080; }
+[data-theme="win98"] .photo-card { box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #fff; }
+[data-theme="win98"] .btn { background:#c0c0c0 !important; color:#000 !important; box-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #fff; border:none !important; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;}
+::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.14);border-radius:3px;}
+
+.topbar{display:flex;align-items:center;gap:12px;padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.topbar-brand{font-size:16px;font-weight:700;} .topbar-brand span{color:var(--accent);}
+.topbar-sep{width:1px;height:24px;background:var(--border);}
+.topbar-info{font-size:13px;color:var(--text2);}
+.topbar-count{font-family:var(--mono);color:var(--accent);font-weight:600;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text2);text-decoration:none;transition:all 0.15s;}
+.btn:hover{border-color:var(--text3);color:var(--text);}
+
+.container{max-width:1400px;margin:0 auto;padding:20px;}
+
+/* ── Categories ─────────────────────────── */
+.category{margin-bottom:28px;}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.cat-icon{font-size:20px;}
+.cat-title{font-size:15px;font-weight:600;}
+.cat-count{font-size:12px;color:var(--text3);font-family:var(--mono);}
+
+/* ── Grid ───────────────────────────────── */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+.photo-card{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all 0.2s;aspect-ratio:1;background:var(--bg3);}
+.photo-card:hover{border-color:var(--accent);transform:scale(1.02);z-index:2;}
+.photo-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-card-label{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,0.85));font-size:11px;font-weight:500;color:#fff;}
+.photo-card-filename{font-size:9px;color:rgba(255,255,255,0.5);font-family:var(--mono);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* ── Lightbox ───────────────────────────── */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(8px);}
+.lightbox.visible{display:flex;}
+.lightbox-img{max-width:92vw;max-height:82vh;object-fit:contain;border-radius:4px;box-shadow:0 4px 40px rgba(0,0,0,0.5);}
+.lightbox-caption{margin-top:12px;text-align:center;}
+.lightbox-label{font-size:16px;font-weight:600;color:#fff;}
+.lightbox-file{font-size:12px;color:rgba(255,255,255,0.5);font-family:var(--mono);margin-top:4px;}
+.lightbox-close{position:absolute;top:16px;right:20px;font-size:28px;color:#fff;cursor:pointer;opacity:0.6;transition:opacity 0.15s;background:none;border:none;z-index:10;}
+.lightbox-close:hover{opacity:1;}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);font-size:36px;color:#fff;cursor:pointer;opacity:0.4;transition:opacity 0.15s;background:none;border:none;padding:20px;z-index:10;}
+.lightbox-nav:hover{opacity:1;}
+.lightbox-prev{left:10px;} .lightbox-next{right:10px;}
+.lightbox-counter{font-size:12px;color:rgba(255,255,255,0.4);font-family:var(--mono);margin-top:6px;}
+
+/* Toolbar */
+.lightbox-toolbar{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;background:rgba(20,22,30,0.85);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:4px 8px;z-index:10;backdrop-filter:blur(8px);}
+.lightbox-toolbar button{background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;padding:6px;border-radius:4px;display:flex;align-items:center;transition:all 0.15s;}
+.lightbox-toolbar button:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.lb-zoom-level{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.5);min-width:40px;text-align:center;}
+.lb-sep{width:1px;height:18px;background:rgba(255,255,255,0.15);margin:0 4px;}
+
+/* Image wrapper for zoom/pan */
+.lightbox-img-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;width:100%;cursor:grab;position:relative;}
+.lightbox-img-wrap.dragging{cursor:grabbing;}
+.lightbox-img{max-width:92vw;max-height:80vh;object-fit:contain;border-radius:4px;box-shadow:0 4px 40px rgba(0,0,0,0.5);transform-origin:center center;transition:transform 0.15s ease;user-select:none;pointer-events:none;}
+
+/* ── Loading / Empty ────────────────────── */
+.loading{text-align:center;padding:60px;color:var(--text3);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.6s linear infinite;margin:0 auto 12px;}
+.empty{text-align:center;padding:60px;color:var(--text3);}
+</style>
+</head>
+<body>
+<script>
+// Appliquer le thème sauvegardé immédiatement
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+
+<div class="topbar">
+    <div class="topbar-brand">Foeto<span>Path</span></div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-info" id="topInfo">Photos macro</div>
+    <div class="topbar-sep"></div>
+    <span class="topbar-count" id="topCount">—</span>
+    <div style="margin-left:auto">
+        <a class="btn" href="/admin/" target="_self">← Admin</a>
+    </div>
+</div>
+
+<div class="container" id="content">
+    <div class="loading"><div class="spinner"></div>Chargement des photos...</div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">&#8249;</button>
+    <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">&#8250;</button>
+    <div class="lightbox-toolbar" id="lbToolbar">
+        <button onclick="lbZoom(0.3)" title="Zoom +">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+        <button onclick="lbZoom(-0.3)" title="Zoom −">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+        <span class="lb-zoom-level" id="lbZoomLevel">100%</span>
+        <div class="lb-sep"></div>
+        <button onclick="lbRotate(-90)" title="Rotation gauche (Shift+R)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1014.85-3.36L1 10"/></svg>
+        </button>
+        <button onclick="lbRotate(90)" title="Rotation droite (R)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 01-14.85-3.36L23 10"/></svg>
+        </button>
+        <div class="lb-sep"></div>
+        <button onclick="lbReset()" title="Réinitialiser (0)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+    </div>
+    <div class="lightbox-img-wrap" id="lbImgWrap">
+        <img class="lightbox-img" id="lbImg" src="" alt="" draggable="false">
+    </div>
+    <div class="lightbox-caption">
+        <div class="lightbox-label" id="lbLabel"></div>
+        <div class="lightbox-file" id="lbFile"></div>
+        <div class="lightbox-counter" id="lbCounter"></div>
+    </div>
+</div>
+
+<script>
+let allPhotos = [];
+let lbIndex = 0;
+
+async function loadPhotos() {
+    const params = new URLSearchParams(window.location.search);
+    const caseId = params.get('case_id') || '{{ case_id or "" }}';
+    const path = params.get('path') || '{{ photos_path or "" }}';
+
+    try {
+        const res = await fetch('/admin/api/photos/list', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ case_id: caseId || null, path: path || null }),
+        });
+        const data = await res.json();
+        if (data.error) {
+            document.getElementById('content').innerHTML = `<div class="empty"><h3>Erreur</h3><p>${data.error}</p></div>`;
+            return;
+        }
+        renderPhotos(data);
+    } catch (e) {
+        document.getElementById('content').innerHTML = `<div class="empty"><h3>Erreur réseau</h3><p>${e.message}</p></div>`;
+    }
+}
+
+function renderPhotos(data) {
+    const el = document.getElementById('content');
+    document.getElementById('topCount').textContent = data.total + ' photo(s)';
+    document.getElementById('topInfo').textContent = data.path;
+
+    if (!data.total) {
+        el.innerHTML = '<div class="empty"><h3>Aucune photo</h3><p>Pas de photos trouvées dans ce dossier.</p></div>';
+        return;
+    }
+
+    // Build flat array for lightbox navigation
+    allPhotos = [];
+    const cats = data.categories;
+
+    let html = '';
+    for (const [catKey, cat] of Object.entries(cats)) {
+        html += `<div class="category">
+            <div class="cat-header">
+                <span class="cat-icon">${cat.icon}</span>
+                <span class="cat-title">${cat.label}</span>
+                <span class="cat-count">${cat.photos.length}</span>
+            </div>
+            <div class="photo-grid">`;
+
+        for (const photo of cat.photos) {
+            const idx = allPhotos.length;
+            allPhotos.push(photo);
+            html += `<div class="photo-card" onclick="openLightbox(${idx})">
+                <img src="/admin/api/photo/thumbnail?path=${encodeURIComponent(photo.path)}&w=360&h=360" loading="lazy" alt="${photo.label || photo.name}">
+                <div class="photo-card-label">
+                    ${photo.label || photo.name}
+                    <div class="photo-card-filename">${photo.filename}</div>
+                </div>
+            </div>`;
+        }
+
+        html += '</div></div>';
+    }
+
+    el.innerHTML = html;
+}
+
+// ── Lightbox with zoom / rotate / drag ──────
+let lbZoomVal = 1;
+let lbRotateVal = 0;
+let lbPanX = 0, lbPanY = 0;
+let lbDragging = false, lbDragStartX = 0, lbDragStartY = 0;
+
+function openLightbox(idx) {
+    lbIndex = idx;
+    lbReset();
+    showLightboxPhoto();
+    document.getElementById('lightbox').classList.add('visible');
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('visible');
+}
+
+function navLightbox(dir) {
+    lbIndex = (lbIndex + dir + allPhotos.length) % allPhotos.length;
+    lbReset();
+    showLightboxPhoto();
+}
+
+function showLightboxPhoto() {
+    const p = allPhotos[lbIndex];
+    if (!p) return;
+    document.getElementById('lbImg').src = '/admin/api/photo/serve?path=' + encodeURIComponent(p.path);
+    document.getElementById('lbLabel').textContent = p.label || p.name;
+    document.getElementById('lbFile').textContent = p.filename;
+    document.getElementById('lbCounter').textContent = (lbIndex + 1) + ' / ' + allPhotos.length;
+    applyTransform();
+}
+
+function applyTransform() {
+    const img = document.getElementById('lbImg');
+    img.style.transform = `translate(${lbPanX}px, ${lbPanY}px) scale(${lbZoomVal}) rotate(${lbRotateVal}deg)`;
+    // Remove transition during drag for responsiveness
+    img.style.transition = lbDragging ? 'none' : 'transform 0.15s ease';
+    document.getElementById('lbZoomLevel').textContent = Math.round(lbZoomVal * 100) + '%';
+    // Change cursor when zoomed
+    const wrap = document.getElementById('lbImgWrap');
+    wrap.style.cursor = lbZoomVal > 1 ? (lbDragging ? 'grabbing' : 'grab') : 'default';
+}
+
+function lbZoom(delta) {
+    lbZoomVal = Math.max(0.2, Math.min(10, lbZoomVal + delta));
+    if (Math.abs(lbZoomVal - 1) < 0.05) lbZoomVal = 1; // snap to 100%
+    if (lbZoomVal <= 1) { lbPanX = 0; lbPanY = 0; } // reset pan when unzooming
+    applyTransform();
+}
+
+function lbRotate(deg) {
+    lbRotateVal = (lbRotateVal + deg) % 360;
+    applyTransform();
+}
+
+function lbReset() {
+    lbZoomVal = 1; lbRotateVal = 0; lbPanX = 0; lbPanY = 0;
+    applyTransform();
+}
+
+// ── Mouse wheel zoom ────────────────────────
+document.getElementById('lbImgWrap')?.addEventListener('wheel', e => {
+    if (!document.getElementById('lightbox').classList.contains('visible')) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.15 : 0.15;
+    lbZoom(delta);
+}, { passive: false });
+
+// ── Drag to pan (when zoomed) ───────────────
+const wrap = document.getElementById('lbImgWrap');
+wrap?.addEventListener('mousedown', e => {
+    if (lbZoomVal <= 1) return;
+    lbDragging = true;
+    lbDragStartX = e.clientX - lbPanX;
+    lbDragStartY = e.clientY - lbPanY;
+    wrap.classList.add('dragging');
+    e.preventDefault();
+});
+document.addEventListener('mousemove', e => {
+    if (!lbDragging) return;
+    lbPanX = e.clientX - lbDragStartX;
+    lbPanY = e.clientY - lbDragStartY;
+    applyTransform();
+});
+document.addEventListener('mouseup', () => {
+    if (lbDragging) {
+        lbDragging = false;
+        wrap?.classList.remove('dragging');
+        applyTransform();
+    }
+});
+
+// ── Touch: pinch to zoom + drag ─────────────
+let touchStartDist = 0, touchStartZoom = 1;
+wrap?.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchStartDist = Math.hypot(dx, dy);
+        touchStartZoom = lbZoomVal;
+        e.preventDefault();
+    } else if (e.touches.length === 1 && lbZoomVal > 1) {
+        lbDragging = true;
+        lbDragStartX = e.touches[0].clientX - lbPanX;
+        lbDragStartY = e.touches[0].clientY - lbPanY;
+        e.preventDefault();
+    }
+}, { passive: false });
+wrap?.addEventListener('touchmove', e => {
+    if (e.touches.length === 2 && touchStartDist > 0) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        lbZoomVal = Math.max(0.2, Math.min(10, touchStartZoom * (dist / touchStartDist)));
+        applyTransform();
+        e.preventDefault();
+    } else if (e.touches.length === 1 && lbDragging) {
+        lbPanX = e.touches[0].clientX - lbDragStartX;
+        lbPanY = e.touches[0].clientY - lbDragStartY;
+        applyTransform();
+        e.preventDefault();
+    }
+}, { passive: false });
+wrap?.addEventListener('touchend', () => {
+    touchStartDist = 0;
+    lbDragging = false;
+});
+
+// ── Double-click to toggle zoom ─────────────
+wrap?.addEventListener('dblclick', e => {
+    e.preventDefault();
+    if (lbZoomVal > 1) {
+        lbReset();
+    } else {
+        lbZoomVal = 3;
+        applyTransform();
+    }
+});
+
+// ── Keyboard ────────────────────────────────
+document.addEventListener('keydown', e => {
+    const lb = document.getElementById('lightbox');
+    if (!lb.classList.contains('visible')) return;
+    switch (e.key) {
+        case 'Escape': closeLightbox(); break;
+        case 'ArrowLeft': navLightbox(-1); break;
+        case 'ArrowRight': navLightbox(1); break;
+        case 'r': lbRotate(90); break;
+        case 'R': lbRotate(-90); break;
+        case '+': case '=': lbZoom(0.3); break;
+        case '-': lbZoom(-0.3); break;
+        case '0': lbReset(); break;
+    }
+});
+
+// Click backdrop to close
+document.getElementById('lightbox').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeLightbox();
+});
+
+// Init
+loadPhotos();
+</script>
+</body>
+</html>

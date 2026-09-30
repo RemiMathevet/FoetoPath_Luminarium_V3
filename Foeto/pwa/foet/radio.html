@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>FoetoPath - Imagerie Radio</title>
+<meta name="theme-color" content="#0e1117">
+<link rel="manifest" href="/pwa/foet/manifest.json">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── Radio-specific styles ── */
+.measure-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.8rem}
+.measure-table th{text-align:center;padding:8px 4px;background:var(--surface);color:var(--text-muted);font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.measure-table th:first-child{text-align:left;border-radius:var(--radius) 0 0 0}
+.measure-table th:last-child{border-radius:0 var(--radius) 0 0}
+.measure-table td{padding:6px 4px;border-bottom:1px solid var(--border);vertical-align:middle;text-align:center}
+.measure-table td.os-name{text-align:left;font-weight:500;color:var(--text)}
+.measure-table input{width:70px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:"Courier New",monospace;font-size:.86rem;padding:6px 6px;border-radius:6px;text-align:center;outline:none}
+.measure-table input:focus{border-color:var(--border-focus)}
+.measure-table .result-cell{font-variant-numeric:tabular-nums;font-weight:500;min-width:50px;font-family:"Courier New",monospace;font-size:.82rem}
+.zscore-cell{font-weight:700;font-family:"Courier New",monospace;font-size:.82rem}
+.z-ok{color:var(--success)}.z-warn{color:var(--warning)}.z-alert{color:var(--danger)}
+
+/* ── Score cards ── */
+.score-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.score-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.score-card .sc-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:6px}
+.score-card .sc-value{font-size:1.4rem;font-weight:700;color:var(--warning);font-variant-numeric:tabular-nums}
+.score-card .sc-unit{font-size:.8rem;font-weight:500;color:var(--text-muted)}
+.score-card .sc-formula{font-size:.65rem;color:var(--text-muted);margin-top:4px;font-style:italic}
+
+/* ── Maturation grid ── */
+.maturation-grid{display:flex;flex-direction:column;gap:2px}
+.mat-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid transparent;cursor:pointer;transition:all .2s;user-select:none}
+.mat-item:active{transform:scale(.99)}
+.mat-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:transparent;transition:all .2s;flex-shrink:0}
+.mat-item.checked .mat-check{background:var(--success);border-color:var(--success);color:#fff}
+.mat-item.absent .mat-check{background:var(--danger);border-color:var(--danger);color:#fff}
+.mat-sa{font-size:.75rem;font-weight:700;color:var(--accent);min-width:55px;font-variant-numeric:tabular-nums}
+.mat-label{font-size:.85rem;color:var(--text);flex:1}
+.mat-item.expected{border-color:var(--success);background:rgba(61,220,132,.08)}
+.mat-item.future{opacity:.4}
+.mat-legend{display:flex;gap:16px;margin-bottom:10px;font-size:.75rem;color:var(--text-muted);flex-wrap:wrap}
+.mat-legend-item{display:flex;align-items:center;gap:4px}
+.mat-legend-dot{width:10px;height:10px;border-radius:3px}
+.mat-legend-dot.expected{background:var(--success)}
+.mat-legend-dot.future{background:var(--border);opacity:.4}
+.mat-legend-dot.present{background:var(--success)}
+.mat-legend-dot.absent{background:var(--danger)}
+
+/* ── Validation dot ── */
+.validation-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--border);vertical-align:middle;transition:background .3s;margin-left:6px}
+.validation-dot.valid{background:var(--success)}
+
+.help-text{font-size:.75rem;color:var(--text-muted);font-style:italic;margin-top:6px}
+
+@media(max-width:400px){.measure-table input{width:58px;padding:5px 4px;font-size:.82rem}.score-cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script src="helpers.js"></script>
+<script src="pwa_common.js"></script>
+
+<!-- ══════ HEADER ══════ -->
+<header class="topbar">
+  <button class="back-btn" onclick="goBack()" data-i18n="pwa.common.back_dossier">←</button>
+  <h1 data-i18n="pwa.foet.radio">Imagerie Radio</h1>
+  <span id="badge-dossier" style="font-size:.82rem;font-weight:600;color:var(--accent);background:var(--accent-dim);padding:3px 10px;border-radius:12px">—</span>
+</header>
+
+<!-- ══════ NAV PILLS ══════ -->
+<nav class="nav-pills" style="top:48px">
+  <button class="pill active" onclick="scrollToSection('sec-terme');setActivePill('sec-terme')">Terme</button>
+  <button class="pill" onclick="scrollToSection('sec-squelette');setActivePill('sec-squelette')">Squelette</button>
+  <button class="pill" onclick="scrollToSection('sec-biom');setActivePill('sec-biom')">Biometries</button>
+  <button class="pill" onclick="scrollToSection('sec-scores');setActivePill('sec-scores')">Scores</button>
+  <button class="pill" onclick="scrollToSection('sec-maturation');setActivePill('sec-maturation')">Maturation</button>
+  <button class="pill" onclick="scrollToSection('sec-remarques');setActivePill('sec-remarques')">Remarques</button>
+</nav>
+
+<main class="main-content" style="padding-top:94px">
+
+  <!-- ══════ TERME ══════ -->
+  <section class="accordion open" id="sec-terme">
+    <div class="acc-header" onclick="toggleAcc('sec-terme')">
+      <span class="acc-title">Terme <span class="validation-dot" id="dot-terme"></span></span>
+      <span class="acc-arrow">▼</span>
+    </div>
+    <div class="acc-body">
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">SA</label>
+          <input type="number" id="terme_sa" min="8" max="42" step="1" placeholder="SA" oninput="onTermeChange()">
+        </div>
+        <div class="field">
+          <label class="field-label">Jours</label>
+          <input type="number" id="terme_jours" min="0" max="6" step="1" placeholder="+j" value="0">
+        </div>
+      </div>
+      <p class="help-text">Le terme conditionne les calculs de Z-score et la maturation attendue.</p>
+    </div>
+  </section>
+
+  <!-- ══════ SQUELETTE ══════ -->
+  <section class="accordion open" id="sec-squelette">
+    <div class="acc-header" onclick="toggleAcc('sec-squelette')">
+      <span class="acc-title">Squelette</span>
+      <span class="acc-arrow">▼</span>
+    </div>
+    <div class="acc-body">
+
+      <!-- Aspect général -->
+      <div style="margin-bottom:14px">
+        <label class="field-label">Aspect general</label>
+        <textarea id="aspect_general" class="text-area" placeholder="Aspect general du squelette..." rows="3"></textarea>
+      </div>
+
+      <!-- Côtes -->
+      <label class="field-label" style="margin-bottom:6px">Cotes</label>
+      <div class="field-row" style="margin-bottom:14px">
+        <div class="field">
+          <label class="field-label">Droite</label>
+          <input type="number" id="cotes_droite" min="0" max="15" step="1" placeholder="12">
+        </div>
+        <div class="field">
+          <label class="field-label">Gauche</label>
+          <input type="number" id="cotes_gauche" min="0" max="15" step="1" placeholder="12">
+        </div>
+      </div>
+
+      <!-- Thorax -->
+      <label class="field-label" style="margin-bottom:6px">Forme du thorax</label>
+      <div class="chip-group" data-field="thorax_forme" style="margin-bottom:14px">
+        <div class="chip" onclick="selectChip(this)">Normal</div>
+        <div class="chip" onclick="selectChip(this)">En tonneau</div>
+        <div class="chip" onclick="selectChip(this)">Etroit</div>
+        <div class="chip" onclick="selectChip(this)">Asymetrique</div>
+      </div>
+
+      <!-- Vertèbres -->
+      <label class="field-label" style="margin-bottom:6px">Vertebres</label>
+      <div class="chip-group multi" data-field="vertebres" style="margin-bottom:6px">
+        <div class="chip" onclick="toggleChipMulti(this)">Normales</div>
+        <div class="chip" onclick="toggleChipMulti(this)">Fentes</div>
+        <div class="chip" onclick="toggleChipMulti(this)">Hemivertebres</div>
+        <div class="chip" onclick="toggleChipMulti(this)">Anomalie de segmentation</div>
+      </div>
+      <textarea id="vertebres_remarques" class="text-area" placeholder="Localisation, details..." rows="2" style="margin-bottom:14px"></textarea>
+
+      <!-- Aspect des os -->
+      <label class="field-label" style="margin-bottom:6px">Aspect des os</label>
+      <div class="chip-group multi" data-field="aspect_os" style="margin-bottom:6px">
+        <div class="chip" onclick="toggleChipMulti(this)">Normal</div>
+        <div class="chip" onclick="toggleChipMulti(this)">Demineralises</div>
+        <div class="chip" onclick="toggleChipMulti(this)">Fractures</div>
+        <div class="chip" onclick="toggleChipMulti(this)">Bandes claires metaphysaires</div>
+        <div class="chip" onclick="toggleChipMulti(this)">Incurves</div>
+      </div>
+      <textarea id="os_remarques" class="text-area" placeholder="Localisation des fractures, details..." rows="2"></textarea>
+    </div>
+  </section>
+
+  <!-- ══════ BIOMÉTRIES OSSEUSES ══════ -->
+  <section class="accordion open" id="sec-biom">
+    <div class="acc-header" onclick="toggleAcc('sec-biom')">
+      <span class="acc-title">Biometries osseuses <span class="validation-dot" id="dot-biom"></span></span>
+      <span class="acc-arrow">▼</span>
+    </div>
+    <div class="acc-body">
+      <div class="field-row" style="margin-bottom:10px">
+        <div class="field">
+          <label class="field-label">BIP osseux (mm)</label>
+          <input type="number" id="bip_osseux" min="0" step="0.1" placeholder="mm" oninput="recalcAll()">
+        </div>
+        <div class="field">
+          <label class="field-label">PC (macro frais, mm)</label>
+          <input type="number" id="pc_radio" min="0" step="0.1" placeholder="auto" oninput="recalcAll()" readonly style="background:var(--surface)">
+        </div>
+      </div>
+      <p class="help-text" style="margin-bottom:10px">Mesures des os longs en mm — Droite et Gauche. Z-score Chitty sur la moyenne D/G.</p>
+      <div style="overflow-x:auto">
+        <table class="measure-table">
+          <thead>
+            <tr>
+              <th style="text-align:left">Os</th>
+              <th>Droite</th>
+              <th>Gauche</th>
+              <th>Moy.</th>
+              <th>P50</th>
+              <th>Z-score</th>
+            </tr>
+          </thead>
+          <tbody id="bones-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ SCORES STATURAUX ══════ -->
+  <section class="accordion open" id="sec-scores">
+    <div class="acc-header" onclick="toggleAcc('sec-scores')">
+      <span class="acc-title">Scores staturaux</span>
+      <span class="acc-arrow">▼</span>
+    </div>
+    <div class="acc-body">
+      <div class="score-cards">
+        <div class="score-card">
+          <div class="sc-label">Hadlock (1984)</div>
+          <div class="sc-value"><span id="score-hadlock">—</span> <span class="sc-unit">SA</span></div>
+          <div class="sc-formula">11.38 + 0.07*(PC/10)*(F/10) + 0.98*(BIP/10)</div>
+        </div>
+        <div class="score-card">
+          <div class="sc-label">Adalian (2002)</div>
+          <div class="sc-value"><span id="score-adalian">—</span> <span class="sc-unit">SA</span></div>
+          <div class="sc-formula">0.434*Femur + 6.93</div>
+        </div>
+      </div>
+      <p class="help-text" style="margin-top:10px">Femur en mm, BIP en mm. PC = périmètre crânien macro frais (auto). Hadlock nécessite PC + BIP + Fémur.</p>
+    </div>
+  </section>
+
+  <!-- ══════ MATURATION OSSEUSE ══════ -->
+  <section class="accordion open" id="sec-maturation">
+    <div class="acc-header" onclick="toggleAcc('sec-maturation')">
+      <span class="acc-title">Maturation osseuse <span class="validation-dot" id="dot-mat"></span></span>
+      <span class="acc-arrow">▼</span>
+    </div>
+    <div class="acc-body">
+      <div class="mat-legend">
+        <div class="mat-legend-item"><span class="mat-legend-dot expected"></span> Attendu</div>
+        <div class="mat-legend-item"><span class="mat-legend-dot future"></span> Non attendu</div>
+        <div class="mat-legend-item"><span class="mat-legend-dot present"></span> Present</div>
+        <div class="mat-legend-item"><span class="mat-legend-dot absent"></span> Absent</div>
+      </div>
+      <div class="maturation-grid" id="maturation-grid"></div>
+    </div>
+  </section>
+
+  <!-- ══════ REMARQUES ══════ -->
+  <section class="accordion open" id="sec-remarques">
+    <div class="acc-header" onclick="toggleAcc('sec-remarques')">
+      <span class="acc-title">Remarques</span>
+      <span class="acc-arrow">▼</span>
+    </div>
+    <div class="acc-body">
+      <textarea id="remarques_generales" class="text-area" placeholder="Remarques complementaires sur l'imagerie..." rows="4"></textarea>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════ BOTTOM BAR ══════ -->
+<div class="bottom-bar">
+  <button class="btn-secondary" onclick="resetForm()" data-i18n="pwa.common.reset">Reinitialiser</button>
+  <button class="btn-primary" onclick="saveAndExport()" data-i18n="pwa.common.save">Enregistrer</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONTEXT
+// ═══════════════════════════════════════════════════════
+var dossier = initDossierField();
+
+// ═══════════════════════════════════════════════════════
+// REFERENCE DATA (loaded from JSON)
+// ═══════════════════════════════════════════════════════
+var CHITTY = {};
+var MATURATION = [];
+var BONES = [
+  { key: "Humerus", label: "Humerus" },
+  { key: "Radius", label: "Radius" },
+  { key: "Ulna", label: "Ulna" },
+  { key: "Femur", label: "Femur" },
+  { key: "Tibia", label: "Tibia" },
+  { key: "Fibula", label: "Fibula" },
+  { key: "Piedradio", label: "Pied" }
+];
+
+function loadRefTables() {
+  return Promise.all([
+    fetch('Biometry_tables/ref_chitty_os_longs.json').then(function(r) { return r.json(); }),
+    fetch('Biometry_tables/ref_maturation_osseuse.json').then(function(r) { return r.json(); })
+  ]).then(function(results) {
+    CHITTY = results[0];
+    MATURATION = results[1];
+    console.log('[radio] Ref tables loaded — CHITTY:', Object.keys(CHITTY).length, 'SA, MATURATION:', MATURATION.length, 'items');
+  }).catch(function(err) {
+    console.warn('[radio] Erreur chargement ref tables:', err);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// BUILD BONE TABLE
+// ═══════════════════════════════════════════════════════
+function buildBonesTable() {
+  var tbody = gid('bones-tbody');
+  tbody.innerHTML = '';
+  BONES.forEach(function(b) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="os-name">' + b.label + '</td>' +
+      '<td><input type="number" id="' + b.key + '_d" min="0" step="0.1" oninput="recalcAll()"></td>' +
+      '<td><input type="number" id="' + b.key + '_g" min="0" step="0.1" oninput="recalcAll()"></td>' +
+      '<td class="result-cell" id="' + b.key + '_moy">—</td>' +
+      '<td class="result-cell" id="' + b.key + '_p50">—</td>' +
+      '<td class="zscore-cell" id="' + b.key + '_z">—</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// CALCULATIONS
+// ═══════════════════════════════════════════════════════
+function getTerme() {
+  return parseInt(gid('terme_sa').value) || null;
+}
+
+function recalcAll() {
+  var sa = getTerme();
+  var ref = sa ? CHITTY[String(sa)] : null;
+  var femurMoy = null;
+
+  BONES.forEach(function(b) {
+    var dVal = parseFloat(gid(b.key + '_d').value);
+    var gVal = parseFloat(gid(b.key + '_g').value);
+    var moy = null;
+    if (!isNaN(dVal) && !isNaN(gVal)) moy = (dVal + gVal) / 2;
+    else if (!isNaN(dVal)) moy = dVal;
+    else if (!isNaN(gVal)) moy = gVal;
+
+    var moyEl = gid(b.key + '_moy');
+    var p50El = gid(b.key + '_p50');
+    var zEl = gid(b.key + '_z');
+
+    moyEl.textContent = moy !== null ? moy.toFixed(1) : '—';
+
+    if (ref && ref[b.key]) {
+      p50El.textContent = ref[b.key].P50;
+      if (moy !== null) {
+        var z = (moy - ref[b.key].P50) / ref[b.key].SD;
+        zEl.textContent = z.toFixed(2);
+        zEl.className = 'zscore-cell ' + zscoreClass(z);
+      } else {
+        zEl.textContent = '—';
+        zEl.className = 'zscore-cell';
+      }
+    } else {
+      p50El.textContent = '—';
+      zEl.textContent = '—';
+      zEl.className = 'zscore-cell';
+    }
+
+    if (b.key === 'Femur') femurMoy = moy;
+  });
+
+  // Scores staturaux
+  var bip = parseFloat(gid('bip_osseux').value);
+  var pc = parseFloat(gid('pc_radio').value);
+
+  var hadlockEl = gid('score-hadlock');
+  var adalianEl = gid('score-adalian');
+
+  if (!isNaN(bip) && !isNaN(pc) && femurMoy !== null) {
+    var hadlock = 11.38 + 0.07 * (pc / 10) * (femurMoy / 10) + 0.98 * (bip / 10);
+    hadlockEl.textContent = hadlock.toFixed(1);
+  } else {
+    hadlockEl.textContent = '—';
+  }
+
+  if (femurMoy !== null) {
+    var adalian = 0.434 * femurMoy + 6.93;
+    adalianEl.textContent = adalian.toFixed(1);
+  } else {
+    adalianEl.textContent = '—';
+  }
+
+  validate();
+}
+
+function zscoreClass(z) {
+  var abs = Math.abs(z);
+  if (abs <= 2) return 'z-ok';
+  if (abs <= 3) return 'z-warn';
+  return 'z-alert';
+}
+
+// ═══════════════════════════════════════════════════════
+// MATURATION
+// ═══════════════════════════════════════════════════════
+function buildMaturation() {
+  var grid = gid('maturation-grid');
+  grid.innerHTML = '';
+  var sa = getTerme();
+
+  MATURATION.forEach(function(item, idx) {
+    var div = document.createElement('div');
+    div.className = 'mat-item';
+    div.dataset.idx = idx;
+    div.dataset.state = 'null';
+
+    if (sa) {
+      if (item.sa <= sa) div.classList.add('expected');
+      else div.classList.add('future');
+    }
+
+    div.innerHTML =
+      '<div class="mat-check">V</div>' +
+      '<span class="mat-sa">' + item.sa + ' SA</span>' +
+      '<span class="mat-label">' + item.label + '</span>';
+
+    div.addEventListener('click', function() { toggleMatItem(div); });
+    grid.appendChild(div);
+  });
+}
+
+function toggleMatItem(el) {
+  var state = el.dataset.state;
+  if (state === 'null') {
+    el.dataset.state = 'present';
+    el.classList.add('checked');
+    el.classList.remove('absent');
+  } else if (state === 'present') {
+    el.dataset.state = 'absent';
+    el.classList.remove('checked');
+    el.classList.add('absent');
+  } else {
+    el.dataset.state = 'null';
+    el.classList.remove('checked', 'absent');
+  }
+  validate();
+}
+
+// ═══════════════════════════════════════════════════════
+// TERME CHANGE
+// ═══════════════════════════════════════════════════════
+function onTermeChange() {
+  buildMaturation();
+  recalcAll();
+}
+
+// ═══════════════════════════════════════════════════════
+// VALIDATION
+// ═══════════════════════════════════════════════════════
+function validate() {
+  var dotFn = function(id, ok) {
+    var el = gid(id);
+    if (el) { if (ok) el.classList.add('valid'); else el.classList.remove('valid'); }
+  };
+  dotFn('dot-terme', !!getTerme());
+
+  var hasBone = BONES.some(function(b) {
+    var d = parseFloat(gid(b.key + '_d').value);
+    var g = parseFloat(gid(b.key + '_g').value);
+    return !isNaN(d) || !isNaN(g);
+  });
+  dotFn('dot-biom', hasBone);
+
+  var hasMat = document.querySelectorAll('.mat-item.checked, .mat-item.absent').length > 0;
+  dotFn('dot-mat', hasMat);
+}
+
+// ═══════════════════════════════════════════════════════
+// COLLECT DATA
+// ═══════════════════════════════════════════════════════
+function collectData() {
+  var bones = {};
+  var sa = getTerme();
+  var ref = sa ? CHITTY[String(sa)] : null;
+  var femurMoy = null;
+
+  BONES.forEach(function(b) {
+    var dVal = parseFloat(gid(b.key + '_d').value);
+    var gVal = parseFloat(gid(b.key + '_g').value);
+    var moy = null;
+    if (!isNaN(dVal) && !isNaN(gVal)) moy = (dVal + gVal) / 2;
+    else if (!isNaN(dVal)) moy = dVal;
+    else if (!isNaN(gVal)) moy = gVal;
+
+    var zscore = null;
+    if (moy !== null && ref && ref[b.key]) {
+      zscore = parseFloat(((moy - ref[b.key].P50) / ref[b.key].SD).toFixed(2));
+    }
+
+    bones[b.key] = {
+      droite: isNaN(dVal) ? null : dVal,
+      gauche: isNaN(gVal) ? null : gVal,
+      moyenne: moy !== null ? parseFloat(moy.toFixed(1)) : null,
+      zscore_chitty: zscore
+    };
+    if (b.key === 'Femur') femurMoy = moy;
+  });
+
+  var maturation = [];
+  qsa('.mat-item').forEach(function(el) {
+    if (el.dataset.state !== 'null') {
+      var idx = parseInt(el.dataset.idx);
+      maturation.push({
+        sa: MATURATION[idx].sa,
+        label: MATURATION[idx].label,
+        status: el.dataset.state
+      });
+    }
+  });
+
+  // Scores
+  var bip = parseFloat(gid('bip_osseux').value);
+  var pc = parseFloat(gid('pc_radio').value);
+  var hadlock = null, adalian = null;
+  if (!isNaN(bip) && !isNaN(pc) && femurMoy !== null) {
+    hadlock = parseFloat((11.38 + 0.07 * (pc / 10) * (femurMoy / 10) + 0.98 * (bip / 10)).toFixed(1));
+  }
+  if (femurMoy !== null) {
+    adalian = parseFloat((0.434 * femurMoy + 6.93).toFixed(1));
+  }
+
+  return {
+    type: 'imagerie_radio',
+    terme: {
+      sa: sa,
+      jours: parseInt(gid('terme_jours').value) || 0
+    },
+    aspect_general: gid('aspect_general').value.trim() || null,
+    cotes: {
+      droite: parseInt(gid('cotes_droite').value) || null,
+      gauche: parseInt(gid('cotes_gauche').value) || null
+    },
+    thorax_forme: getChips('thorax_forme')[0] || null,
+    vertebres: {
+      aspects: getChips('vertebres'),
+      remarques: gid('vertebres_remarques').value.trim() || null
+    },
+    aspect_os: {
+      aspects: getChips('aspect_os'),
+      remarques: gid('os_remarques').value.trim() || null
+    },
+    biometries: {
+      bip_osseux_mm: isNaN(bip) ? null : bip,
+      pc_radio_mm: isNaN(pc) ? null : pc,
+      os_longs: bones
+    },
+    scores_staturaux: {
+      hadlock_sa: hadlock,
+      adalian_sa: adalian
+    },
+    maturation_osseuse: maturation,
+    remarques: gid('remarques_generales').value.trim() || null
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// SAVE / LOAD
+// ═══════════════════════════════════════════════════════
+function showToast(msg, isError) {
+  var t = gid('toast');
+  t.textContent = msg;
+  if (isError) t.classList.add('error'); else t.classList.remove('error');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function saveAndExport() {
+  var data = collectData();
+  pwaSave('radio', dossier, data);
+  pwaSubmit(dossier, 'radio', data, {});
+}
+
+function resetForm() {
+  if (!confirm('Reinitialiser tous les champs ?')) return;
+  qsa('input[type="number"], textarea').forEach(function(el) { el.value = ''; });
+  qsa('.chip.selected').forEach(function(c) { c.classList.remove('selected'); });
+  buildMaturation();
+  recalcAll();
+  try { localStorage.removeItem('foet_radio_' + dossier); } catch(e) {}
+  showToast('Formulaire reinitialise');
+}
+
+// ═══════════════════════════════════════════════════════
+// RESTORE DATA
+// ═══════════════════════════════════════════════════════
+function restoreData(d) {
+  if (!d || d.type !== 'imagerie_radio') return;
+
+  if (d.terme && d.terme.sa) { gid('terme_sa').value = d.terme.sa; onTermeChange(); }
+  if (d.terme && d.terme.jours) gid('terme_jours').value = d.terme.jours;
+  if (d.aspect_general) gid('aspect_general').value = d.aspect_general;
+  if (d.cotes && d.cotes.droite) gid('cotes_droite').value = d.cotes.droite;
+  if (d.cotes && d.cotes.gauche) gid('cotes_gauche').value = d.cotes.gauche;
+  if (d.thorax_forme) selectChipByValue('thorax_forme', d.thorax_forme);
+  if (d.vertebres && d.vertebres.aspects) {
+    d.vertebres.aspects.forEach(function(v) { selectChipByValue('vertebres', v); });
+  }
+  if (d.vertebres && d.vertebres.remarques) gid('vertebres_remarques').value = d.vertebres.remarques;
+  if (d.aspect_os && d.aspect_os.aspects) {
+    d.aspect_os.aspects.forEach(function(v) { selectChipByValue('aspect_os', v); });
+  }
+  if (d.aspect_os && d.aspect_os.remarques) gid('os_remarques').value = d.aspect_os.remarques;
+  if (d.biometries && d.biometries.bip_osseux_mm) gid('bip_osseux').value = d.biometries.bip_osseux_mm;
+  if (d.biometries && d.biometries.pc_radio_mm) gid('pc_radio').value = d.biometries.pc_radio_mm;
+
+  if (d.biometries && d.biometries.os_longs) {
+    BONES.forEach(function(b) {
+      var bone = d.biometries.os_longs[b.key];
+      if (bone && bone.droite != null) gid(b.key + '_d').value = bone.droite;
+      if (bone && bone.gauche != null) gid(b.key + '_g').value = bone.gauche;
+    });
+  }
+
+  if (d.maturation_osseuse && d.maturation_osseuse.length) {
+    d.maturation_osseuse.forEach(function(m) {
+      qsa('.mat-item').forEach(function(el) {
+        var idx = parseInt(el.dataset.idx);
+        if (MATURATION[idx] && MATURATION[idx].sa === m.sa && MATURATION[idx].label === m.label) {
+          el.dataset.state = m.status;
+          if (m.status === 'present') { el.classList.add('checked'); el.classList.remove('absent'); }
+          else if (m.status === 'absent') { el.classList.add('absent'); el.classList.remove('checked'); }
+        }
+      });
+    });
+  }
+
+  if (d.remarques) gid('remarques_generales').value = d.remarques;
+  recalcAll();
+}
+
+function loadExistingData() {
+  pwaLoadFromHub(dossier, 'radio')
+    .then(function(resp) {
+      if (resp.found) {
+        if (resp.pc_macro) gid('pc_radio').value = resp.pc_macro;
+        if (resp.data) restoreData(resp.data);
+        recalcAll();
+      } else {
+        var local = pwaLoad('radio', dossier);
+        if (local) restoreData(local);
+      }
+    });
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+buildBonesTable();
+loadRefTables().then(function() {
+  buildMaturation();
+  loadExistingData();
+  validate();
+});
+applySettings();
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>pwaI18nInit();</script>
+</body>
+</html>

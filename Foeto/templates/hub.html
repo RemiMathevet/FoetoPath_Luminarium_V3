@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181a23;
+  --surface2: #1e2130;
+  --border: #2a2d3e;
+  --text: #e8eaf0;
+  --text2: #9498ab;
+  --muted: #5f6378;
+  --accent: #7c6aef;
+  --accent-dim: rgba(124,106,239,0.12);
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --info: #4a90d9;
+  --radius: 12px;
+  --font: 'DM Sans', -apple-system, sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.hub-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.hub-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+.hub-header p {
+  color: var(--text2);
+  font-size: 15px;
+}
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  width: 100%;
+}
+.hub-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hub-card:hover {
+  border-color: var(--accent);
+  background: var(--surface2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.hub-card-icon {
+  font-size: 32px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--accent-dim);
+}
+.hub-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.hub-card p {
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.hub-card .hub-url {
+  color: var(--muted);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: auto;
+}
+
+/* Card accent colors */
+.hub-card.viewer .hub-card-icon { background: rgba(74,144,217,0.12); }
+.hub-card.foetus .hub-card-icon { background: rgba(124,106,239,0.12); }
+.hub-card.placenta .hub-card-icon { background: rgba(74,222,128,0.12); }
+.hub-card.pwa .hub-card-icon { background: rgba(251,191,36,0.12); }
+
+.hub-footer {
+  margin-top: 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+.hub-footer span { color: var(--text2); }
+
+/* User bar */
+.user-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 40px; background: rgba(15,17,23,0.85);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 24px; gap: 16px;
+  font-size: 13px; z-index: 10;
+}
+.user-bar .user-name { color: var(--text2); }
+.user-bar .user-role {
+  padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+.role-admin        { background: rgba(248,113,113,0.12); color: #f87171; }
+.role-admin_centre { background: rgba(251,191,36,0.12); color: #fbbf24; }
+.role-user         { background: rgba(74,144,217,0.12); color: #4a90d9; }
+.role-spectator    { background: rgba(100,100,120,0.15); color: var(--muted); }
+.user-bar a {
+  color: var(--muted); text-decoration: none; font-size: 12px;
+  padding: 4px 10px; border-radius: 6px;
+}
+.user-bar a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+</style>
+<link rel="stylesheet" href="/static/themes.css">
+</head>
+<body style="padding-top:48px;">
+<script>
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+
+<div class="user-bar" id="userBar"></div>
+
+<div class="hub-header">
+  <h1>FoetoPath</h1>
+  <p data-i18n="nav.hub_subtitle">Examen fœto-placentaire — Hub de navigation</p>
+</div>
+
+<div class="hub-grid">
+
+  <a href="/admin" class="hub-card foetus">
+    <div class="hub-card-icon">👶</div>
+    <h2 data-i18n="nav.admin_foetus">Admin Fœtus</h2>
+    <p data-i18n="nav.desc_admin_foetus">Gestion des cas fœtus, biométrie, sync téléphone, appairage lames/macro, CR Jinja2.</p>
+    <span class="hub-url">/admin</span>
+  </a>
+
+  <a href="/admin/placenta" class="hub-card placenta">
+    <div class="hub-card-icon">🤰</div>
+    <h2 data-i18n="nav.admin_placenta">Admin Placentas</h2>
+    <p data-i18n="nav.desc_admin_placenta">Consultation base placenta, biométrie, plaques/annexes, tranches, photos, export JSON, CR.</p>
+    <span class="hub-url">/admin/placenta</span>
+  </a>
+
+  <a href="/pediatrique" class="hub-card placenta" style="--card-accent: rgba(251,191,36,0.12);">
+    <div class="hub-card-icon" style="background:rgba(251,191,36,0.12);">🧒</div>
+    <h2>Admin Pédiatrique</h2>
+    <p>Décès néonataux et pédiatriques — biométries Molina 2019, masses d'organes par âge et taille.</p>
+    <span class="hub-url">/pediatrique</span>
+  </a>
+
+  <a href="/pwa/foet/" class="hub-card pwa" id="pwaFoetCard" style="display:none;">
+    <div class="hub-card-icon">📱</div>
+    <h2 data-i18n="nav.pwa_foetus">PWA Fœtus</h2>
+    <p data-i18n="nav.desc_pwa_foetus">Application mobile — macro frais, autopsie, fixé, neuropath, photos, biométrie. Hors-ligne.</p>
+    <span class="hub-url">/pwa/foet/</span>
+  </a>
+
+  <a href="/pwa/placentas/" class="hub-card pwa" id="pwaPlacentaCard" style="display:none;">
+    <div class="hub-card-icon">📱</div>
+    <h2 data-i18n="nav.pwa_placenta">PWA Placenta</h2>
+    <p data-i18n="nav.desc_pwa_placenta">Application mobile — saisie macro frais, tranches de section, photos. Fonctionne hors-ligne.</p>
+    <span class="hub-url">/pwa/placentas/</span>
+  </a>
+
+  <a href="/pwa/divers/" class="hub-card pwa" id="pwaDiversCard" style="display:none;">
+    <div class="hub-card-icon" style="background:rgba(155,109,215,0.12);">📱</div>
+    <h2 data-i18n="nav.pwa_divers">PWA Cas Divers</h2>
+    <p data-i18n="nav.desc_pwa_divers">Application mobile — curetage, placenta gémellaire, photos. Fonctionne hors-ligne.</p>
+    <span class="hub-url">/pwa/divers/</span>
+  </a>
+
+  <a href="/pwa/neonat/" class="hub-card pwa" id="pwaNeonatCard" style="display:none;">
+    <div class="hub-card-icon" style="background:rgba(232,168,56,0.12);">📱</div>
+    <h2>PWA Néonat</h2>
+    <p>Application mobile — données périnatales, décès, biométries Molina 2019.</p>
+    <span class="hub-url">/pwa/neonat/</span>
+  </a>
+
+  <a href="/admin/users" class="hub-card" id="usersCard" style="display:none;">
+    <div class="hub-card-icon" style="background:rgba(248,113,113,0.12);">👥</div>
+    <h2 data-i18n="nav.users">Utilisateurs</h2>
+    <p data-i18n="nav.desc_users">Gestion des comptes, rôles et droits d'accès.</p>
+    <span class="hub-url">/admin/users</span>
+  </a>
+
+  <a href="/admin/settings" class="hub-card" id="settingsCard" style="display:none;">
+    <div class="hub-card-icon" style="background:rgba(124,106,239,0.12);">&#9881;</div>
+    <h2 data-i18n="nav.settings">Paramètres</h2>
+    <p data-i18n="nav.desc_settings">Thème, chemins, Magos, sécurité.</p>
+    <span class="hub-url">/admin/settings</span>
+  </a>
+
+</div>
+
+<div class="hub-footer">
+  FoetoPath Hub — <span id="serverInfo"></span>
+</div>
+
+<script>
+// Charger info utilisateur
+fetch('/auth/api/me').then(r => r.json()).then(u => {
+  const bar = document.getElementById('userBar');
+  const canManage = u.permissions && u.permissions.can_manage_users;
+  bar.innerHTML = `
+    <span class="user-name">${u.display_name || u.username}</span>
+    <span class="user-role role-${u.role}">${u.role}</span>
+    ${canManage ? '<a href="/admin/users" data-i18n="nav.users">Utilisateurs</a>' : ''}
+    <a href="/auth/logout" data-i18n="nav.logout">Déconnexion</a>
+  `;
+  // Afficher carte utilisateurs si admin/admin_centre
+  if (canManage) {
+    document.getElementById('usersCard').style.display = '';
+  }
+  // Masquer PWA + Paramètres pour les spectateurs
+  const isSpectator = u.role === 'spectator';
+  if (!isSpectator) {
+    document.getElementById('pwaFoetCard').style.display = '';
+    document.getElementById('pwaPlacentaCard').style.display = '';
+    document.getElementById('pwaDiversCard').style.display = '';
+    document.getElementById('pwaNeonatCard').style.display = '';
+    document.getElementById('settingsCard').style.display = '';
+  }
+}).catch(() => {});
+
+// Charger info serveur
+fetch('/admin/api/settings').then(r => r.json()).then(d => {
+  const el = document.getElementById('serverInfo');
+  const cases = d.data_root || '';
+  el.textContent = cases ? 'Data : ' + cases : '';
+}).catch(() => {});
+</script>
+<script src="/static/i18n.js"></script>
+<script>
+i18nInit().then(function() { i18nApply(); });
+</script>
+<script src="/static/idle-timeout.js"></script>
+</body>
+</html>

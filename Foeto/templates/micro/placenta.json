@@ -1,0 +1,19 @@
+{
+  "name": "Placenta",
+  "description": "Grille de lecture placentaire — villosités, vascularisation, lésions",
+  "icon": "",
+  "organ_type": "placenta",
+  "fields": [
+    {
+      "id": "maturation_villositaire",
+      "label": "Maturation villositaire",
+      "type": "select",
+      "options": ["Adaptée au terme", "Retard de maturation", "Maturation accélérée"]
+    },
+    {
+      "id": "commentaire",
+      "label": "Commentaire",
+      "type": "text"
+    }
+  ]
+}

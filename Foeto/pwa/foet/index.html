@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>FœtoPath – Dossier</title>
+<link rel="manifest" href="/pwa/foet/manifest.json">
+<link rel="stylesheet" href="style.css">
+<style>
+  .dossier-screen {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 32px;
+    position: relative;
+  }
+  .dossier-screen h2 { font-size: 1.4rem; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .dossier-screen .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 28px; }
+  .dossier-input-wrap { width: 100%; max-width: 320px; }
+  .dossier-input-wrap input {
+    width: 100%; background: var(--surface); border: 2px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; color: var(--text);
+    font-size: 1.2rem; font-weight: 600; text-align: center;
+    letter-spacing: 0.05em; outline: none; transition: border-color 0.2s;
+    font-family: var(--font);
+  }
+  .dossier-input-wrap input:focus { border-color: var(--accent); }
+  .dossier-input-wrap input::placeholder { color: var(--text-muted); font-weight: 400; font-size: 1rem; }
+  .dossier-status { margin-top: 12px; font-size: 0.82rem; color: var(--text-muted); min-height: 2.8em; text-align: center; }
+  .status-new { color: var(--accent); }
+  .status-existing { color: var(--success); }
+  .dossier-btn {
+    width: 100%; max-width: 320px; margin-top: 10px; padding: 14px;
+    border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s; font-family: var(--font);
+  }
+  .dossier-btn:active { transform: scale(0.98); }
+  .btn-frais { background: var(--accent); color: #fff; }
+  .btn-fixe { background: var(--success); color: #0e1117; }
+  .btn-secondary-small {
+    background: var(--surface-hover); border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 0.85rem; opacity: 0.8;
+  }
+  .btn-row { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .gear-btn {
+    position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+    border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; color: var(--text-muted); cursor: pointer;
+    transition: background 0.2s;
+  }
+  .gear-btn:active { background: var(--surface-hover); }
+  .gear-btn.open { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .version-tag {
+    position: absolute; bottom: 16px; font-size: 0.65rem; color: var(--text-muted);
+    opacity: 0.5; letter-spacing: 0.05em;
+  }
+
+  /* Settings panel (from settings.html) */
+  .settings-panel {
+    display: none; width: 100%; max-width: 320px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px;
+  }
+  .settings-panel.open { display: block; }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .setting-label { font-size: 0.9rem; font-weight: 600; }
+  .setting-desc { font-size: 0.75rem; color: var(--text-muted); }
+  .theme-chips { display: flex; gap: 6px; }
+  .theme-chip {
+    padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer;
+  }
+  .theme-chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .toggle-switch {
+    width: 44px; height: 24px; border-radius: 12px; background: var(--border);
+    position: relative; cursor: pointer; transition: background 0.2s;
+  }
+  .toggle-switch.on { background: var(--accent); }
+  .toggle-knob {
+    position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+    border-radius: 50%; background: #fff; transition: left 0.2s;
+  }
+  .toggle-switch.on .toggle-knob { left: 22px; }
+
+  /* Connectivity badge */
+  .conn-badge {
+    position: fixed; top: 12px; left: 12px;
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 0.7rem; font-weight: 600;
+  }
+  .conn-badge.online { background: var(--success-dim); color: var(--success); }
+  .conn-badge.offline { background: var(--warning-dim); color: var(--warning); }
+</style>
+</head>
+<body>
+
+<div class="conn-badge" id="conn-badge">●</div>
+
+<div class="dossier-screen">
+  <div class="gear-btn" id="gear-btn" onclick="toggleSettings()">⚙</div>
+
+  <img src="logo.png" alt="FoetoPath" style="width:80px;height:80px;border-radius:16px;" onerror="this.style.display='none'">
+  <h2>FœtoPath</h2>
+  <p class="subtitle">Examen fœtopathologique</p>
+
+  <!-- Settings panel -->
+  <div class="settings-panel" id="settings-panel">
+    <div class="setting-row">
+      <div><div class="setting-label">Thème</div></div>
+    </div>
+    <div class="theme-chips" style="padding:8px 0 14px">
+      <div class="theme-chip" data-theme="sombre" onclick="setTheme('sombre')">🌙 Sombre</div>
+      <div class="theme-chip" data-theme="clair" onclick="setTheme('clair')">☀️ Clair</div>
+      <div class="theme-chip" data-theme="malvoyant" onclick="setTheme('malvoyant')">👁️ Malvoyant</div>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">Mode gaucher</div>
+        <div class="setting-desc">Navigation et boutons à gauche</div>
+      </div>
+      <div class="toggle-switch" id="toggle-gaucher" onclick="toggleGaucher()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+    <div class="setting-row" style="border-bottom:none;padding-bottom:0">
+      <div><div class="setting-desc">v2.0 PWA — Réf. Guihard-Costa, Maroun, Muller-Brochut</div></div>
+    </div>
+  </div>
+
+  <!-- Dossier input -->
+  <div class="dossier-input-wrap" style="margin-top:20px">
+    <input type="text" id="dossier-input" placeholder="N° dossier (ex : 25P1234)" autocomplete="off" inputmode="text">
+  </div>
+  <div class="dossier-status" id="dossier-status"></div>
+  <div class="btn-row" id="btn-row"></div>
+
+  <div class="version-tag">FœtoPath v2.0 PWA</div>
+</div>
+
+<script>
+// ═══ HUB URL ═══
+const HUB = window.location.origin;
+
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
+
+// ═══ Connectivity ═══
+function updateConn() {
+  const badge = document.getElementById('conn-badge');
+  if (navigator.onLine) {
+    badge.className = 'conn-badge online';
+    badge.textContent = '● En ligne';
+  } else {
+    badge.className = 'conn-badge offline';
+    badge.textContent = '● Hors-ligne';
+  }
+}
+window.addEventListener('online', updateConn);
+window.addEventListener('offline', updateConn);
+updateConn();
+
+// ═══ Settings (localStorage) ═══
+function loadSettings() {
+  try { return JSON.parse(localStorage.getItem('foetopath-settings') || '{}'); } catch { return {}; }
+}
+function saveSettings(s) { localStorage.setItem('foetopath-settings', JSON.stringify(s)); }
+
+function toggleSettings() {
+  document.getElementById('settings-panel').classList.toggle('open');
+  document.getElementById('gear-btn').classList.toggle('open');
+}
+function setTheme(t) {
+  var s = loadSettings(); s.theme = t; saveSettings(s); applyAll();
+}
+function toggleGaucher() {
+  var s = loadSettings(); s.gaucher = !s.gaucher; saveSettings(s); applyAll();
+}
+function applyAll() {
+  var s = loadSettings();
+  document.body.classList.remove('theme-clair', 'theme-malvoyant');
+  if (s.theme === 'clair') document.body.classList.add('theme-clair');
+  else if (s.theme === 'malvoyant') document.body.classList.add('theme-malvoyant');
+  document.querySelectorAll('.theme-chip').forEach(c => {
+    c.classList.toggle('active', c.getAttribute('data-theme') === (s.theme || 'sombre'));
+  });
+  if (s.gaucher) document.body.classList.add('gaucher');
+  else document.body.classList.remove('gaucher');
+  var tog = document.getElementById('toggle-gaucher');
+  if (tog) { if (s.gaucher) tog.classList.add('on'); else tog.classList.remove('on'); }
+}
+
+// ═══ Format dossier (aaPnnnn) ═══
+function normalizeDossier(val) {
+  return val.replace(/^(\d{2})p/i, '$1P');
+}
+function isValidDossierFormat(val) {
+  return /^\d{2}P\d+$/.test(val);
+}
+
+// ═══ Dossier check via hub API ═══
+const input = document.getElementById('dossier-input');
+const status = document.getElementById('dossier-status');
+const btnRow = document.getElementById('btn-row');
+let checkTimer = null;
+let lastExists = null;
+
+// Auto-normalisation à la saisie : force le P majuscule
+input.addEventListener('input', () => {
+  const pos = input.selectionStart;
+  const before = input.value;
+  const after = normalizeDossier(before);
+  if (before !== after) {
+    input.value = after;
+    input.setSelectionRange(pos, pos);
+  }
+  clearTimeout(checkTimer);
+  const val = input.value.trim();
+  if (!val) { status.innerHTML = ''; btnRow.innerHTML = ''; lastExists = null; return; }
+  if (!isValidDossierFormat(val)) {
+    status.innerHTML = '<span style="color:#f87171;font-size:0.85rem;">Format attendu : <b>aaPnnnn</b> (ex: 25P1234)</span>';
+    btnRow.innerHTML = '';
+    lastExists = null;
+    return;
+  }
+  status.innerHTML = '<span style="color:var(--text-muted)">Vérification…</span>';
+  checkTimer = setTimeout(() => checkDossier(val), 300);
+});
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && input.value.trim() && isValidDossierFormat(normalizeDossier(input.value.trim()))) {
+    if (lastExists) goMacroAutopsie();
+    else goMacroFrais();
+  }
+});
+
+async function checkDossier(val) {
+  try {
+    const r = await fetch(`${HUB}/admin/api/pwa/load?dossier=${encodeURIComponent(val)}`);
+    const d = await r.json();
+    const found = d.found === true;
+    lastExists = found;
+    updateUI(val, found);
+  } catch {
+    // Offline — check localStorage
+    const local = localStorage.getItem('foet_macro_frais_' + val);
+    lastExists = !!local;
+    updateUI(val, lastExists);
+  }
+}
+
+function updateUI(val, exists) {
+  if (exists) {
+    status.innerHTML = '<span class="status-existing">● Dossier existant</span>';
+    btnRow.innerHTML = `
+      <button class="dossier-btn btn-fixe" onclick="goMacroAutopsie()">Autopsie →</button>
+      <button class="dossier-btn btn-fixe" style="background:var(--purple);color:#fff" onclick="goMacroFixe()">Macro fixé →</button>
+      <button class="dossier-btn btn-fixe" style="background:var(--orange);color:#fff" onclick="goNeuro()">Neuropath →</button>
+      <button class="dossier-btn btn-secondary-small" onclick="goMacroFrais()">Reprendre macro frais</button>
+    `;
+  } else {
+    status.innerHTML = '<span class="status-new">● Nouveau dossier</span>';
+    btnRow.innerHTML = '<button class="dossier-btn btn-frais" onclick="goMacroFrais()">Macro état frais →</button>';
+  }
+}
+
+function goMacroFrais() { navigate('macro_frais.html'); }
+function goMacroAutopsie() { navigate('macro_autopsie.html'); }
+function goMacroFixe() { navigate('macro_fixe.html'); }
+function goNeuro() { navigate('neuropath.html'); }
+
+function navigate(page) {
+  var d = normalizeDossier(input.value.trim());
+  if (!d || !isValidDossierFormat(d)) return;
+  window.location.href = page + '?dossier=' + encodeURIComponent(d);
+}
+
+// ═══ Init ═══
+applyAll();
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>pwaI18nInit();</script>
+</body>
+</html>

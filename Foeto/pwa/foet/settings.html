@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>FœtoPath – Paramètres</title>
+<link rel="manifest" href="/pwa/foet/manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <h1 data-i18n="pwa.foet.settings_title">⚙️ Paramètres</h1>
+  </div>
+</div>
+
+<div class="settings-container">
+
+  <div class="setting-row" style="flex-direction:column;align-items:stretch;">
+    <div>
+      <div class="setting-label" data-i18n="pwa.common.user_label">Utilisateur PWA</div>
+      <div class="setting-desc">Détecté automatiquement lors de la connexion au hub. Modifiable si besoin.</div>
+    </div>
+    <input type="text" id="input-pwa-user" placeholder="(non identifié)"
+      style="margin-top:8px;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg2,#1a1a2e);color:var(--text,#e8e6e1);font-size:15px;font-family:inherit;width:100%;"
+      oninput="savePwaUser(this.value)">
+  </div>
+
+  <div class="setting-row">
+    <div>
+      <div class="setting-label">Mode gaucher</div>
+      <div class="setting-desc">Boutons de repli/dépli et navigation à gauche</div>
+    </div>
+    <div class="toggle-switch" id="toggle-gaucher" onclick="toggleGaucher()">
+      <div class="toggle-knob"></div>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <div>
+      <div class="setting-label">Version</div>
+      <div class="setting-desc">FœtoPath v2.0 PWA — Fœtopathologie</div>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <div>
+      <div class="setting-label">Stockage</div>
+      <div class="setting-desc" id="storage-path">Documents/FoetoPath/foetus/</div>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <div>
+      <div class="setting-label">Références biométriques</div>
+      <div class="setting-desc">Guihard-Costa 2002 (13-42 SA)<br>Maroun (12-43 SA)<br>Muller-Brochut 2018 (12-20 SA)</div>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <div>
+      <div class="setting-label">Références organes</div>
+      <div class="setting-desc">Maroun par grade macération (12-43 SA)<br>Muller-Brochut 2018 (12-20 SA)</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-bar">
+  <button class="btn btn-secondary" onclick="goBack()" data-i18n="pwa.common.back_dossier">← Retour</button>
+</div>
+
+<script src="helpers.js"></script>
+<script>
+function goBack() {
+  window.location.href = 'index.html';
+}
+
+function loadSettings() {
+  try {
+    var raw = localStorage.getItem('foetopath_settings');
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { gaucher: false };
+}
+
+function saveSettings(s) {
+  try { localStorage.setItem('foetopath_settings', JSON.stringify(s)); } catch(e) {}
+}
+
+function savePwaUser(val) {
+  var s = loadSettings();
+  s.pwa_user = (val || '').trim();
+  saveSettings(s);
+}
+
+function toggleGaucher() {
+  var s = loadSettings();
+  s.gaucher = !s.gaucher;
+  saveSettings(s);
+  applyToggle(s);
+  applySettings();
+}
+
+function applyToggle(s) {
+  var el = gid('toggle-gaucher');
+  if (el) {
+    if (s.gaucher) el.classList.add('on');
+    else el.classList.remove('on');
+  }
+}
+
+// Init
+var settings = loadSettings();
+applyToggle(settings);
+applySettings();
+// Pré-remplir le champ utilisateur PWA
+var userInput = document.getElementById('input-pwa-user');
+if (userInput && settings.pwa_user) userInput.value = settings.pwa_user;
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>pwaI18nInit();</script>
+</body>
+</html>

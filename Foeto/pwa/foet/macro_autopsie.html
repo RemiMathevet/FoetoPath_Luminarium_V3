@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1117">
+<title>FœtoPath – Autopsie</title>
+<link rel="manifest" href="/pwa/foet/manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+<div class="header-top"><h1 data-i18n="pwa.foet.macro_autopsie">🫀 Autopsie</h1><span class="dossier-badge green" id="badge-dossier">—</span></div>
+<div class="nav-pills">
+<a class="nav-pill active" onclick="scrollToSection('sec-ouv')" data-nav="sec-ouv">📷 <span data-i18n="pwa.foet.ouverture">Ouverture</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-airway')" data-nav="sec-airway">🫁 <span data-i18n="pwa.foet.voies_aeriennes">Voies aér.</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-thorax')" data-nav="sec-thorax">🔶 <span data-i18n="pwa.foet.mediastin">Médiastin</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-coeur')" data-nav="sec-coeur">❤️ <span data-i18n="pwa.foet.coeur">Cœur</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-poumons')" data-nav="sec-poumons">🫁 <span data-i18n="pwa.foet.poumons">Poumons</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-dig')" data-nav="sec-dig">🟢 <span data-i18n="pwa.foet.digestif">Digestif</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-retro')" data-nav="sec-retro">🟡 <span data-i18n="pwa.foet.retroperitoneal">Rétropérit.</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-neuro')" data-nav="sec-neuro">🧠 <span data-i18n="pwa.foet.neuro">Neuro</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-prelev')" data-nav="sec-prelev">🧪 <span data-i18n="pwa.foet.prelevements">Prélèvem.</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-restit')" data-nav="sec-restit">📷 <span data-i18n="pwa.foet.restitution">Restit.</span></a>
+<a class="nav-pill" onclick="scrollToSection('sec-note')" data-nav="sec-note">📝 <span data-i18n="pwa.foet.note">Note</span></a>
+</div></div>
+<div class="content">
+<!-- ═══ 1. OUVERTURE ═══ -->
+<div class="acc-section sec-ouv open" id="sec-ouv"><div class="acc-header" onclick="toggleAcc('sec-ouv')"><span class="acc-icon">📷</span><span class="acc-title">Ouverture & Situs</span><span class="acc-status empty" id="ast-ouv">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="sub-title">Photo avant ouverture (timestamp)</div>
+<div class="photo-row"><div class="photo-slot wide" data-key="p_avant_ouv" data-original-label="Avant ouverture" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Avant ouverture</div></div></div>
+<div class="sub-title">Situs viscéral</div>
+<div class="chip-group single" data-field="situs"><div class="chip" onclick="selectChip(this)">Solitus</div><div class="chip" onclick="selectChip(this)">Inversus</div><div class="chip" onclick="selectChip(this)">Ambiguus</div></div>
+<div class="sub-title">État général</div>
+<div class="yn-row"><div class="yn-label">Anasarque</div><div class="yn-toggle" data-id="anasarque"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Épanchements</div>
+<div class="field-row">
+<div class="field"><label>Pleural D (mL)</label><input type="number" id="epanch_pleural_d" step="1" min="0" inputmode="numeric" placeholder="0"></div>
+<div class="field"><label>Pleural G (mL)</label><input type="number" id="epanch_pleural_g" step="1" min="0" inputmode="numeric" placeholder="0"></div>
+</div>
+<div class="field-row">
+<div class="field"><label>Péritonéal (mL)</label><input type="number" id="epanch_peritoine" step="1" min="0" inputmode="numeric" placeholder="0"></div>
+<div class="field"><label>Péricardique (mL)</label><input type="number" id="epanch_pericarde" step="1" min="0" inputmode="numeric" placeholder="0"></div>
+</div>
+<div class="sub-title">Photo ouverture thoraco-abdominale</div>
+<div class="photo-row"><div class="photo-slot wide" data-key="p_ouverture" data-original-label="Ouverture" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Ouverture thoraco-abdo</div></div></div>
+<div class="sub-title">Abdomen — repérage</div>
+<div class="photo-row">
+<div class="photo-slot" data-key="p_veine_omb" data-original-label="V. ombilicale" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">V. ombilicale</div></div>
+<div class="photo-slot" data-key="p_vessie" data-original-label="Vessie" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Vessie</div></div>
+<div class="photo-slot" data-key="p_art_omb" data-original-label="A. ombilicales" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">A. ombilicales</div></div>
+</div>
+<div class="sub-title">OGI</div>
+<div class="chip-group single" data-field="ogi"><div class="chip" onclick="selectChip(this)">Testicules</div><div class="chip" onclick="selectChip(this)">Ovaires</div><div class="chip" onclick="selectChip(this)">Ambigus</div><div class="chip" onclick="selectChip(this)">Non identifiés</div></div>
+<div class="field"><input type="text" id="ogi_detail" placeholder="Précisions OGI, position gonades…"></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_ogi" data-original-label="OGI" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">OGI</div></div></div>
+<div class="sub-title">VB & Appendice</div>
+<div class="photo-row">
+<div class="photo-slot" data-key="p_vb" data-original-label="VB" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">VB</div></div>
+<div class="photo-slot" data-key="p_appendice" data-original-label="Appendice" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Appendice</div></div>
+</div>
+<div class="sub-title">Diaphragme</div>
+<div class="chip-group single" data-field="diaphragme"><div class="chip" onclick="selectChip(this)">Intègre</div><div class="chip" onclick="selectChip(this)">Hernie G</div><div class="chip" onclick="selectChip(this)">Hernie D</div><div class="chip" onclick="selectChip(this)">Hernie bilat.</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_diaphragme" data-original-label="Diaphragme" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Diaphragme</div></div></div>
+</div></div></div>
+
+<!-- ═══ 2. VOIES AÉRIENNES ═══ -->
+<div class="acc-section sec-airway" id="sec-airway"><div class="acc-header" onclick="toggleAcc('sec-airway')"><span class="acc-icon">🫁</span><span class="acc-title">Voies aériennes</span><span class="acc-status empty" id="ast-airway">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="yn-row"><div class="yn-label">Œsophage cathétérisable</div><div class="yn-toggle" data-id="oeso_cath"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="yn-row"><div class="yn-label">Trachée cathétérisable</div><div class="yn-toggle" data-id="trachee_cath"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="yn-row"><div class="yn-label">Absence de fistule œso-trachéale</div><div class="yn-toggle" data-id="fistule_abs"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="field"><input type="text" id="airway_detail" placeholder="Précisions voies aériennes…"></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_airway" data-original-label="Voies aériennes" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Voies aér.</div></div></div>
+</div></div></div>
+
+<!-- ═══ 3. THORAX / MÉDIASTIN ═══ -->
+<div class="acc-section sec-thorax" id="sec-thorax"><div class="acc-header" onclick="toggleAcc('sec-thorax')"><span class="acc-icon">🔶</span><span class="acc-title">Thorax — Médiastin</span><span class="acc-status empty" id="ast-thorax">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="sub-title">Thymus</div>
+<div class="field-row"><div class="field"><label>Masse</label><input type="number" id="thymus_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_thymus"></div></div></div>
+<div class="chip-group single" data-field="thymus_aspect"><div class="chip" onclick="selectChip(this)">Normal</div><div class="chip" onclick="selectChip(this)">Absent</div><div class="chip" onclick="selectChip(this)">Pétéchies</div><div class="chip" onclick="selectChip(this)">Autre</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_thymus" data-original-label="Thymus" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Thymus</div></div></div>
+<div class="yn-row"><div class="yn-label">Thymus prélevé</div><div class="yn-toggle" data-id="thymus_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">TVI (Tronc Veineux Innominé)</div>
+<div class="chip-group single" data-field="tvi"><div class="chip" onclick="selectChip(this)">Présent</div><div class="chip" onclick="selectChip(this)">Absent</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_tvi" data-original-label="TVI" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">TVI</div></div></div>
+<div class="sub-title">Sac péricardique</div>
+<div class="chip-group multi" data-field="pericarde"><div class="chip" onclick="toggleChipMulti(this)">Normal</div><div class="chip" onclick="toggleChipMulti(this)">Épanchement</div><div class="chip" onclick="toggleChipMulti(this)">Hémopéricarde</div><div class="chip" onclick="toggleChipMulti(this)">Pétéchies</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_pericarde" data-original-label="Péricarde" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Péricarde</div></div></div>
+<div class="sub-title">TSA</div>
+<div class="chip-group single" data-field="tsa"><div class="chip" onclick="selectChip(this)">Normaux</div><div class="chip" onclick="selectChip(this)">Variante (vert. G)</div><div class="chip" onclick="selectChip(this)">Art. rétro-œsoph.</div><div class="chip" onclick="selectChip(this)">Autre</div></div>
+<div class="field"><input type="text" id="tsa_detail" placeholder="Précisions TSA…"></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_tsa" data-original-label="TSA" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">TSA</div></div></div>
+</div></div></div>
+
+<!-- ═══ 4. CŒUR ═══ -->
+<div class="acc-section sec-coeur" id="sec-coeur"><div class="acc-header" onclick="toggleAcc('sec-coeur')"><span class="acc-icon">❤️</span><span class="acc-title">Cœur</span><span class="acc-status empty" id="ast-coeur">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="sub-title">Photos de situs</div>
+<div class="photo-row">
+<div class="photo-slot" data-key="p_situs" data-original-label="Situs" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Situs</div></div>
+<div class="photo-slot" data-key="p_ret_vein_d" data-original-label="Ret. vein. D" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Ret. vein. D</div></div>
+<div class="photo-slot" data-key="p_ret_vein_g" data-original-label="Ret. vein. G" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Ret. vein. G</div></div>
+</div>
+<div class="sub-title">Gros vaisseaux</div>
+<div class="chip-group single" data-field="gros_vx"><div class="chip" onclick="selectChip(this)">Normaux</div><div class="chip" onclick="selectChip(this)">Transposition</div><div class="chip" onclick="selectChip(this)">Coarctation</div><div class="chip" onclick="selectChip(this)">Autre</div></div>
+<div class="sub-title">Crosse aortique</div>
+<div class="chip-group single" data-field="crosse"><div class="chip" onclick="selectChip(this)">Gauche</div><div class="chip" onclick="selectChip(this)">Droite</div><div class="chip" onclick="selectChip(this)">Double arc</div></div>
+<div class="sub-title">Isthme aortique</div>
+<div class="chip-group single" data-field="isthme"><div class="chip" onclick="selectChip(this)">Normal</div><div class="chip" onclick="selectChip(this)">Hypoplasique</div></div>
+<div class="sub-title">4 cavités</div>
+<div class="chip-group single" data-field="quatre_cav"><div class="chip" onclick="selectChip(this)">Normales</div><div class="chip" onclick="selectChip(this)">Hypoplasie cœur D</div><div class="chip" onclick="selectChip(this)">Hypoplasie cœur G</div><div class="chip" onclick="selectChip(this)">Autre</div></div>
+<div class="yn-row"><div class="yn-label">Pointe à gauche</div><div class="yn-toggle" data-id="pointe_g"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Retours veineux systémiques</div>
+<div class="yn-row"><div class="yn-label">VCS / VCI normales</div><div class="yn-toggle" data-id="vcs_vci"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="yn-row"><div class="yn-label">VCSG persistante</div><div class="yn-toggle" data-id="vcsg"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Oreillette droite</div>
+<div class="chip-group single" data-field="foramen_ovale"><div class="chip" onclick="selectChip(this)">FO perméable</div><div class="chip" onclick="selectChip(this)">FO restrictif</div><div class="chip" onclick="selectChip(this)">FO fermé</div></div>
+<div class="sub-title">Sinus coronaire</div>
+<div class="chip-group single" data-field="sinus_cor"><div class="chip" onclick="selectChip(this)">Normal</div><div class="chip" onclick="selectChip(this)">Dilaté</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_od_fo" data-original-label="OD / FO" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">OD / FO</div></div></div>
+<div class="yn-row"><div class="yn-label">V. ombilicale cathétérisable → OD</div><div class="yn-toggle" data-id="vo_cath_od"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Oreillette gauche</div>
+<div class="field"><input type="text" id="og_retours" placeholder="Retours veineux cathétérisables…"></div>
+<div class="sub-title">VD — Éjection</div>
+<div class="chip-group single" data-field="valve_pulm"><div class="chip" onclick="selectChip(this)">Tricuspide</div><div class="chip" onclick="selectChip(this)">Bicuspide</div><div class="chip" onclick="selectChip(this)">Sténosée</div><div class="chip" onclick="selectChip(this)">Atrésie</div></div>
+<div class="yn-row"><div class="yn-label">Orifices AP normaux</div><div class="yn-toggle" data-id="ap_norm"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="yn-row"><div class="yn-label">Canal artériel perméable</div><div class="yn-toggle" data-id="canal_art"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_vd_ej" data-original-label="VD éjection" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">VD éjection</div></div></div>
+<div class="sub-title">VG — Éjection</div>
+<div class="chip-group single" data-field="septum_iv"><div class="chip" onclick="selectChip(this)">Normal</div><div class="chip" onclick="selectChip(this)">CIV périmemb.</div><div class="chip" onclick="selectChip(this)">CIV membr.</div><div class="chip" onclick="selectChip(this)">CIV muscul.</div></div>
+<div class="field"><input type="text" id="civ_diam" placeholder="Diamètre CIV (mm)…"></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_septum" data-original-label="Septum IV" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Septum IV</div></div></div>
+<div class="chip-group single" data-field="valve_aort"><div class="chip" onclick="selectChip(this)">Tricuspide</div><div class="chip" onclick="selectChip(this)">Bicuspide</div><div class="chip" onclick="selectChip(this)">Sténosée</div></div>
+<div class="yn-row"><div class="yn-label">Orifices coronaires normaux</div><div class="yn-toggle" data-id="coronaires"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_vg_ej" data-original-label="VG éjection" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">VG éjection</div></div></div>
+<div class="sub-title">VD — Admission</div>
+<div class="chip-group single" data-field="valve_tric"><div class="chip" onclick="selectChip(this)">Normale</div><div class="chip" onclick="selectChip(this)">Ebstein</div><div class="chip" onclick="selectChip(this)">Autre</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_vd_av" data-original-label="VD AV" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">VD AV</div></div></div>
+<div class="sub-title">VG — Admission</div>
+<div class="chip-group single" data-field="valve_mitr"><div class="chip" onclick="selectChip(this)">Normale</div><div class="chip" onclick="selectChip(this)">Anormale</div></div>
+<div class="field"><input type="text" id="mitrale_det" placeholder="Précisions mitrale…"></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_vg_av" data-original-label="VG AV" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">VG AV</div></div></div>
+<div class="separator"></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_coeur" data-original-label="Cœur" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Cœur</div></div></div>
+<div id="extraPhotos_coeur" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"></div>
+<button class="btn-add-photo" onclick="addExtraPhoto('coeur')">＋ Photo supplémentaire</button>
+<div class="field-row"><div class="field"><label>Masse cœur</label><input type="number" id="coeur_masse" step="0.1" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_coeur"></div></div></div>
+<div class="yn-row"><div class="yn-label">Cœur prélevé</div><div class="yn-toggle" data-id="coeur_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+</div></div></div>
+<!-- ═══ 5. POUMONS ═══ -->
+<div class="acc-section sec-poumon" id="sec-poumons"><div class="acc-header" onclick="toggleAcc('sec-poumons')"><span class="acc-icon">🫁</span><span class="acc-title">Poumons</span><span class="acc-status empty" id="ast-poumons">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="chip-group multi" data-field="poumons_morpho"><div class="chip" onclick="toggleChipMulti(this)">Normaux</div><div class="chip" onclick="toggleChipMulti(this)">Pétéchies</div><div class="chip" onclick="toggleChipMulti(this)">Anom. lobation</div><div class="chip" onclick="toggleChipMulti(this)">Hypoplasie</div><div class="chip" onclick="toggleChipMulti(this)">CPAM/MAKP</div><div class="chip" onclick="toggleChipMulti(this)">Séquestration</div><div class="chip" onclick="toggleChipMulti(this)">Autre</div></div>
+<div class="photo-row">
+<div class="photo-slot" data-key="p_poumon_d" data-original-label="Poumon D" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Poumon D</div></div>
+<div class="photo-slot" data-key="p_poumon_g" data-original-label="Poumon G" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Poumon G</div></div>
+</div>
+<div class="sub-title">Docimasie</div>
+<div class="chip-group single" data-field="docimasie"><div class="chip" onclick="selectChip(this)">Positive</div><div class="chip" onclick="selectChip(this)">Négative</div><div class="chip" onclick="selectChip(this)">Non faite</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_docimasie" data-original-label="Docimasie" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Docimasie</div></div></div>
+<div id="extraPhotos_poumons" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"></div>
+<button class="btn-add-photo" onclick="addExtraPhoto('poumons')">＋ Photo supplémentaire</button>
+<div class="field-row">
+<div class="field"><label>Masse P. D</label><input type="number" id="poumon_d_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_poumon_d"></div></div>
+<div class="field"><label>Masse P. G</label><input type="number" id="poumon_g_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_poumon_g"></div></div>
+</div>
+<div class="info-box" id="ratio-pc">Rapport poumons/corps : —</div>
+<div class="yn-row"><div class="yn-label">Poumons prélevés</div><div class="yn-toggle" data-id="poumons_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+</div></div></div>
+
+<!-- ═══ 6. DIGESTIF ═══ -->
+<div class="acc-section sec-dig" id="sec-dig"><div class="acc-header" onclick="toggleAcc('sec-dig')"><span class="acc-icon">🟢</span><span class="acc-title">Digestif</span><span class="acc-status empty" id="ast-dig">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="sub-title">Foie</div>
+<div class="chip-group single" data-field="foie_aspect"><div class="chip" onclick="selectChip(this)">Normal</div><div class="chip" onclick="selectChip(this)">Pâle</div><div class="chip" onclick="selectChip(this)">Ictérique</div><div class="chip" onclick="selectChip(this)">Congestif</div><div class="chip" onclick="selectChip(this)">Autre</div></div>
+<div class="yn-row"><div class="yn-label">Vésicule biliaire présente</div><div class="yn-toggle" data-id="vb_presente"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_foie" data-original-label="Foie" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Foie</div></div></div>
+<div class="field-row"><div class="field"><label>Masse foie</label><input type="number" id="foie_masse" step="0.1" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_foie"></div></div></div>
+<div class="yn-row"><div class="yn-label">Foie prélevé</div><div class="yn-toggle" data-id="foie_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Estomac</div>
+<div class="chip-group single" data-field="estomac_aspect"><div class="chip" onclick="selectChip(this)">Normal</div><div class="chip" onclick="selectChip(this)">Petit</div><div class="chip" onclick="selectChip(this)">Distendu</div><div class="chip" onclick="selectChip(this)">Atrésie</div><div class="chip" onclick="selectChip(this)">Autre</div></div>
+<div class="sub-title">Docimasie gastrique</div>
+<div class="chip-group single" data-field="docimasie_gastrique"><div class="chip" onclick="selectChip(this)">Positive</div><div class="chip" onclick="selectChip(this)">Négative</div><div class="chip" onclick="selectChip(this)">Non faite</div></div>
+<div class="field"><input type="text" id="estomac_contenu" placeholder="Contenu gastrique (aspect, volume)…"></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_estomac" data-original-label="Estomac" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Estomac</div></div></div>
+<div class="sub-title">Tube digestif</div>
+<div class="chip-group multi" data-field="tube_dig"><div class="chip" onclick="toggleChipMulti(this)">Normal</div><div class="chip" onclick="toggleChipMulti(this)">Mésentère commun</div><div class="chip" onclick="toggleChipMulti(this)">Dolicho-côlon</div><div class="chip" onclick="toggleChipMulti(this)">Atrésie</div><div class="chip" onclick="toggleChipMulti(this)">Apple peel</div><div class="chip" onclick="toggleChipMulti(this)">Autre</div></div>
+<div class="sub-title">Méconium</div>
+<div class="chip-group single" data-field="meconium"><div class="chip" onclick="selectChip(this)">Présent iléon</div><div class="chip" onclick="selectChip(this)">Présent côlon</div><div class="chip" onclick="selectChip(this)">Absent</div></div>
+<div class="yn-row"><div class="yn-label">Diverticule de Meckel</div><div class="yn-toggle" data-id="meckel"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Anus (vérification interne)</div>
+<div class="chip-group single" data-field="anus_int"><div class="chip" onclick="selectChip(this)">Perméable</div><div class="chip" onclick="selectChip(this)">Imperforé</div></div>
+<div class="field"><input type="text" id="tube_dig_detail" placeholder="Précisions tube digestif…"></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_tube_dig" data-original-label="Tube dig." onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Tube dig.</div></div></div>
+<div class="yn-row"><div class="yn-label">Tube digestif prélevé</div><div class="yn-toggle" data-id="tubedig_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Pancréas</div>
+<div class="chip-group single" data-field="pancreas"><div class="chip" onclick="selectChip(this)">Normal</div><div class="chip" onclick="selectChip(this)">Annulaire</div><div class="chip" onclick="selectChip(this)">Intricat. spléno-panc.</div><div class="chip" onclick="selectChip(this)">Autre</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_pancreas" data-original-label="Pancréas" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Pancréas</div></div></div>
+<div class="field-row"><div class="field"><label>Masse pancréas</label><input type="number" id="pancreas_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_pancreas"></div></div></div>
+<div class="yn-row"><div class="yn-label">Pancréas prélevé</div><div class="yn-toggle" data-id="pancreas_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Rate</div>
+<div class="chip-group multi" data-field="rate"><div class="chip" onclick="toggleChipMulti(this)">Normale</div><div class="chip" onclick="toggleChipMulti(this)">Rates accessoires</div><div class="chip" onclick="toggleChipMulti(this)">Autre</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_rate" data-original-label="Rate" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Rate</div></div></div>
+<div class="field-row"><div class="field"><label>Masse rate</label><input type="number" id="rate_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_rate"></div></div></div>
+<div class="yn-row"><div class="yn-label">Rate prélevée</div><div class="yn-toggle" data-id="rate_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div id="extraPhotos_dig" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"></div>
+<button class="btn-add-photo" onclick="addExtraPhoto('dig')">＋ Photo supplémentaire</button>
+</div></div></div>
+
+<!-- ═══ 7. RÉTROPÉRITOINE ═══ -->
+<div class="acc-section sec-retro" id="sec-retro"><div class="acc-header" onclick="toggleAcc('sec-retro')"><span class="acc-icon">🟡</span><span class="acc-title">Rétropéritoine</span><span class="acc-status empty" id="ast-retro">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="sub-title">Surrénales</div>
+<div class="chip-group multi" data-field="surrenales"><div class="chip" onclick="toggleChipMulti(this)">Normales</div><div class="chip" onclick="toggleChipMulti(this)">En galette</div><div class="chip" onclick="toggleChipMulti(this)">Jaunes</div><div class="chip" onclick="toggleChipMulti(this)">Autre</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_surrenales" data-original-label="Surrénales" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Surrénales</div></div></div>
+<div class="field-row">
+<div class="field"><label>Masse surr. D</label><input type="number" id="surr_d_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_surr_d"></div></div>
+<div class="field"><label>Masse surr. G</label><input type="number" id="surr_g_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_surr_g"></div></div>
+</div>
+<div class="yn-row"><div class="yn-label">Surrénales prélevées</div><div class="yn-toggle" data-id="surr_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Reins</div>
+<div class="chip-group multi" data-field="reins"><div class="chip" onclick="toggleChipMulti(this)">Normaux</div><div class="chip" onclick="toggleChipMulti(this)">Kystiques</div><div class="chip" onclick="toggleChipMulti(this)">Dysplasie multiK</div><div class="chip" onclick="toggleChipMulti(this)">Kystes non déf.</div><div class="chip" onclick="toggleChipMulti(this)">Agénésie</div><div class="chip" onclick="toggleChipMulti(this)">Autre</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_reins" data-original-label="Reins" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Reins</div></div></div>
+<div class="field-row">
+<div class="field"><label>Masse rein D</label><input type="number" id="rein_d_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_rein_d"></div></div>
+<div class="field"><label>Masse rein G</label><input type="number" id="rein_g_masse" step="0.01" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_rein_g"></div></div>
+</div>
+<div class="yn-row"><div class="yn-label">Reins prélevés</div><div class="yn-toggle" data-id="reins_prelev"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="sub-title">Voies urinaires</div>
+<div class="chip-group single" data-field="voies_urin"><div class="chip" onclick="selectChip(this)">Normales</div><div class="chip" onclick="selectChip(this)">Uretères dilatés</div><div class="chip" onclick="selectChip(this)">Hydronéphrose</div><div class="chip" onclick="selectChip(this)">Atrésie</div></div>
+<div class="sub-title">Vessie</div>
+<div class="chip-group single" data-field="vessie_morph"><div class="chip" onclick="selectChip(this)">Normale</div><div class="chip" onclick="selectChip(this)">Mégavessie</div><div class="chip" onclick="selectChip(this)">Valves urét. post.</div></div>
+<div class="sub-title">Position des gonades (si masculin)</div>
+<div class="chip-group single" data-field="gonades_pos"><div class="chip" onclick="selectChip(this)">Scrotales</div><div class="chip" onclick="selectChip(this)">Inguinales</div><div class="chip" onclick="selectChip(this)">Abdominales</div><div class="chip" onclick="selectChip(this)">N/A</div></div>
+<div id="extraPhotos_retro" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"></div>
+<button class="btn-add-photo" onclick="addExtraPhoto('retro')">＋ Photo supplémentaire</button>
+</div></div></div>
+
+<!-- ═══ 8. NEUROPATHOLOGIE ═══ -->
+<div class="acc-section sec-neuro" id="sec-neuro"><div class="acc-header" onclick="toggleAcc('sec-neuro')"><span class="acc-icon">🧠</span><span class="acc-title">Neuropathologie</span><span class="acc-status empty" id="ast-neuro">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="sub-title">Aspect externe cerveau</div>
+<div class="chip-group multi" data-field="cerveau_ext"><div class="chip" onclick="toggleChipMulti(this)">Normal</div><div class="chip" onclick="toggleChipMulti(this)">Hémorragies méningées</div><div class="chip" onclick="toggleChipMulti(this)">Lissencéphalie</div><div class="chip" onclick="toggleChipMulti(this)">Polymicrogyrie</div><div class="chip" onclick="toggleChipMulti(this)">Autre</div></div>
+<div class="sub-title">Gyration</div>
+<div class="chip-group single" data-field="gyration"><div class="chip" onclick="selectChip(this)">Adaptée au terme</div><div class="chip" onclick="selectChip(this)">Retard</div><div class="chip" onclick="selectChip(this)">Non évaluable</div></div>
+<div class="photo-row"><div class="photo-slot" data-key="p_cerveau" data-original-label="Cerveau" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Cerveau</div></div></div>
+<div class="field-row"><div class="field"><label>Masse cerveau frais</label><input type="number" id="cerveau_masse" step="0.1" min="0" inputmode="decimal" placeholder="—" oninput="computeOrganDS()"><div class="unit">g</div><div class="ds-inline" id="ds_cerveau"></div></div></div>
+<div class="sub-title">Moelle épinière</div>
+<div class="chip-group single" data-field="moelle"><div class="chip" onclick="selectChip(this)">Normale</div><div class="chip" onclick="selectChip(this)">Anormale</div><div class="chip" onclick="selectChip(this)">Non examinée</div></div>
+<div class="yn-row"><div class="yn-label">Ouverture rachis postérieur</div><div class="yn-toggle" data-id="rachis_ouv"><button onclick="setYN(this,'y')">Oui</button><button onclick="setYN(this,'n')">Non</button></div></div>
+<div class="field"><input type="text" id="neuro_detail" placeholder="Précisions neuropathologie…"></div>
+<div id="extraPhotos_neuro" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"></div>
+<button class="btn-add-photo" onclick="addExtraPhoto('neuro')">＋ Photo supplémentaire</button>
+</div></div></div>
+
+<!-- ═══ 9. PRÉLÈVEMENTS ═══ -->
+<div class="acc-section sec-prelev" id="sec-prelev"><div class="acc-header" onclick="toggleAcc('sec-prelev')"><span class="acc-icon">🧪</span><span class="acc-title">Prélèvements</span><span class="acc-status empty" id="ast-prelev">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="sub-title">Prélèvements annexes</div>
+<div class="chip-group multi" data-field="prelev_annexes"><div class="chip" onclick="toggleChip(this)">OGI</div><div class="chip" onclick="toggleChip(this)">Trachée</div><div class="chip" onclick="toggleChip(this)">Thyroïde</div><div class="chip" onclick="toggleChip(this)">Œsophage</div><div class="chip" onclick="toggleChip(this)">Peau abdo</div><div class="chip" onclick="toggleChip(this)">Peau pieds</div><div class="chip" onclick="toggleChip(this)">Muscle</div><div class="chip" onclick="toggleChip(this)">Diaphragme</div><div class="chip" onclick="toggleChip(this)">Autre</div></div>
+<div class="field"><input type="text" id="prelev_annexes_det" placeholder="Précisions…"></div>
+<div class="sub-title">Prélèvements spéciaux</div>
+<div class="chip-group multi" data-field="prelev_spec"><div class="chip" onclick="toggleChip(this)">Os</div><div class="chip" onclick="toggleChip(this)">Cerveau</div></div>
+<div class="field"><input type="text" id="prelev_spec_det" placeholder="Précisions…"></div>
+<div class="sub-title">Congélation de</div>
+<div class="field"><input type="text" id="congelation" placeholder="Tissu(s) congelé(s)…"></div>
+<div class="sub-title">DNAthèque à partir de</div>
+<div class="field"><input type="text" id="dnatheque" placeholder="Source DNAthèque…"></div>
+</div></div></div>
+
+<!-- ═══ 10. RESTITUTION ═══ -->
+<div class="acc-section sec-ouv" id="sec-restit"><div class="acc-header" onclick="toggleAcc('sec-restit')"><span class="acc-icon">📷</span><span class="acc-title">Restitution</span><span class="acc-status empty" id="ast-restit">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="sub-title">Photo post-restitution</div>
+<div class="photo-row"><div class="photo-slot wide" data-key="p_post_restit" data-original-label="Post-restitution" onclick="capturePhoto(this)"><div class="icon">📷</div><div class="label">Post-restitution</div></div></div>
+</div></div></div>
+
+<!-- ═══ 11. NOTE ═══ -->
+<div class="acc-section sec-comment" id="sec-note"><div class="acc-header" onclick="toggleAcc('sec-note')"><span class="acc-icon">📝</span><span class="acc-title">Commentaire</span><span class="acc-status empty" id="ast-note">—</span><span class="acc-chevron">▼</span></div><div class="acc-body"><div class="acc-body-inner">
+<div class="field"><textarea id="commentaire" rows="4" placeholder="Remarques, observations particulières…"></textarea></div>
+</div></div></div>
+
+</div><!-- /content -->
+<div class="bottom-bar">
+<button class="btn btn-secondary" onclick="goBack()" data-i18n="pwa.common.back_dossier">← Dossier</button>
+<button class="btn btn-primary" style="flex:1.5" onclick="saveAndExport()" data-i18n="pwa.common.save">Enregistrer ✓</button>
+</div>
+<input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none">
+<script src="references.js"></script>
+<script src="hpo_mapping.js"></script>
+<script src="helpers.js"></script>
+<script src="hpo_engine.js"></script>
+<script src="pwa_common.js"></script>
+<script>
+// ═══ PAGE STATE ═══
+var dossier = initDossierField();
+var cachedSA = null;
+var cachedMaroun = 0;
+
+// ═══ EXTRA PHOTOS (per section) ═══
+var extraPhotoCounts = {};
+function addExtraPhoto(section) {
+  if (!extraPhotoCounts[section]) extraPhotoCounts[section] = 0;
+  extraPhotoCounts[section]++;
+  var n = extraPhotoCounts[section];
+  var grid = gid('extraPhotos_' + section); if (!grid) return;
+  var slot = document.createElement('div'); slot.className = 'photo-slot grid-slot';
+  slot.setAttribute('data-key', 'xp_' + section + '_' + n);
+  slot.setAttribute('data-original-label', 'Suppl. ' + n);
+  slot.onclick = function() { capturePhoto(this); };
+  slot.innerHTML = '<div class="icon big">📷</div><div class="label big">Suppl. ' + n + '</div>';
+  grid.appendChild(slot);
+}
+
+// ═══ LOAD DATA FROM MACRO FRAIS ═══
+function loadFraisData() {
+  fetch(HUB + '/admin/api/pwa/load?dossier=' + encodeURIComponent(dossier) + '&module=macro_frais')
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+      if (res.found && res.data) {
+        cachedSA = res.data.terme ? res.data.terme.sa : null;
+        cachedMaroun = res.data.maceration ? res.data.maceration.maroun_score : 0;
+        computeOrganDS();
+      } else {
+        // Fallback localStorage
+        try { var raw = localStorage.getItem('foet_macro_frais_' + dossier); if (raw) { var d = JSON.parse(raw); cachedSA = d.terme ? d.terme.sa : null; cachedMaroun = d.maceration ? d.maceration.maroun_score : 0; computeOrganDS(); } } catch(e) {}
+      }
+    })
+    .catch(function() {
+      try { var raw = localStorage.getItem('foet_macro_frais_' + dossier); if (raw) { var d = JSON.parse(raw); cachedSA = d.terme ? d.terme.sa : null; cachedMaroun = d.maceration ? d.maceration.maroun_score : 0; computeOrganDS(); } } catch(e) {}
+    });
+}
+
+// ═══ ORGAN DS (3 references: GC + MA + MB) ═══
+function computeOrganDS() {
+  var sa = cachedSA; if (!sa || sa < 12 || sa > 43) return;
+  var grade = getMarounGrade(cachedMaroun);
+  var grade23 = getMarounGrade23(cachedMaroun);
+  var maE = getMAOrg(sa); var mbE = getMBOrg(sa); var gcE = getGCOrg(sa);
+
+  function doDS(inputId, dsId, maKey, mbKey, gcKey) {
+    var v = parseFloat(gval(inputId)); var h = '';
+    if (gcE && gcKey && gcE[gcKey]) h += dsTag(zs(v, gcE[gcKey].m, gcE[gcKey].sd), 'gc');
+    if (maE && maKey && maE[maKey]) h += dsTag(zs(v, maE[maKey].m, maE[maKey].sd), 'ma');
+    if (mbE && mbKey && mbE[mbKey]) h += dsTag(zs(v, mbE[mbKey].m, mbE[mbKey].sd), 'mb');
+    var el = gid(dsId); if (el) el.innerHTML = h;
+  }
+
+  doDS('cerveau_masse', 'ds_cerveau', 'brain', 'Brain', null);
+  doDS('coeur_masse', 'ds_coeur', 'heart', 'Heart', 'coeur');
+  doDS('thymus_masse', 'ds_thymus', 'thymus_' + grade, 'Thymus', 'thymus');
+  doDS('foie_masse', 'ds_foie', 'liver_' + grade, 'Liver', 'foie');
+  doDS('rate_masse', 'ds_rate', 'spleen_' + grade23, 'Spleen', 'spleen');
+  doDS('pancreas_masse', 'ds_pancreas', null, null, 'pancreas');
+
+  var pd = parseFloat(gval('poumon_d_masse')) || 0;
+  var pg = parseFloat(gval('poumon_g_masse')) || 0;
+  var ptot = pd + pg; var h = '';
+  if (gcE && gcE.poumons && ptot > 0) h += dsTag(zs(ptot, gcE.poumons.m, gcE.poumons.sd), 'gc');
+  var luKey = 'lungs_' + grade23;
+  if (maE && maE[luKey] && ptot > 0) h += dsTag(zs(ptot, maE[luKey].m, maE[luKey].sd), 'ma');
+  if (mbE && mbE.Lungs && ptot > 0) h += dsTag(zs(ptot, mbE.Lungs.m, mbE.Lungs.sd), 'mb');
+  var el = gid('ds_poumon_d'); if (el) el.innerHTML = ptot > 0 ? h : '';
+  el = gid('ds_poumon_g'); if (el) el.innerHTML = '';
+
+  // Masse fœtale depuis les données frais (cachedFraisData ou localStorage)
+  var masse_foetale = null;
+  try {
+    var rawF = localStorage.getItem('foet_macro_frais_' + dossier);
+    if (rawF) { var d2 = JSON.parse(rawF); if (d2.biometries) masse_foetale = d2.biometries.masse; }
+  } catch(e) {}
+  var ratioEl = gid('ratio-pc');
+  if (ratioEl && ptot > 0 && masse_foetale > 0) {
+    var ratio = ((ptot / masse_foetale) * 100).toFixed(2);
+    var warn = parseFloat(ratio) < 1.2 && sa >= 28 ? ' ⚠️ < 1.2% (hypoplasie)' : '';
+    ratioEl.textContent = 'Rapport poumons/corps : ' + ratio + '%' + warn;
+  } else if (ratioEl) { ratioEl.textContent = 'Rapport poumons/corps : —'; }
+
+  var rd = parseFloat(gval('rein_d_masse')) || 0; var rg = parseFloat(gval('rein_g_masse')) || 0;
+  var rtot = rd + rg; h = '';
+  if (gcE && gcE.reins && rtot > 0) h += dsTag(zs(rtot, gcE.reins.m, gcE.reins.sd), 'gc');
+  var kKey = 'kidneys_' + grade23;
+  if (maE && maE[kKey] && rtot > 0) h += dsTag(zs(rtot, maE[kKey].m, maE[kKey].sd), 'ma');
+  if (mbE && mbE.Kidneys && rtot > 0) h += dsTag(zs(rtot, mbE.Kidneys.m, mbE.Kidneys.sd), 'mb');
+  el = gid('ds_rein_d'); if (el) el.innerHTML = rtot > 0 ? h : '';
+  el = gid('ds_rein_g'); if (el) el.innerHTML = '';
+
+  var sd_v = parseFloat(gval('surr_d_masse')) || 0; var sg_v = parseFloat(gval('surr_g_masse')) || 0;
+  var stot = sd_v + sg_v; h = '';
+  if (gcE && gcE.surrenales && stot > 0) h += dsTag(zs(stot, gcE.surrenales.m, gcE.surrenales.sd), 'gc');
+  var aKey = 'adrenals_' + grade23;
+  if (maE && maE[aKey] && maE[aKey].m != null && stot > 0) h += dsTag(zs(stot, maE[aKey].m, maE[aKey].sd), 'ma');
+  if (mbE && mbE.Adrenals && stot > 0) h += dsTag(zs(stot, mbE.Adrenals.m, mbE.Adrenals.sd), 'mb');
+  el = gid('ds_surr_d'); if (el) el.innerHTML = stot > 0 ? h : '';
+  el = gid('ds_surr_g'); if (el) el.innerHTML = '';
+}
+
+// ═══ COLLECT ═══
+function collectData() {
+  return {
+    dossier: dossier, timestamp: new Date().toISOString(), type: 'macro_autopsie',
+    sa_from_frais: cachedSA, maroun_from_frais: cachedMaroun,
+    ouverture: { situs: getChips('situs')[0] || null, epanchements: { pleural_d: parseFloat(gval('epanch_pleural_d')) || 0, pleural_g: parseFloat(gval('epanch_pleural_g')) || 0, peritoine: parseFloat(gval('epanch_peritoine')) || 0, pericarde: parseFloat(gval('epanch_pericarde')) || 0 }, ogi: getChips('ogi')[0] || null, ogi_detail: gval('ogi_detail') || null, diaphragme: getChips('diaphragme')[0] || null },
+    voies_aeriennes: { detail: gval('airway_detail') || null },
+    thorax: { thymus: { masse: parseFloat(gval('thymus_masse')) || null, aspect: getChips('thymus_aspect')[0] || null }, tvi: getChips('tvi')[0] || null, pericarde: getChips('pericarde'), tsa: { etat: getChips('tsa')[0] || null, detail: gval('tsa_detail') || null } },
+    coeur: { gros_vx: getChips('gros_vx')[0] || null, crosse: getChips('crosse')[0] || null, isthme: getChips('isthme')[0] || null, quatre_cav: getChips('quatre_cav')[0] || null, foramen_ovale: getChips('foramen_ovale')[0] || null, sinus_cor: getChips('sinus_cor')[0] || null, og_retours: gval('og_retours') || null, vd_ej: { valve_pulm: getChips('valve_pulm')[0] || null }, vg_ej: { septum_iv: getChips('septum_iv')[0] || null, civ_diam: gval('civ_diam') || null, valve_aort: getChips('valve_aort')[0] || null }, vd_av: { valve_tric: getChips('valve_tric')[0] || null }, vg_av: { valve_mitr: getChips('valve_mitr')[0] || null, detail: gval('mitrale_det') || null }, masse: parseFloat(gval('coeur_masse')) || null },
+    poumons: { morpho: getChips('poumons_morpho'), docimasie: getChips('docimasie')[0] || null, masse_d: parseFloat(gval('poumon_d_masse')) || null, masse_g: parseFloat(gval('poumon_g_masse')) || null },
+    digestif: { foie: { aspect: getChips('foie_aspect')[0] || null, masse: parseFloat(gval('foie_masse')) || null }, estomac: { aspect: getChips('estomac_aspect')[0] || null, docimasie_gastrique: getChips('docimasie_gastrique')[0] || null, contenu: gval('estomac_contenu') || null }, tube_dig: { aspects: getChips('tube_dig'), detail: gval('tube_dig_detail') || null }, meconium: getChips('meconium')[0] || null, anus: getChips('anus_int')[0] || null, pancreas: { aspect: getChips('pancreas')[0] || null, masse: parseFloat(gval('pancreas_masse')) || null }, rate: { aspects: getChips('rate'), masse: parseFloat(gval('rate_masse')) || null } },
+    retroperitoine: { surrenales: { aspects: getChips('surrenales'), masse_d: parseFloat(gval('surr_d_masse')) || null, masse_g: parseFloat(gval('surr_g_masse')) || null }, reins: { aspects: getChips('reins'), masse_d: parseFloat(gval('rein_d_masse')) || null, masse_g: parseFloat(gval('rein_g_masse')) || null }, voies_urin: getChips('voies_urin')[0] || null, vessie: getChips('vessie_morph')[0] || null, gonades_pos: getChips('gonades_pos')[0] || null },
+    neuro: { cerveau_ext: getChips('cerveau_ext'), gyration: getChips('gyration')[0] || null, masse_cerveau: parseFloat(gval('cerveau_masse')) || null, moelle: getChips('moelle')[0] || null, detail: gval('neuro_detail') || null },
+    prelevements: { annexes: getChips('prelev_annexes'), annexes_det: gval('prelev_annexes_det') || null, speciaux: getChips('prelev_spec'), speciaux_det: gval('prelev_spec_det') || null, congelation: gval('congelation') || null, dnatheque: gval('dnatheque') || null },
+    toggles: collectYNs(),
+    commentaire: gval('commentaire') || null,
+    photos: Object.keys(photos).map(function(k) { return { key: k, label: photos[k].label }; }),
+    hpo: collectHPO()
+  };
+}
+
+// ═══ SAVE ═══
+function saveAndExport() {
+  try {
+    var data = collectData();
+    pwaSave('macro_autopsie', dossier, data);
+    saveHPOToLocalStorage(dossier, 'macro_autopsie');
+    pwaSubmit(dossier, 'macro_autopsie', data, photos);
+  } catch (e) { alert('Erreur: ' + e.message); }
+}
+
+// ═══ INIT ═══
+applySettings();
+initPhotoInput();
+loadFraisData();
+computeOrganDS();
+injectCollapseButtons(false);
+loadExistingAutopsieData();
+
+// ═══ LOAD EXISTING AUTOPSIE DATA ═══
+function loadExistingAutopsieData() {
+  pwaLoadFromHub(dossier, 'macro_autopsie')
+    .then(function(res) {
+      if (res.found && res.data) {
+        restoreAutopsieData(res.data, res.photos_on_disk || []);
+      } else {
+        var local = pwaLoad('macro_autopsie', dossier);
+        if (local) restoreAutopsieData(local, []);
+      }
+    });
+}
+function restoreAutopsieData(d, photosOnDisk) {
+  try {
+    if (d.ouverture) {
+      if (d.ouverture.situs) selectChipByValue('situs', d.ouverture.situs);
+      if (d.ouverture.ogi) selectChipByValue('ogi', d.ouverture.ogi);
+      if (d.ouverture.diaphragme) selectChipByValue('diaphragme', d.ouverture.diaphragme);
+      setField('ogi_detail', d.ouverture.ogi_detail);
+      if (d.ouverture.epanchements) {
+        setField('epanch_pleural_d', d.ouverture.epanchements.pleural_d);
+        setField('epanch_pleural_g', d.ouverture.epanchements.pleural_g);
+        setField('epanch_peritoine', d.ouverture.epanchements.peritoine);
+        setField('epanch_pericarde', d.ouverture.epanchements.pericarde);
+      }
+    }
+    if (d.voies_aeriennes) { setField('airway_detail', d.voies_aeriennes.detail); }
+    if (d.thorax) {
+      if (d.thorax.thymus) { setField('thymus_masse', d.thorax.thymus.masse); if (d.thorax.thymus.aspect) selectChipByValue('thymus_aspect', d.thorax.thymus.aspect); }
+      if (d.thorax.tvi) selectChipByValue('tvi', d.thorax.tvi);
+      if (d.thorax.pericarde) restoreMultiChips('pericarde', d.thorax.pericarde);
+      if (d.thorax.tsa) { if (d.thorax.tsa.etat) selectChipByValue('tsa', d.thorax.tsa.etat); setField('tsa_detail', d.thorax.tsa.detail); }
+    }
+    if (d.coeur) {
+      if (d.coeur.gros_vx) selectChipByValue('gros_vx', d.coeur.gros_vx);
+      if (d.coeur.crosse) selectChipByValue('crosse', d.coeur.crosse);
+      if (d.coeur.isthme) selectChipByValue('isthme', d.coeur.isthme);
+      if (d.coeur.quatre_cav) selectChipByValue('quatre_cav', d.coeur.quatre_cav);
+      if (d.coeur.foramen_ovale) selectChipByValue('foramen_ovale', d.coeur.foramen_ovale);
+      if (d.coeur.sinus_cor) selectChipByValue('sinus_cor', d.coeur.sinus_cor);
+      setField('og_retours', d.coeur.og_retours);
+      if (d.coeur.vd_ej && d.coeur.vd_ej.valve_pulm) selectChipByValue('valve_pulm', d.coeur.vd_ej.valve_pulm);
+      if (d.coeur.vg_ej) { if (d.coeur.vg_ej.septum_iv) selectChipByValue('septum_iv', d.coeur.vg_ej.septum_iv); setField('civ_diam', d.coeur.vg_ej.civ_diam); if (d.coeur.vg_ej.valve_aort) selectChipByValue('valve_aort', d.coeur.vg_ej.valve_aort); }
+      if (d.coeur.vd_av && d.coeur.vd_av.valve_tric) selectChipByValue('valve_tric', d.coeur.vd_av.valve_tric);
+      if (d.coeur.vg_av) { if (d.coeur.vg_av.valve_mitr) selectChipByValue('valve_mitr', d.coeur.vg_av.valve_mitr); setField('mitrale_det', d.coeur.vg_av.detail); }
+      setField('coeur_masse', d.coeur.masse);
+    }
+    if (d.poumons) {
+      if (d.poumons.morpho) restoreMultiChips('poumons_morpho', d.poumons.morpho);
+      if (d.poumons.docimasie) selectChipByValue('docimasie', d.poumons.docimasie);
+      setField('poumon_d_masse', d.poumons.masse_d);
+      setField('poumon_g_masse', d.poumons.masse_g);
+    }
+    if (d.digestif) {
+      if (d.digestif.foie) { if (d.digestif.foie.aspect) selectChipByValue('foie_aspect', d.digestif.foie.aspect); setField('foie_masse', d.digestif.foie.masse); }
+      if (d.digestif.estomac) { if (d.digestif.estomac.aspect) selectChipByValue('estomac_aspect', d.digestif.estomac.aspect); if (d.digestif.estomac.docimasie_gastrique) selectChipByValue('docimasie_gastrique', d.digestif.estomac.docimasie_gastrique); setField('estomac_contenu', d.digestif.estomac.contenu); }
+      if (d.digestif.tube_dig) { if (d.digestif.tube_dig.aspects) restoreMultiChips('tube_dig', d.digestif.tube_dig.aspects); setField('tube_dig_detail', d.digestif.tube_dig.detail); }
+      if (d.digestif.meconium) selectChipByValue('meconium', d.digestif.meconium);
+      if (d.digestif.anus) selectChipByValue('anus_int', d.digestif.anus);
+      if (d.digestif.pancreas) { if (d.digestif.pancreas.aspect) selectChipByValue('pancreas', d.digestif.pancreas.aspect); setField('pancreas_masse', d.digestif.pancreas.masse); }
+      if (d.digestif.rate) { if (d.digestif.rate.aspects) restoreMultiChips('rate', d.digestif.rate.aspects); setField('rate_masse', d.digestif.rate.masse); }
+    }
+    if (d.retroperitoine) {
+      if (d.retroperitoine.surrenales) { if (d.retroperitoine.surrenales.aspects) restoreMultiChips('surrenales', d.retroperitoine.surrenales.aspects); setField('surr_d_masse', d.retroperitoine.surrenales.masse_d); setField('surr_g_masse', d.retroperitoine.surrenales.masse_g); }
+      if (d.retroperitoine.reins) { if (d.retroperitoine.reins.aspects) restoreMultiChips('reins', d.retroperitoine.reins.aspects); setField('rein_d_masse', d.retroperitoine.reins.masse_d); setField('rein_g_masse', d.retroperitoine.reins.masse_g); }
+      if (d.retroperitoine.voies_urin) selectChipByValue('voies_urin', d.retroperitoine.voies_urin);
+      if (d.retroperitoine.vessie) selectChipByValue('vessie_morph', d.retroperitoine.vessie);
+      if (d.retroperitoine.gonades_pos) selectChipByValue('gonades_pos', d.retroperitoine.gonades_pos);
+    }
+    if (d.neuro) {
+      if (d.neuro.cerveau_ext) restoreMultiChips('cerveau_ext', d.neuro.cerveau_ext);
+      if (d.neuro.gyration) selectChipByValue('gyration', d.neuro.gyration);
+      setField('cerveau_masse', d.neuro.masse_cerveau);
+      if (d.neuro.moelle) selectChipByValue('moelle', d.neuro.moelle);
+      setField('neuro_detail', d.neuro.detail);
+    }
+    if (d.prelevements) {
+      if (d.prelevements.annexes) restoreMultiChips('prelev_annexes', d.prelevements.annexes);
+      setField('prelev_annexes_det', d.prelevements.annexes_det);
+      if (d.prelevements.speciaux) restoreMultiChips('prelev_spec', d.prelevements.speciaux);
+      setField('prelev_spec_det', d.prelevements.speciaux_det);
+      setField('congelation', d.prelevements.congelation);
+      setField('dnatheque', d.prelevements.dnatheque);
+    }
+    if (d.toggles) {
+      var toggleIds = Object.keys(d.toggles);
+      for (var i = 0; i < toggleIds.length; i++) {
+        var tid = toggleIds[i]; var val = d.toggles[tid]; if (val === null) continue;
+        var toggle = qs('.yn-toggle[data-id="' + tid + '"]');
+        if (toggle) { var btns = toggle.querySelectorAll('button'); for (var j = 0; j < btns.length; j++) btns[j].className = '';
+          if (val === true) { if (btns[0]) btns[0].className = 'sel-y'; } else { if (btns[1]) btns[1].className = 'sel-n'; } }
+      }
+    }
+    setField('commentaire', d.commentaire);
+
+    // Photos depuis le serveur
+    if (d.photos && d.photos.length > 0) {
+      for (var i = 0; i < d.photos.length; i++) {
+        var p = d.photos[i];
+        var imgUrl = HUB + '/admin/api/pwa/photo?dossier=' + encodeURIComponent(dossier) + '&key=' + encodeURIComponent(p.key);
+        if (p.key.indexOf('xp_') === 0) {
+          var parts = p.key.split('_');
+          var section = parts[1];
+          var grid = gid('extraPhotos_' + section);
+          if (grid) {
+            if (!extraPhotoCounts[section]) extraPhotoCounts[section] = 0;
+            extraPhotoCounts[section]++;
+            var slot = document.createElement('div'); slot.className = 'photo-slot grid-slot has-photo';
+            slot.setAttribute('data-key', p.key); slot.setAttribute('data-original-label', p.label);
+            slot.setAttribute('onclick', 'capturePhoto(this)');
+            slot.innerHTML = '<img src="' + imgUrl + '"><button class="remove-btn" onclick="event.stopPropagation();removePhoto(\'' + p.key + '\')">✕</button><div class="overlay-label">' + p.label + '</div>';
+            grid.appendChild(slot);
+            photos[p.key] = { dataUrl: null, label: p.label, serverUrl: imgUrl };
+            continue;
+          }
+        }
+        photos[p.key] = { dataUrl: null, label: p.label, serverUrl: imgUrl };
+        var slot = qs('[data-key="' + p.key + '"]');
+        if (slot) { slot.classList.add('has-photo');
+          slot.innerHTML = '<img src="' + imgUrl + '"><button class="remove-btn" onclick="event.stopPropagation();removePhoto(\'' + p.key + '\')">✕</button><div class="overlay-label">' + (p.label || p.key) + '</div>'; }
+      }
+    }
+    computeOrganDS();
+  } catch(e) {}
+}
+
+function setField(id, val) { if (val === null || val === undefined || val === 0) return; var el = gid(id); if (el) el.value = val; }
+function restoreMultiChips(field, values) {
+  if (!values || !values.length) return;
+  var chips = qsa('[data-field="' + field + '"] .chip');
+  for (var i = 0; i < chips.length; i++) { var txt = chips[i].textContent.trim();
+    for (var j = 0; j < values.length; j++) { if (values[j] === txt) { chips[i].classList.add('selected'); break; } } }
+}
+</script>
+<script>
+// ═══ PWA Registration ═══
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/pwa/foet/sw.js').catch(() => {});
+}
+</script>
+
+<script src="/static/i18n.js"></script>
+<script>pwaI18nInit();</script>
+</body>
+</html>

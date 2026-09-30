@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoetoPath — Slide Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/openseadragon.min.js"></script>
+    <link rel="stylesheet" href="static/viewer.css?v=sp1">
+</head>
+<body>
+
+<!-- ── Top Bar ──────────────────────────────────────────── -->
+<div class="topbar">
+    <div class="topbar-brand">FoetoPath <span>Slide Viewer</span></div>
+    <div class="topbar-sep"></div>
+    <div class="folder-input-group">
+        <input type="text" class="folder-input" id="rootInput"
+               placeholder="Chemin du dossier contenant les lames (ex: D:\Lames\2024)"
+               value="{{ default_root }}" spellcheck="false">
+        <button class="btn btn-primary" onclick="loadCases()" id="btnLoad">Charger</button>
+    </div>
+    <button class="btn btn-index" id="btnIndex" onclick="toggleCaseIndex()" title="Afficher/masquer l'index du cas (labels &amp; annotations)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg>
+        Index
+    </button>
+    <button class="btn btn-label" id="btnLabel" onclick="toggleLabel()" title="Afficher l'étiquette (L)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="14" rx="2"/>
+            <line x1="7" y1="9" x2="17" y2="9"/>
+            <line x1="7" y1="13" x2="13" y2="13"/>
+        </svg>
+        Étiquette
+    </button>
+    <button class="btn btn-ann" id="btnAnnotate" onclick="toggleAnnotationMode()" title="Mode annotation (N)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+            <path d="M2 2l7.586 7.586"/>
+            <circle cx="11" cy="11" r="2"/>
+        </svg>
+        Annoter
+    </button>
+    <button class="btn btn-measure" id="btnMeasure" onclick="toggleMeasureMode()" title="Mesurer une distance (M)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 20L20 2"/>
+            <path d="M6 16l2-2"/><path d="M10 12l2-2"/><path d="M14 8l2-2"/>
+            <circle cx="2" cy="20" r="1.5" fill="currentColor"/><circle cx="20" cy="2" r="1.5" fill="currentColor"/>
+        </svg>
+        Mesurer
+    </button>
+    <button class="btn btn-display" id="btnDisplay" onclick="toggleDisplaySettings()" title="Luminosité / Gamma (I)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        Affichage
+    </button>
+    <button class="btn btn-display" id="btnHeatmap" onclick="heatmapToggle()" title="Heatmap vascularite (H)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        Heatmap
+    </button>
+    <select id="heatmapSelect" onchange="heatmapLoadVariant(this.value)" title="Variante de heatmap" style="display:none;height:28px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;"></select>
+    <span class="zoom-indicator" id="zoomIndicator"></span>
+    <div class="slide-meta" id="slideMeta"></div>
+</div>
+
+<!-- ── Main Layout ─────────────────────────────────────── -->
+<div class="main-layout">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            Cas <span id="caseCount" style="float:right; color: var(--accent)"></span>
+        </div>
+        <div class="case-list" id="caseList">
+            <div class="sidebar-empty">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                </svg>
+                Entrez un chemin de dossier ci-dessus et cliquez <strong>Charger</strong>
+            </div>
+        </div>
+        <div class="case-index" id="caseIndex" style="display:none"></div>
+    </div>
+
+    <div class="resize-handle" id="resizeHandle"></div>
+
+    <div class="content">
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/>
+                </svg>
+            </div>
+            <div class="welcome-title">Visionneuse de lames numériques</div>
+            <div class="welcome-sub">Parcourez vos lames histologiques et photos associées.</div>
+            <div class="welcome-steps">
+                <div class="welcome-step"><div class="welcome-step-num">1</div>Entrez le chemin<br>du dossier</div>
+                <div class="welcome-step"><div class="welcome-step-num">2</div>Sélectionnez<br>un cas</div>
+                <div class="welcome-step"><div class="welcome-step-num">3</div>Explorez lames<br>et photos</div>
+            </div>
+        </div>
+
+        <div id="viewer"></div>
+
+        <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+
+        <!-- Annotation drawing badge (visible when drawing mode is on) -->
+        <div class="ann-drawing-badge" id="annDrawingBadge">&#9998; Mode dessin actif</div>
+        <!-- Measure mode badge -->
+        <div class="measure-badge" id="measureBadge">&#128207; Mode mesure — <span id="measureCount">0</span> mesure(s)</div>
+        <!-- Superpixel painting badge -->
+        <div class="measure-badge" id="spBadge">&#9638; Superpixels &#8212;
+            <span id="spCount">0</span> visibles &#8212; clic gauche = peindre / dépeindre, clic droit maintenu = pinceau</div>
+
+        <!-- Annotation canvas overlay -->
+        <canvas id="annotationCanvas"></canvas>
+        <!-- Measurement delete buttons overlay -->
+        <div class="measure-delete-overlay" id="measureDeleteOverlay"></div>
+
+        <!-- View mode badge (shown when viewing a photo) -->
+        <div class="view-badge photo-mode" id="viewBadge">&#128247; Photo</div>
+
+        <!-- SVG gamma filter (invisible, referenced by CSS) -->
+        <svg style="position:absolute;width:0;height:0;pointer-events:none">
+            <defs>
+                <filter id="gammaFilter" color-interpolation-filters="sRGB">
+                    <feComponentTransfer>
+                        <feFuncR type="gamma" amplitude="1" exponent="1" offset="0" id="gammaR"/>
+                        <feFuncG type="gamma" amplitude="1" exponent="1" offset="0" id="gammaG"/>
+                        <feFuncB type="gamma" amplitude="1" exponent="1" offset="0" id="gammaB"/>
+                    </feComponentTransfer>
+                </filter>
+                <!-- CHROMA client-side : démixage HES en espace encre (feColorMatrix), instantané GPU.
+                     Matrice pilotée par chromaMatrix() dans viewer.js (calib_viewer ab1d87f9). -->
+                <filter id="chromaFilter" color-interpolation-filters="sRGB">
+                    <feColorMatrix type="matrix" id="chromaMat"
+                        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+                </filter>
+            </defs>
+        </svg>
+
+        <!-- Display settings popup -->
+        <div class="display-settings" id="displaySettings">
+            <div class="display-settings-header">
+                <span class="display-settings-title">Affichage</span>
+                <button class="display-reset" onclick="resetDisplaySettings()">Reset</button>
+            </div>
+            <div class="display-settings-row">
+                <span class="display-settings-label">Luminosité</span>
+                <input type="range" class="display-slider" id="brightnessSlider"
+                       min="0.2" max="3" step="0.05" value="1" oninput="updateDisplayFilters()">
+                <span class="display-settings-val" id="brightnessVal">1.00</span>
+            </div>
+            <div class="display-settings-row">
+                <span class="display-settings-label">Contraste</span>
+                <input type="range" class="display-slider" id="contrastSlider"
+                       min="0.2" max="3" step="0.05" value="1" oninput="updateDisplayFilters()">
+                <span class="display-settings-val" id="contrastVal">1.00</span>
+            </div>
+            <div class="display-settings-row">
+                <span class="display-settings-label">Saturation</span>
+                <input type="range" class="display-slider" id="saturateSlider"
+                       min="0" max="4" step="0.05" value="1" oninput="updateDisplayFilters()">
+                <span class="display-settings-val" id="saturateVal">1.00</span>
+            </div>
+            <div class="display-settings-row">
+                <span class="display-settings-label">Teinte</span>
+                <input type="range" class="display-slider" id="hueSlider"
+                       min="0" max="360" step="1" value="0" oninput="updateDisplayFilters()">
+                <span class="display-settings-val" id="hueVal">0°</span>
+            </div>
+
+            <div class="display-section-title" onclick="toggleChannelGamma()">
+                <span class="arrow" id="channelArrow">&#9654;</span> Gamma par canal
+            </div>
+            <div class="display-channel-group" id="channelGroup">
+                <div class="display-settings-row">
+                    <span class="display-settings-label" style="color:#e74c3c">Rouge</span>
+                    <input type="range" class="display-slider red" id="gammaRSlider"
+                           min="0.2" max="3" step="0.05" value="1" oninput="updateDisplayFilters(true)">
+                    <span class="display-settings-val" id="gammaRVal">1.00</span>
+                </div>
+                <div class="display-settings-row">
+                    <span class="display-settings-label" style="color:#2ecc71">Vert</span>
+                    <input type="range" class="display-slider green" id="gammaGSlider"
+                           min="0.2" max="3" step="0.05" value="1" oninput="updateDisplayFilters(true)">
+                    <span class="display-settings-val" id="gammaGVal">1.00</span>
+                </div>
+                <div class="display-settings-row">
+                    <span class="display-settings-label" style="color:#3498db">Bleu</span>
+                    <input type="range" class="display-slider blue" id="gammaBSlider"
+                           min="0.2" max="3" step="0.05" value="1" oninput="updateDisplayFilters(true)">
+                    <span class="display-settings-val" id="gammaBVal">1.00</span>
+                </div>
+            </div>
+
+            <div class="display-section-title" style="cursor:default">Presets IHC virtuelle</div>
+            <div class="display-presets" id="displayPresets"></div>
+
+            <div class="display-section-title" style="cursor:default">Superpixels</div>
+            <div class="display-presets">
+                <button class="display-preset-btn" id="btnSpGrid" onclick="toggleSpGrid()"
+                        title="Affiche la grille de superpixels déjà en cache — pas de peinture, pas de limite de champ">Grille</button>
+                <select class="display-preset-btn" id="spUm" onchange="setSpUm(this.value)"
+                        title="Taille visée du superpixel. En mode Grille seules les tailles déjà précalculées pour la lame s'affichent.">
+                    <option value="50">50 µm</option>
+                    <option value="60">60 µm</option>
+                    <option value="70">70 µm</option>
+                    <option value="80">80 µm</option>
+                    <option value="90" selected>90 µm</option>
+                </select>
+            </div>
+
+            <div class="display-section-title" style="cursor:default">Normalisation CHROMA</div>
+            <div class="display-presets">
+                <button class="display-preset-btn" id="btnChroma" onclick="toggleChroma()"
+                        title="Normalisation colorimétrique HES côté serveur (recharge les tuiles)">CHROMA</button>
+            </div>
+            <div class="display-channel-group" id="chromaChannels">
+                <div class="display-settings-row">
+                    <span class="display-settings-label">Hématox. (H)</span>
+                    <input type="range" class="display-slider" id="chromaH" min="0" max="2" step="0.05" value="1"
+                           oninput="chromaGainLabel('H')">
+                    <span class="display-settings-val" id="chromaHVal">1.00</span>
+                </div>
+                <div class="display-settings-row">
+                    <span class="display-settings-label">Éosine (E)</span>
+                    <input type="range" class="display-slider" id="chromaE" min="0" max="2" step="0.05" value="1"
+                           oninput="chromaGainLabel('E')">
+                    <span class="display-settings-val" id="chromaEVal">1.00</span>
+                </div>
+                <div class="display-settings-row">
+                    <span class="display-settings-label">Safran (S)</span>
+                    <input type="range" class="display-slider" id="chromaS" min="0" max="2" step="0.05" value="1"
+                           oninput="chromaGainLabel('S')">
+                    <span class="display-settings-val" id="chromaSVal">1.00</span>
+                </div>
+                <div class="display-settings-row">
+                    <span class="display-settings-label" title="Résiduel : pigments méconium/hémosidérine">Pigments (K)</span>
+                    <input type="range" class="display-slider" id="chromaK" min="0" max="2" step="0.05" value="1"
+                           oninput="chromaGainLabel('K')">
+                    <span class="display-settings-val" id="chromaKVal">1.00</span>
+                </div>
+                <div class="display-settings-row">
+                    <span class="display-settings-label">Luminosité (B)</span>
+                    <input type="range" class="display-slider" id="chromaB" min="0.2" max="2" step="0.05" value="1"
+                           oninput="chromaGainLabel('B')">
+                    <span class="display-settings-val" id="chromaBVal">1.00</span>
+                </div>
+                <div class="display-settings-row">
+                    <span class="display-settings-label">Saturation (V)</span>
+                    <input type="range" class="display-slider" id="chromaV" min="0" max="2" step="0.05" value="1"
+                           oninput="chromaGainLabel('V')">
+                    <span class="display-settings-val" id="chromaVVal">1.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Label popup -->
+        <div class="label-popup" id="labelPopup">
+            <div class="label-popup-bar">
+                <span class="label-popup-title" id="labelPopupTitle">Étiquette</span>
+                <button class="macro-ann-btn" id="btnMacroAnnotate" onclick="macroAnnToggle()" title="Annoter l'image macro">&#9998; Annoter</button>
+                <button class="label-popup-close" onclick="closeLabel()" title="Fermer">&times;</button>
+            </div>
+            <div class="macro-ann-toolbar" id="macroAnnToolbar">
+                <div class="macro-ann-colors" id="macroAnnColors"></div>
+                <input type="text" class="macro-ann-input" id="macroAnnLabelInput" placeholder="Label...">
+                <button class="macro-ann-btn" onclick="macroAnnUndo()">Annuler</button>
+                <button class="macro-ann-btn danger" onclick="macroAnnClearAll()">Effacer</button>
+                <button class="macro-ann-btn save" onclick="macroAnnSave()">Sauvegarder</button>
+                <span class="macro-ann-count" id="macroAnnCount">0 annotation(s)</span>
+            </div>
+            <div class="label-popup-img-container">
+                <img id="labelPopupImg" src="" alt="Étiquette">
+                <canvas class="label-popup-canvas" id="macroAnnCanvas"></canvas>
+            </div>
+        </div>
+
+        <div class="shortcuts-hint" id="shortcutsHint">
+            <kbd>&#8592;</kbd><kbd>&#8593;</kbd><kbd>&#8595;</kbd><kbd>&#8594;</kbd> Déplacer 90%
+            &nbsp;<kbd>4</kbd><kbd>6</kbd> / <kbd>Q</kbd><kbd>D</kbd> Préc./Suiv.
+            &nbsp;<kbd>7</kbd><kbd>9</kbd> Rot. 90° &nbsp;<kbd>A</kbd><kbd>E</kbd> Rot. 10°
+            &nbsp;<kbd>R</kbd> Reset &nbsp;<kbd>F</kbd> Plein écran &nbsp;<kbd>L</kbd> Étiquette &nbsp;<kbd>P</kbd> Peindre &nbsp;<kbd>N</kbd> Annoter &nbsp;<kbd>M</kbd> Mesurer &nbsp;<kbd>I</kbd> Affichage
+        </div>
+
+        <div class="carousel-wrapper" id="carousel"></div>
+    </div>
+
+    <!-- Right panel resize handle -->
+    <div class="resize-handle-right" id="resizeHandleRight"></div>
+
+    <!-- Right panel: Labellisation + Annotation -->
+    <div class="ann-panel" id="annPanel">
+
+        <!-- Tab bar (above domain toggle) -->
+        <div class="ann-tab-bar">
+            <button class="ann-tab-btn active" data-tab="label" onclick="switchTab('label')">Labellisation</button>
+            <button class="ann-tab-btn" data-tab="annotate" onclick="switchTab('annotate')">Annoter</button>
+            <button class="ann-panel-close" onclick="closePanelRight()" title="Fermer">&times;</button>
+        </div>
+
+        <!-- ═══ TAB: Labellisation ═══ -->
+        <div class="ann-tab-content" id="tabLabel">
+
+            <!-- Domain toggle -->
+            <div class="ann-tools">
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Mode</span>
+                    <div class="ann-domain-group">
+                        <button class="ann-domain-btn active" data-domain="placenta" onclick="setDomain('placenta', this)">Placenta</button>
+                        <button class="ann-domain-btn" data-domain="foetus" onclick="setDomain('foetus', this)">F&#339;tus</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placenta tissue selector (placenta mode) -->
+            <div class="ann-tools" id="labelPlacentaSection">
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Tissu</span>
+                    <div class="tissue-selector">
+                        <button class="tissue-btn" data-tissue="cordon" onclick="labelToggleTissue('cordon', this)">Cordon</button>
+                        <button class="tissue-btn" data-tissue="membranes" onclick="labelToggleTissue('membranes', this)">Membranes</button>
+                        <button class="tissue-btn" data-tissue="parenchyme" onclick="labelToggleTissue('parenchyme', this)">Parenchyme</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Organ pills (fœtus mode) -->
+            <div class="ann-tools" id="labelOrganSection" style="display:none">
+                <div class="ann-tools-row" style="align-items:flex-start;flex-wrap:wrap;">
+                    <span class="ann-tools-row-label" style="margin-top:3px;">Organes</span>
+                    <div class="ann-organ-pills" id="labelOrganPills"></div>
+                </div>
+            </div>
+
+            <!-- Status toggle Normal / Patho -->
+            <div class="ann-tools" id="labelStatusSection" style="display:none">
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Statut</span>
+                    <div class="label-status-group">
+                        <button class="label-status-btn normal" id="btnNormal" onclick="setOrganStatus('normal')">&#10003; Normal</button>
+                        <button class="label-status-btn patho" id="btnPatho" onclick="setOrganStatus('patho')">&#10007; Pathologique</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signs section (visible when patho) -->
+            <div class="ann-tools" id="labelSignsSection" style="display:none">
+                <div class="ann-tools-row" style="align-items:flex-start;flex-wrap:wrap;">
+                    <span class="ann-tools-row-label" style="margin-top:3px;">Signes</span>
+                    <div class="ann-diag-tags" id="labelQuickTags"></div>
+                </div>
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Patho</span>
+                    <input type="text" class="ann-input" id="labelSignSearch" placeholder="Rechercher un signe (3 lettres)..." oninput="labelSignSearchUpdate()">
+                </div>
+                <div class="ann-sign-results" id="labelSignResults"></div>
+                <div class="ann-tools-row" style="align-items:flex-start;flex-wrap:wrap;" id="labelSelectedSigns">
+                    <!-- Dynamically populated selected signs -->
+                </div>
+            </div>
+
+            <!-- Retention section (visible when fœtus + patho) -->
+            <div class="ann-tools" id="labelRetentionSection" style="display:none">
+                <div class="ann-tools-row" style="align-items:flex-start;flex-wrap:wrap;">
+                    <span class="ann-tools-row-label" style="margin-top:3px;">R&#233;tention</span>
+                    <div class="ann-diag-tags" id="labelRetentionTags"></div>
+                </div>
+            </div>
+
+            <!-- Maturation section (visible when fœtus + organ selected) -->
+            <div class="ann-tools" id="labelMaturationSection" style="display:none">
+                <div class="ann-tools-row" style="align-items:flex-start;flex-wrap:wrap;">
+                    <span class="ann-tools-row-label" style="margin-top:3px;">Maturation</span>
+                    <div class="ann-diag-tags" id="labelMaturationTags"></div>
+                </div>
+            </div>
+
+            <!-- Note -->
+            <div class="ann-tools">
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Note</span>
+                    <textarea class="ann-input label-note" id="labelNote" rows="2" placeholder="Note libre..."></textarea>
+                </div>
+            </div>
+
+            <!-- Save row -->
+            <div class="ann-tools">
+                <div class="ann-tools-row" style="justify-content: flex-end; gap: 6px;">
+                    <button class="ann-btn save" onclick="labelSave()">&#128190; Sauver</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ═══ TAB: Annotation (existing content moved here) ═══ -->
+        <div class="ann-tab-content" id="tabAnnotate" style="display:none">
+
+            <!-- Placenta tissue -->
+            <div class="ann-tools" id="placentaTools">
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Tissu</span>
+                    <div class="tissue-selector" id="tissueSelector"></div>
+                </div>
+            </div>
+
+            <!-- Foetus organ selector -->
+            <div class="ann-tools" id="foetusTools" style="display:none">
+                <div class="ann-tools-row" style="align-items:flex-start;flex-wrap:wrap;">
+                    <span class="ann-tools-row-label" style="margin-top:3px;">Organes</span>
+                    <div class="ann-organ-pills" id="organPills"></div>
+                </div>
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Autre</span>
+                    <input type="text" class="ann-input" id="organFreeText" placeholder="P&#233;ricarde, m&#233;sent&#232;re...">
+                </div>
+            </div>
+
+            <!-- Drawing tools (LDA) -->
+            <div class="ann-tools">
+<div class="ann-tools-row" id="annSignRow">
+                    <span class="ann-tools-row-label">Signe</span>
+                    <div class="ann-class-swatch" id="annClassSwatch" style="background:#3498db"></div>
+                    <select class="ann-class-select" id="annClassSelect" onchange="annOnClassChange()"></select>
+                    <input type="text" class="ann-input ann-class-search" id="annClassSearch"
+                           placeholder="Rechercher signe..." oninput="annFilterClasses()" style="max-width:120px; margin-left:4px;">
+                </div>
+                <div class="ann-tools-row" id="annOtherRow">
+                    <span class="ann-tools-row-label">Autre</span>
+                    <input type="text" class="ann-input" id="annOtherLabel" placeholder="Nom libre..." style="display:none;">
+                </div>
+                <div class="ann-tools-row" id="annStructRow">
+                    <span class="ann-tools-row-label">Structure</span>
+                    <div class="ann-class-swatch" id="annStructSwatch" style="background:#e67e22"></div>
+                    <select class="ann-class-select" id="annStructSelect" onchange="annOnStructChange()"></select>
+                    <input type="text" class="ann-input ann-class-search" id="annStructSearch"
+                           placeholder="Rechercher structure..." oninput="annFilterStructs()" style="max-width:120px; margin-left:4px;">
+                </div>
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Note</span>
+                    <input type="text" class="ann-input" id="annLabelInput" placeholder="Commentaire / grading (optionnel)...">
+                </div>
+                <div class="ann-tools-row">
+                    <span class="ann-tools-row-label">Outil</span>
+                    <div class="ann-domain-group">
+                        <button class="ann-domain-btn ann-tool-btn" data-tool="nav"
+                                onclick="setEditMode('nav')" title="D&#233;placer la lame">Naviguer</button>
+                        <button class="ann-domain-btn ann-tool-btn" data-tool="draw"
+                                onclick="setEditMode('draw')" title="Tracer un contour &#224; la main">D&#233;tourer</button>
+                        <button class="ann-domain-btn ann-tool-btn" data-tool="paint"
+                                onclick="setEditMode('paint')" title="Peindre des superpixels (P)">Peindre</button>
+                    </div>
+                </div>
+                <div class="ann-tools-row" style="justify-content: flex-end; gap: 6px;">
+                    <button class="ann-btn" onclick="annUndo()">Annuler</button>
+                    <button class="ann-btn danger" onclick="annClearAll()">Effacer tout</button>
+                    <button class="ann-btn save" onclick="annSave()">Sauvegarder</button>
+                </div>
+            </div>
+
+            <!-- Annotation list -->
+            <div class="ann-list-header">
+                <span class="ann-list-header-title">Liste</span>
+                <span class="ann-count" id="annCount">0</span>
+            </div>
+            <div class="ann-list-scroll" id="annListScroll">
+                <div class="ann-list-empty">Dessinez sur la lame pour annoter</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<dialog class="similar-dialog" id="similarDialog">
+    <div class="similar-header">
+        <span class="similar-title" id="similarTitle"></span>
+        <button class="similar-close" onclick="closeSimilar()">&times;</button>
+    </div>
+    <div class="similar-grid" id="similarGrid"></div>
+</dialog>
+<div class="ctx-menu" id="ctxMenu"></div>
+<div class="toast" id="toast"></div>
+<div class="drag-overlay" id="dragOverlay"></div>
+
+<script src="static/viewer.js?v=sp6"></script>
+
+</body>
+</html>
