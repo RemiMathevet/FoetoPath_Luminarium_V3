@@ -58,6 +58,15 @@ def list_slides_in(folder: str) -> list[dict]:
                 "path": str(f),
                 "extension": f.suffix.lower(),
             })
+        elif f.is_dir() and not f.name.startswith(".") and any(
+                c.suffix.lower() == ".dcm" for c in f.iterdir()):
+            # Lame DICOM = dossier de .dcm ; le viewer Lumi l'ouvre par son chemin de dossier.
+            slides.append({
+                "name": f.name,
+                "filename": f.name,
+                "path": str(f),
+                "extension": ".dcm",
+            })
     return slides
 
 
