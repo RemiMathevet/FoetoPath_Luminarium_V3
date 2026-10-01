@@ -122,7 +122,19 @@ _prefetch_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="tile-pref
 @lru_cache(maxsize=10)
 def get_slide(slide_path: str) -> OpenSlide:
     """Open and cache an OpenSlide object."""
-    return OpenSlide(slide_path)
+    return OpenSlide(dicom_file(slide_path) or slide_path)
+
+
+def dicom_file(path) -> str | None:
+    """Une lame DICOM = un dossier de .dcm ; OpenSlide (>= 4.0) l'ouvre par n'importe lequel."""
+    if not os.path.isdir(path):
+        return None
+    dcm = sorted(f for f in os.listdir(path) if f.lower().endswith(".dcm"))
+    return os.path.join(path, dcm[0]) if dcm else None
+
+
+def is_slide(path: str) -> bool:
+    return os.path.isfile(path) or dicom_file(path) is not None
 
 
 @lru_cache(maxsize=10)
@@ -219,6 +231,14 @@ def find_slides(folder: str) -> list[dict]:
                 "filename": f.name,
                 "path": str(f),
                 "extension": f.suffix.lower(),
+            })
+        elif f.is_dir() and not f.name.startswith(".") and dicom_file(f):
+            # Dossier DICOM : le chemin de la lame est le dossier, les annotations restent dans le cas.
+            slides.append({
+                "name": f.name,
+                "filename": f.name,
+                "path": str(f),
+                "extension": ".dcm",
             })
     return slides
 
@@ -336,7 +356,7 @@ def slide_info():
     """Get slide metadata."""
     data = request.get_json()
     path = data.get("path", "")
-    if not path or not os.path.isfile(path):
+    if not path or not is_slide(path):
         abort(404)
     try:
         slide = get_slide(path)
@@ -365,7 +385,7 @@ def slide_dzi():
     """Generate DZI XML descriptor for OpenSeadragon."""
     data = request.get_json()
     path = data.get("path", "")
-    if not path or not os.path.isfile(path):
+    if not path or not is_slide(path):
         abort(404)
     try:
         dz = get_dz(path)
@@ -379,7 +399,7 @@ def slide_dzi():
 def slide_tile(level: int, col: int, row: int, fmt: str):
     """Serve a single tile with LRU RAM cache + neighbor prefetch."""
     path = request.args.get("path", "")
-    if not path or not os.path.isfile(path):
+    if not path or not is_slide(path):
         abort(404)
 
     use_chroma = request.args.get("chroma") == "1" and _chroma_norm is not None
@@ -427,7 +447,7 @@ def slide_thumbnail():
     path = request.args.get("path", "")
     width = int(request.args.get("w", THUMBNAIL_SIZE[0]))
     height = int(request.args.get("h", THUMBNAIL_SIZE[1]))
-    if not path or not os.path.isfile(path):
+    if not path or not is_slide(path):
         abort(404)
     try:
         slide = get_slide(path)
@@ -450,7 +470,7 @@ def slide_label():
     """Get the label/macro image if available."""
     path = request.args.get("path", "")
     img_type = request.args.get("type", "label")  # label or macro
-    if not path or not os.path.isfile(path):
+    if not path or not is_slide(path):
         abort(404)
     try:
         slide = get_slide(path)
@@ -472,7 +492,7 @@ def slide_label():
 def slide_macro_info():
     """Get macro image dimensions for annotation coordinate mapping."""
     path = request.args.get("path", "")
-    if not path or not os.path.isfile(path):
+    if not path or not is_slide(path):
         abort(404)
     try:
         slide = get_slide(path)
@@ -1226,7 +1246,7 @@ def slide_label_save():
         return jsonify({"error": "slide_id requis"}), 400
     conn = db.get_db()
     # Ensure slide exists in DB before FK writes
-    if slide_path and os.path.isfile(slide_path):
+    if slide_path and is_slide(slide_path):
         calibration = get_slide_calibration(slide_path)
         db.upsert_slide(conn, slide_id, Path(slide_path).name,
                         str(Path(slide_path).parent), "", calibration)
