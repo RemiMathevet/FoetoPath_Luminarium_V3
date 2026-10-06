@@ -377,6 +377,16 @@ fetch('/auth/api/me').then(r=>r.json()).then(u=>{
         <div id="dbFilesInfo" style="margin-top:16px;font-size:12px;"></div>
     </div>
 
+    <!-- Import Monolithe (admin / admin_centre) -->
+    <div class="section" id="monolitheSection" style="display:none;">
+        <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Import Monolithe
+        </div>
+        <p class="path-hint" style="margin-bottom:12px;">Charger les JSON export&eacute;s par les modules du Monolithe (f&oelig;tus et placenta) : aper&ccedil;u, confirmation, progression.</p>
+        <a class="btn btn-primary" href="/admin/monolithe" style="text-decoration:none;display:inline-block;">Ouvrir l'import</a>
+    </div>
+
     <!-- Save -->
     <div class="save-bar">
         <a href="/" class="btn">Retour au Hub</a>
@@ -449,6 +459,7 @@ async function loadSettings() {
         const me = await mr.json();
         if (me.role === 'admin' || me.role === 'admin_centre') {
             document.getElementById('securitySection').style.display = '';
+            document.getElementById('monolitheSection').style.display = '';
             _isSecurityAdmin = true;
         }
     } catch (e) { /* pas admin → section cachée */ }

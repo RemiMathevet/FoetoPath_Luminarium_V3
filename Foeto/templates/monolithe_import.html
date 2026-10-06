@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoetoPath — Import Monolithe</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117; --surface: #181a23; --surface2: #1e2130; --border: #2a2d3e;
+  --text: #e8eaf0; --text2: #9498ab; --muted: #5f6378;
+  --accent: #7c6aef; --accent-dim: rgba(124,106,239,0.12);
+  --success: #4ade80; --warning: #fbbf24; --danger: #f87171;
+  --radius: 12px; --font: 'DM Sans', -apple-system, sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); padding: 24px 16px; }
+main { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+a { color: var(--accent); }
+h1 { font-size: 24px; font-weight: 600; }
+.sous { color: var(--text2); font-size: 14px; line-height: 1.5; }
+.depot {
+  border: 2px dashed var(--border); border-radius: var(--radius); background: var(--surface);
+  padding: 32px 16px; text-align: center; cursor: pointer; color: var(--text2);
+}
+.depot.survol { border-color: var(--accent); background: var(--accent-dim); }
+.resume { font-size: 14px; color: var(--text2); }
+.resume b { color: var(--text); }
+.table-boite { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { background: var(--surface2); color: var(--text2); font-weight: 500; }
+td.action { white-space: normal; }
+tr.erreur td { color: var(--danger); }
+.base-placenta { color: var(--success); }
+.remplace { color: var(--warning); }
+.etat-ok { color: var(--success); }
+.etat-ko { color: var(--danger); white-space: normal; }
+.barre { height: 10px; background: var(--surface2); border-radius: 6px; overflow: hidden; }
+.barre div { height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+button {
+  font: inherit; font-size: 14px; padding: 10px 18px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--text);
+}
+button.principal { background: var(--accent); border-color: var(--accent); color: #fff; }
+button:disabled { opacity: .45; cursor: default; }
+</style>
+<link rel="stylesheet" href="/static/themes.css">
+</head>
+<body>
+<script>
+(function(){var t=localStorage.getItem('foetopath-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+</script>
+<main>
+  <div><a href="/admin/settings">← Paramètres</a></div>
+  <h1>Import Monolithe</h1>
+  <p class="sous">Les JSON exportés par les modules du Monolithe. Les modules fœtaux vont dans la base
+    fœtus, <code>macro_placenta</code> dans la base placenta. Rien n'est écrit avant la confirmation.</p>
+
+  <label class="depot" id="depot">
+    Déposer les fichiers ici, ou cliquer pour les choisir
+    <input type="file" id="choix" accept=".json,application/json" multiple hidden>
+  </label>
+
+  <section id="apercu" hidden>
+    <p class="resume" id="resume"></p>
+    <div class="table-boite">
+      <table>
+        <thead><tr><th><input type="checkbox" id="tous" checked></th><th>Fichier</th><th>Dossier</th>
+          <th>Module</th><th>Base</th><th>Ce qui sera fait</th><th>Clichés</th><th>Taille</th><th>État</th></tr></thead>
+        <tbody id="lignes"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="progression" hidden>
+    <p class="resume" id="progTexte"></p>
+    <div class="barre"><div id="progBarre"></div></div>
+  </section>
+
+  <div class="actions" id="actions" hidden>
+    <button class="principal" id="importer">Importer</button>
+    <button id="vider">Vider la liste</button>
+  </div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let fichiers = [];   // {f, json, dossier, module, exported_at, cliches, erreur, apercu, etat}
+
+const ORDRE = {administratif: 0};   // la fiche du cas d'abord, le reste ensuite
+const taille = (o) => o < 1e6 ? (o / 1e3).toFixed(0) + ' ko' : (o / 1e6).toFixed(1) + ' Mo';
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function compterCliches(n) {
+  if (Array.isArray(n)) return n.reduce((s, x) => s + compterCliches(x), 0);
+  if (!n || typeof n !== 'object') return 0;
+  return (typeof n.data_base64 === 'string' && n.data_base64 ? 1 : 0)
+       + Object.values(n).reduce((s, x) => s + (x && typeof x === 'object' ? compterCliches(x) : 0), 0);
+}
+
+async function ajouter(liste) {
+  for (const f of liste) {
+    if (fichiers.some(x => x.f.name === f.name && x.f.size === f.size)) continue;
+    const e = {f};
+    try {
+      const d = JSON.parse(await f.text());
+      Object.assign(e, {dossier: String(d.dossier || '').trim().toUpperCase(), module: d.module,
+                        exported_at: d.exported_at, cliches: compterCliches(d)});
+    } catch (err) {
+      e.erreur = 'JSON illisible';
+    }
+    fichiers.push(e);
+  }
+  fichiers.sort((a, b) => (a.dossier || '').localeCompare(b.dossier || '')
+                       || (ORDRE[a.module] ?? 1) - (ORDRE[b.module] ?? 1));
+  const aVerifier = fichiers.filter(e => !e.erreur && !e.apercu);
+  if (aVerifier.length) {
+    const r = await fetch('/admin/api/monolithe/apercu', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({fichiers: aVerifier.map(e => ({dossier: e.dossier, module: e.module}))})});
+    const d = await r.json();
+    if (!r.ok) { alert(d.error || r.status); return; }
+    d.fichiers.forEach((a, i) => { aVerifier[i].apercu = a; if (a.erreur) aVerifier[i].erreur = a.erreur; });
+  }
+  afficher();
+}
+
+function action(e) {
+  if (e.erreur) return esc(e.erreur);
+  const a = e.apercu;
+  // Plusieurs fichiers du même dossier : seul le premier crée le cas.
+  const premier = fichiers.find(x => !x.erreur && x.dossier === e.dossier && x.apercu.base_cible === a.base_cible);
+  let t = a.cas_existant || premier !== e ? 'complète le cas' : '<b>crée le cas</b>';
+  if (a.deja_importe) t += ` · <span class="remplace">remplace l'import du ${esc((a.deja_importe || '').slice(0, 10))}</span>`;
+  return t;
+}
+
+function afficher() {
+  $('apercu').hidden = $('actions').hidden = !fichiers.length;
+  $('lignes').innerHTML = fichiers.map((e, i) => `
+    <tr class="${e.erreur ? 'erreur' : ''}">
+      <td><input type="checkbox" data-i="${i}" ${e.erreur || e.etat ? 'disabled' : ''} ${!e.erreur && e.coche !== false ? 'checked' : ''}></td>
+      <td>${esc(e.f.name)}</td><td>${esc(e.dossier)}</td><td>${esc(e.module)}</td>
+      <td class="${e.apercu?.base_cible === 'placenta' ? 'base-placenta' : ''}">${esc(e.apercu?.base_cible === 'placenta' ? 'Placenta' : e.apercu ? 'Fœtus' : '')}</td>
+      <td class="action">${action(e)}</td><td>${e.cliches ?? ''}</td><td>${taille(e.f.size)}</td>
+      <td class="${e.etat?.ok ? 'etat-ok' : 'etat-ko'}">${esc(e.etat?.texte || '')}</td>
+    </tr>`).join('');
+  const choisis = selection();
+  const dossiers = new Set(choisis.map(e => e.dossier));
+  const nouveaux = new Set(choisis.filter(e => !e.apercu.cas_existant).map(e => e.apercu.base_cible + e.dossier));
+  const remplacements = choisis.filter(e => e.apercu.deja_importe).length;
+  const erreurs = fichiers.filter(e => e.erreur).length;
+  $('resume').innerHTML = `<b>${choisis.length}</b> fichier(s) à importer · <b>${dossiers.size}</b> dossier(s) · `
+    + `<b>${nouveaux.size}</b> cas créé(s) · <b>${remplacements}</b> remplacement(s)`
+    + (erreurs ? ` · <span class="etat-ko">${erreurs} fichier(s) refusé(s)</span>` : '');
+  $('importer').disabled = !choisis.length;
+  $('importer').textContent = `Confirmer l'import de ${choisis.length} fichier(s)`;
+}
+
+const selection = () => fichiers.filter(e => !e.erreur && !e.etat && e.coche !== false);
+
+$('lignes').addEventListener('change', (ev) => {
+  const i = ev.target.dataset.i;
+  if (i !== undefined) { fichiers[i].coche = ev.target.checked; afficher(); }
+});
+$('tous').addEventListener('change', (ev) => {
+  fichiers.forEach(e => { if (!e.erreur && !e.etat) e.coche = ev.target.checked; });
+  afficher();
+});
+
+$('importer').addEventListener('click', async () => {
+  const lot = selection();
+  const total = lot.reduce((s, e) => s + e.f.size, 0);
+  let fait = 0, ok = 0;
+  $('importer').disabled = $('vider').disabled = true;
+  $('progression').hidden = false;
+  for (const [i, e] of lot.entries()) {
+    $('progTexte').textContent = `${i + 1} / ${lot.length} — ${e.f.name}`;
+    const fd = new FormData();
+    fd.append('fichier', e.f);
+    try {
+      const r = await fetch('/admin/api/monolithe/import', {method: 'POST', body: fd});
+      const d = await r.json();
+      e.etat = r.ok ? {ok: true, texte: `✓ ${d.cree ? 'cas créé' : 'importé'}${d.cliches ? ` · ${d.cliches} clichés` : ''}`}
+                    : {ok: false, texte: `✗ ${d.error || r.status}`};
+    } catch (err) {
+      e.etat = {ok: false, texte: `✗ ${err}`};
+    }
+    ok += e.etat.ok ? 1 : 0;
+    fait += e.f.size;
+    $('progBarre').style.width = (100 * fait / total).toFixed(1) + '%';
+    afficher();
+  }
+  $('progTexte').textContent = `Terminé : ${ok} / ${lot.length} fichier(s) importé(s)`
+                             + (ok < lot.length ? ` — ${lot.length - ok} en échec, voir la colonne État` : '');
+  $('vider').disabled = false;
+});
+
+$('vider').addEventListener('click', () => {
+  fichiers = [];
+  $('progression').hidden = true;
+  $('progBarre').style.width = '0';
+  afficher();
+});
+
+$('choix').addEventListener('change', (ev) => { ajouter(Array.from(ev.target.files)); ev.target.value = ''; });
+const depot = $('depot');
+['dragenter', 'dragover'].forEach(t => depot.addEventListener(t, (ev) => { ev.preventDefault(); depot.classList.add('survol'); }));
+['dragleave', 'drop'].forEach(t => depot.addEventListener(t, () => depot.classList.remove('survol')));
+depot.addEventListener('drop', (ev) => { ev.preventDefault(); ajouter(Array.from(ev.dataTransfer.files)); });
+</script>
+</body>
+</html>
