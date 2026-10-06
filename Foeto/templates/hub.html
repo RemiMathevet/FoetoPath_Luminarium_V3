@@ -208,6 +208,14 @@ body {
     <span class="hub-url">/admin/users</span>
   </a>
 
+  <label class="hub-card" id="monolitheCard" style="display:none;cursor:pointer;">
+    <div class="hub-card-icon" style="background:rgba(56,189,248,0.12);">📥</div>
+    <h2>Import Monolithe</h2>
+    <p id="monolitheEtat">Charger les JSON exportés par les modules du Monolithe (administratif, examen clinique, biométrie, radio, autopsie, neuropath…). Plusieurs fichiers à la fois.</p>
+    <input type="file" id="monolitheFichiers" accept=".json,application/json" multiple hidden>
+    <span class="hub-url">/admin/api/monolithe/import</span>
+  </label>
+
   <a href="/admin/settings" class="hub-card" id="settingsCard" style="display:none;">
     <div class="hub-card-icon" style="background:rgba(124,106,239,0.12);">&#9881;</div>
     <h2 data-i18n="nav.settings">Paramètres</h2>
@@ -236,6 +244,9 @@ fetch('/auth/api/me').then(r => r.json()).then(u => {
   if (canManage) {
     document.getElementById('usersCard').style.display = '';
   }
+  if (u.role === 'admin' || u.role === 'admin_centre') {
+    document.getElementById('monolitheCard').style.display = '';
+  }
   // Masquer PWA + Paramètres pour les spectateurs
   const isSpectator = u.role === 'spectator';
   if (!isSpectator) {
@@ -246,6 +257,29 @@ fetch('/auth/api/me').then(r => r.json()).then(u => {
     document.getElementById('settingsCard').style.display = '';
   }
 }).catch(() => {});
+
+// Import des JSON du Monolithe, un fichier par requête (limite de 50 Mo par envoi)
+document.getElementById('monolitheFichiers').addEventListener('change', async (ev) => {
+  const etat = document.getElementById('monolitheEtat');
+  const fichiers = Array.from(ev.target.files);
+  const lignes = [];
+  for (const [i, f] of fichiers.entries()) {
+    etat.textContent = `Import ${i + 1}/${fichiers.length} : ${f.name}…`;
+    const fd = new FormData();
+    fd.append('fichier', f);
+    try {
+      const r = await fetch('/admin/api/monolithe/import', {method: 'POST', body: fd});
+      const d = await r.json();
+      lignes.push(r.ok ? `✓ ${d.dossier} — ${d.module}${d.cree ? ' (cas créé)' : ''}${d.cliches ? `, ${d.cliches} clichés` : ''}`
+                       : `✗ ${f.name} : ${d.error || r.status}`);
+    } catch (e) {
+      lignes.push(`✗ ${f.name} : ${e}`);
+    }
+  }
+  etat.style.whiteSpace = 'pre-line';
+  etat.textContent = lignes.join('\n');
+  ev.target.value = '';
+});
 
 // Charger info serveur
 fetch('/admin/api/settings').then(r => r.json()).then(d => {

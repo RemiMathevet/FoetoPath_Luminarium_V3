@@ -629,8 +629,10 @@ from admin_photos_bp import admin_photos_bp
 from admin_llm_bp import admin_llm_bp
 from admin_cr_bp import admin_cr_bp
 from admin_pwa_bp import admin_pwa_bp
+from admin_monolithe_bp import admin_monolithe_bp
 
 admin_bp.register_blueprint(admin_photos_bp)
 admin_bp.register_blueprint(admin_llm_bp)
 admin_bp.register_blueprint(admin_cr_bp)
 admin_bp.register_blueprint(admin_pwa_bp)
+admin_bp.register_blueprint(admin_monolithe_bp)
