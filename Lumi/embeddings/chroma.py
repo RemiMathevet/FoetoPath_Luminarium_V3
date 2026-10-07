@@ -35,6 +35,11 @@ __version__ = "2.2"
 # gris (Test 2 spec : séparation brightness/safran).
 GRAY = np.ones(3) / np.sqrt(3.0)
 
+# Pénalité de norme du NNLS sur le chemin NORMALISATION seulement (voir _nnls3). Effet
+# identique de 0,003 à 0,03 ; écart aux pixels sains 0,06 niveau de gris. La calibration
+# (auto_calibrate) reste à 0 : les 2214 calibs et les cibles ne bougent pas.
+LAM_NORM = 0.01
+
 
 def _gray_removed(S):
     """Matrice de stain (colonnes H/E/S) projetée hors de l'axe gris : S⊥ = S − ĝ(ĝᵀS).
@@ -42,12 +47,19 @@ def _gray_removed(S):
     return S - np.outer(GRAY, GRAY @ S)
 
 
-def _nnls3(x, S):
+def _nnls3(x, S, lam=0.0):
     """NNLS exact batché : argmin_c≥0 ‖x − S·cᵀ‖ pour 3 colonnes (x (N,3), S (3,3)).
     L'optimum non-négatif à 3 variables appartient à l'un des 7 ensembles actifs non
     vides ou à la solution nulle ; on les énumère (déterministe, vectorisé, sans SciPy).
     Sur S⊥ (rang 2) la solution min-norm à 3 actifs sort souvent négative → écartée, et
-    le NNLS retombe sur une combinaison 1-2 colonnes propre (calme la sur-sat. de E)."""
+    le NNLS retombe sur une combinaison 1-2 colonnes propre (calme la sur-sat. de E).
+
+    lam > 0 : choix de l'ensemble actif sur ‖résidu‖² + lam·‖c‖². Sur S⊥, H⊥ et S⊥ sont
+    presque opposés : un bruit chromatique perpendiculaire à leur axe (pixels quasi blancs)
+    n'est atteint EXACTEMENT que par c_H, c_S ~30x le signal qui s'annulent, et des gains
+    différents par colorant cassent l'annulation → mouchetures cyan (7 % des patchs avec la
+    cible v2, Prefect 2026-10-06). Avec lam la solution approchée l'emporte, le reste part
+    dans K (recopié tel quel par normalize). lam = 0 : comportement historique."""
     x = np.asarray(x, np.float64)
     best_c = np.zeros((len(x), 3))
     best_err = np.einsum("ij,ij->i", x, x)
@@ -60,7 +72,7 @@ def _nnls3(x, S):
                 continue
             coeff = np.maximum(coeff, 0.0)
             res = x - coeff @ A.T
-            err = np.einsum("ij,ij->i", res, res)
+            err = np.einsum("ij,ij->i", res, res) + lam * np.einsum("ij,ij->i", coeff, coeff)
             imp = feas & (err < best_err)
             if imp.any():
                 best_c[imp] = 0.0
@@ -240,7 +252,7 @@ def _channels_from_od(od, S):
     T = od @ GRAY
     chroma = od - T[:, None] * GRAY
     Sat = np.linalg.norm(chroma, axis=1)
-    c = _nnls3(chroma, S_chroma)
+    c = _nnls3(chroma, S_chroma, lam=LAM_NORM)
     K = od - (T[:, None] * GRAY + c @ S_chroma.T)
     return T, Sat, c, K
 

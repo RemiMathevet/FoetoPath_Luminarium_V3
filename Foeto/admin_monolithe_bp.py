@@ -375,6 +375,9 @@ def api_monolithe_apercu():
 @admin_monolithe_bp.route("/api/monolithe/import", methods=["POST"])
 @role_required("admin", "admin_centre")
 def api_monolithe_import():
+    # Clichés pleine résolution en base64 : un export dépasse vite les 50 Mo globaux.
+    # Levée ici seulement, après le contrôle du rôle (Flask >= 3.1).
+    request.max_content_length = 150 * 1024 * 1024
     f = request.files.get("fichier")
     if not f:
         return jsonify({"error": "Aucun fichier"}), 400

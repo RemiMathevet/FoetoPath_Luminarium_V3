@@ -24,12 +24,11 @@ divers_bp = Blueprint('divers', __name__,
                        template_folder=_template_dir)
 
 
-# ─── Auth : protéger toutes les routes sauf soumission PWA ────────
+# ─── Auth : protéger toutes les routes (PWA comprise : même origine, cookie de session) ─
 from auth_bp import make_before_request
 
 divers_bp.before_request(make_before_request(
     api_prefix="/divers/api/",
-    exempt_paths={"/divers/api/save"},
     check_mutations=False,
 ))
 

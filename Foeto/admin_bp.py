@@ -51,7 +51,6 @@ from auth_bp import make_before_request
 
 admin_bp.before_request(make_before_request(
     api_prefix="/admin/api/",
-    exempt_paths={"/admin/api/pwa/submit", "/admin/api/pwa/load", "/admin/api/pwa/photo"},
     exempt_delete_paths={"/admin/api/cr/user-templates/"},
     spectator_blocked_pages={"/admin/settings"},
     check_mutations=True,

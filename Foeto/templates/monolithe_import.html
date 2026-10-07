@@ -182,7 +182,7 @@ $('importer').addEventListener('click', async () => {
     fd.append('fichier', e.f);
     try {
       const r = await fetch('/admin/api/monolithe/import', {method: 'POST', body: fd});
-      const d = await r.json();
+      const d = await r.json().catch(() => ({error: `HTTP ${r.status}`}));
       e.etat = r.ok ? {ok: true, texte: `✓ ${d.cree ? 'cas créé' : 'importé'}${d.cliches ? ` · ${d.cliches} clichés` : ''}`}
                     : {ok: false, texte: `✗ ${d.error || r.status}`};
     } catch (err) {
