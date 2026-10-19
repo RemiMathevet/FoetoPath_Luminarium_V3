@@ -231,7 +231,7 @@ body {
 
 /* ── Photos grid ── */
 .photos-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--vignette, 160px), 1fr));
   gap: 10px;
 }
 .photo-thumb {
@@ -241,7 +241,7 @@ body {
 }
 .photo-thumb:hover { border-color: var(--accent); }
 .photo-thumb img {
-  width: 100%; height: 100%; object-fit: cover;
+  width: 100%; height: 100%; object-fit: contain; background: #0d0e11;  /* photo entière : réglette et bords visibles */
 }
 .photo-thumb .photo-label {
   position: absolute; bottom: 0; left: 0; right: 0;
@@ -697,6 +697,22 @@ const API = '/placenta/api';
 let currentCaseId = null;
 let currentCase = null;
 let _sectionPhotos = {};
+function tailleVignette(v) {
+  if (v === undefined) {
+    try { return +localStorage.getItem('macroVignette') || 160; } catch (e) { return 160; }
+  }
+  document.getElementById('panel-macro')?.style.setProperty('--vignette', v + 'px');
+  try { localStorage.setItem('macroVignette', v); } catch (e) {}
+  return +v;
+}
+// overlay du masque plaque basale / cordon / plaque choriale (serveur_recherche/mesures_auto.py)
+const MASQUE_RE = /_photo_(basale|choriale)\.jpe?g$/i;
+let _macroMasque = false;
+const macroVue = e => (_macroMasque && e.masque) ? {...e, full: e.masque.full} : e;
+function basculerMasque(on) {
+  _macroMasque = on;
+  document.querySelectorAll('img[data-masque]').forEach(im => im.src = on ? im.dataset.masque : im.dataset.plain);
+}
 let _trancheData = null;
 let _viewerUrl = null;
 let _lameCounts = {};
@@ -1007,6 +1023,7 @@ function renderContextePanel(c) {
           <div><div class="field-label">Forme</div><div class="field-value">${c.forme || '&mdash;'}</div></div>
           <div><div class="field-label">Completude</div><div class="field-value">${completude.length ? completude.join(', ') : '&mdash;'}</div></div>
         </div>
+        <div class="field-grid" id="macro-auto-fields" style="margin-top:10px"></div>
       </div>
     </div>
 
@@ -1054,6 +1071,19 @@ function renderContextePanel(c) {
         </select></span>
     </div>
   `;
+  fetch(`${API}/cases/${c.id}/macro-auto`).then(r => r.ok ? r.json() : {}).then(m => {
+    const box = document.getElementById('macro-auto-fields');
+    if (!box || (m.surface_basale_cm2 == null && m.surface_choriale_cm2 == null)) return;
+    const f = (lab, v, src) => `<div><div class="field-label">${lab}</div><div class="field-value mono">${v ?? '&mdash;'}${src ? ` <span style="color:var(--muted);font-size:11px">${src}</span>` : ''}</div></div>`;
+    box.innerHTML = f('Surface basale (auto)', m.surface_basale_cm2 != null ? m.surface_basale_cm2 + ' cm²' : null, m.segmentation_basale)
+      + f('Surface choriale (auto)', m.surface_choriale_cm2 != null ? m.surface_choriale_cm2 + ' cm²' : null, m.segmentation_choriale)
+      + f('Rapport choriale/basale', m.ratio_txt
+          // indicateur qualité : les deux faces d'un même placenta donnent la même surface
+          // (médiane 0,98, IQR 0,92-1,05 sur 126 cas) ; hors 0,85-1,15 = segmentation ou réglette à revoir
+          ? `<span style="color:var(--${m.ratio_chorio_basal >= 0.85 && m.ratio_chorio_basal <= 1.15 ? 'success' : 'warning'})"
+               title="Contrôle qualité de la mesure : attendu entre 0,85 et 1,15">${m.ratio_txt}${m.ratio_chorio_basal >= 0.85 && m.ratio_chorio_basal <= 1.15 ? '' : ' — à revoir'}</span>`
+          : null, 'contrôle qualité');
+  }).catch(() => {});
 
   // Charger la liste des utilisateurs dans le dropdown "Attribué à"
   loadAssignedToDropdown(c.assigned_to || '');
@@ -1136,7 +1166,12 @@ async function renderMacroPanel(c) {
     return d;
   }, trancheComment);
 
+  // curseur de taille des vignettes (mémorisé par navigateur)
+  if (html) html = `<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);margin-bottom:10px">
+      Taille des vignettes <input type="range" min="120" max="640" step="20" value="${tailleVignette()}"
+      oninput="tailleVignette(this.value)" style="flex:0 1 240px"></label>` + html;
   el.innerHTML = html || '<div style="padding:20px;color:var(--muted);font-size:13px;">Aucune donnee macroscopique disponible.</div>';
+  tailleVignette(tailleVignette());
   // no cache — always refresh from viewer
 }
 
@@ -1148,33 +1183,51 @@ function buildMacroSection(id, icon, title, moduleData, photos, fromPairing, dat
 
   // Store photos for lightbox
   _sectionPhotos[id] = photos.map(p => {
+    const chemin = fromPairing ? p.path : p.file_path;
+    const masque = MASQUE_RE.test(chemin || '') ? {
+      thumb: `${API}/photo/masque?path=${encodeURIComponent(chemin)}&w=640&h=640`,
+      full: `${API}/photo/masque?path=${encodeURIComponent(chemin)}`,
+    } : null;
+    return {...photoUrls(p, fromPairing), masque};
+  });
+  function photoUrls(p, fromPairing) {
     if (fromPairing) {
       return {
-        thumb: `${API}/photo/thumbnail?path=${encodeURIComponent(p.path)}&w=280&h=280`,
+        thumb: `${API}/photo/thumbnail?path=${encodeURIComponent(p.path)}&w=640&h=640`,
         full: `${API}/photo/serve?path=${encodeURIComponent(p.path)}`,
         label: p.filename || p.name,
       };
     } else {
       return {
-        thumb: `${API}/photo/thumbnail?path=${encodeURIComponent(p.file_path)}&w=280&h=280`,
+        thumb: `${API}/photo/thumbnail?path=${encodeURIComponent(p.file_path)}&w=640&h=640`,
         full: `${API}/photo/serve?path=${encodeURIComponent(p.file_path)}`,
         label: p.label || p.photo_key,
       };
     }
-  });
+  }
+  const avecMasque = _sectionPhotos[id].some(e => e.masque);
 
   let body = '';
+
+  if (avecMasque) {
+    const pastille = c => `<i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:rgb(${c});margin:0 4px 0 10px;vertical-align:-1px"></i>`;
+    body += `<label style="display:block;font-size:12px;color:var(--text2);margin-bottom:8px;cursor:pointer">
+      <input type="checkbox" ${_macroMasque ? 'checked' : ''} onchange="basculerMasque(this.checked)"> Masque automatique
+      ${pastille('79,195,255')}plaque basale${pastille('95,224,138')}cordon${pastille('190,120,255')}plaque choriale</label>`;
+  }
 
   // Photos grid
   if (photoCount) {
     body += '<div class="photos-grid">';
     photos.forEach((p, i) => {
       const thumbUrl = fromPairing
-        ? `${API}/photo/thumbnail?path=${encodeURIComponent(p.path)}&w=280&h=280`
-        : `${API}/photo/thumbnail?path=${encodeURIComponent(p.file_path)}&w=280&h=280`;
+        ? `${API}/photo/thumbnail?path=${encodeURIComponent(p.path)}&w=640&h=640`
+        : `${API}/photo/thumbnail?path=${encodeURIComponent(p.file_path)}&w=640&h=640`;
       const label = fromPairing ? (p.filename || p.name) : (p.label || p.photo_key);
-      body += `<div class="photo-thumb" onclick="openLightbox(_sectionPhotos['${id}'],${i})" title="${escHtml(label)}">
-        <img src="${thumbUrl}" loading="lazy" alt="">
+      const e = _sectionPhotos[id][i];
+      body += `<div class="photo-thumb" onclick="openLightbox(_sectionPhotos['${id}'].map(macroVue),${i})" title="${escHtml(label)}">
+        <img src="${_macroMasque && e.masque ? e.masque.thumb : thumbUrl}" loading="lazy" alt=""
+             ${e.masque ? `data-plain="${thumbUrl}" data-masque="${e.masque.thumb}"` : ''}>
         <div class="photo-label">${escHtml(label)}</div>
       </div>`;
     });

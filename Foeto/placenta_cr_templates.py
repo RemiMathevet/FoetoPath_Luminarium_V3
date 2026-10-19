@@ -592,6 +592,9 @@ def build_cr_context(case: dict, modules: dict, viewer_annotations: dict | None 
         "viewer_micro_text": build_viewer_micro_text(viewer_annotations) if viewer_annotations else "",
         "viewer_conclusion_items": build_viewer_conclusion_items(viewer_annotations) if viewer_annotations else "",
         "viewer_annotations": viewer_annotations or {},
+
+        # Surfaces mesurées sur les clichés : renseigné par placenta_bp (services.macro_auto)
+        "macro_auto": {},
     }
 
 
@@ -653,9 +656,17 @@ TEMPLATES = {
         "description": "Mise en forme relevée sur le corpus anonymisé 07/2026 "
                        "(1783 CR placenta) : macroscopie en prose, micro préfixée "
                        "« Au microscope, », conclusion en lignes brèves",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "file": "placenta_service.jinja2",
         "changelog": [
+            {
+                "version": "1.1.0",
+                "date": "2026-10-08",
+                "changes": [
+                    "Surface de la plaque basale mesurée automatiquement sur le "
+                    "cliché (macro_annot.db, lecture seule)",
+                ],
+            },
             {
                 "version": "1.0.0",
                 "date": "2026-09-09",
@@ -676,9 +687,17 @@ TEMPLATES = {
         "description": "Toutes les données saisies : biométrie + Z-score Redline, "
                        "plaques, cordon, membranes, tranches, et TOUTES les sources "
                        "de microscopie cumulées (composite, FOETO, viewer, grille)",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "file": "placenta_integral.jinja2",
         "changelog": [
+            {
+                "version": "1.1.0",
+                "date": "2026-10-08",
+                "changes": [
+                    "Surface de la plaque basale mesurée automatiquement sur le "
+                    "cliché (macro_annot.db, lecture seule)",
+                ],
+            },
             {
                 "version": "1.0.0",
                 "date": "2026-09-09",
@@ -696,9 +715,17 @@ TEMPLATES = {
     "standard": {
         "label": "CR Standard (Amsterdam)",
         "description": "Compte-rendu macro placentaire complet",
-        "version": "2.0.0",
+        "version": "2.1.0",
         "file": "placenta_standard.jinja2",
         "changelog": [
+            {
+                "version": "2.1.0",
+                "date": "2026-10-08",
+                "changes": [
+                    "Surface de la plaque basale mesurée automatiquement sur le "
+                    "cliché (macro_annot.db, lecture seule)",
+                ],
+            },
             {
                 "version": "2.0.0",
                 "date": "2026-03-29",
@@ -721,9 +748,17 @@ TEMPLATES = {
     "moderne": {
         "label": "CR Moderne (mise en page)",
         "description": "Compte-rendu complet, sections encadrées, micro DB-driven FOETO",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "file": "placenta_moderne.jinja2",
         "changelog": [
+            {
+                "version": "1.1.0",
+                "date": "2026-10-08",
+                "changes": [
+                    "Surface de la plaque basale mesurée automatiquement sur le "
+                    "cliché (macro_annot.db, lecture seule)",
+                ],
+            },
             {
                 "version": "1.0.0",
                 "date": "2026-07-08",

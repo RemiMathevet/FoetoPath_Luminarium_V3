@@ -213,6 +213,15 @@ def api_submit():
 
     photos_dir = _get_photos_dir(dossier)
     photos_saved = _save_pwa_photos(request, case_id, dossier, module, photos_dir, submit_user)
+    if photos_saved:                       # signal à la veille macro (mesures des plaques) : jamais bloquant
+        try:
+            import urllib.request as _u
+            import db as foetopath_db
+            _u.urlopen(_u.Request(foetopath_db.get_setting("macro_veille_url", "http://127.0.0.1:5099/traiter"),
+                                  data=json.dumps({"dossier": dossier}).encode(), method="POST",
+                                  headers={"Content-Type": "application/json"}), timeout=1)
+        except Exception:
+            pass                           # veille arrêtée : le rattrapage à son démarrage s'en chargera
 
     pdb.update_case(case_id, {"dossier_photos_path": str(photos_dir)}, user=submit_user)
     _save_json_to_disk(dossier, module, data)
@@ -482,6 +491,22 @@ _list_slides_in = list_slides_in
 _list_photos_in = list_photos_in
 
 
+@placenta_bp.route("/api/photo/masque")
+def api_photo_masque():
+    """Cliché basal / choral fondu avec le masque plaque basale / cordon / plaque choriale
+    (serveur_recherche/mesures_auto.py), réglette et graduations cm tracées pour contrôle à l'œil.
+    w et h : vignette ; sans eux, pleine résolution."""
+    path = request.args.get("path", "")
+    import db as foetopath_db
+    ok, err = validate_photo_path(path, allowed_dir=foetopath_db.get_setting("data_root"))
+    if not ok:
+        return jsonify({"error": err}), 404 if "trouvée" in err else 403
+    from services.macro_auto import masque_de, photo_avec_masque, regle_de
+    w, h = request.args.get("w", type=int), request.args.get("h", type=int)
+    return Response(photo_avec_masque(path, masque_de(path), w, h, regle=regle_de(path)),
+                    mimetype="image/jpeg")
+
+
 @placenta_bp.route("/api/cases/<int:case_id>/pairing", methods=["GET"])
 def api_pairing(case_id):
     """
@@ -598,6 +623,16 @@ def api_lumi_slides(case_id):
         viewer_url = "/viewer"
     data["viewer_url"] = viewer_url
     return jsonify(data)
+
+
+@placenta_bp.route("/api/cases/<int:case_id>/macro-auto")
+def api_macro_auto(case_id):
+    """Surfaces basale / choriale mesurées sur les clichés (lecture seule de macro_annot.db)."""
+    case = pdb.get_case(case_id)
+    if not case:
+        return jsonify({"error": t('errors.case_not_found')}), 404
+    from services.macro_auto import get_mesures
+    return jsonify(get_mesures(case["numero_dossier"]) or {})
 
 
 @placenta_bp.route("/api/lumi-counts")
@@ -741,7 +776,10 @@ import placenta_cr_templates as _pcr
 def _build_placenta_context(case, modules_data, template_id=None):
     from services.lumi import get_annotations_for_case
     viewer_ann = get_annotations_for_case(case.get("numero_dossier", ""))
-    return _pcr.build_cr_context(case, modules_data, viewer_annotations=viewer_ann)
+    from services.macro_auto import get_mesures
+    ctx = _pcr.build_cr_context(case, modules_data, viewer_annotations=viewer_ann)
+    ctx["macro_auto"] = get_mesures(case.get("numero_dossier", "")) or {}
+    return ctx
 
 
 def _llm_placenta(text, model):

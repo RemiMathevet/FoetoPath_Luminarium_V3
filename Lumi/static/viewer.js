@@ -1,3 +1,7 @@
+// Lame renommée d'après son étiquette (ingest/renommer_ocr.py) : symbole ⌕ devant le nom, ancien nom en infobulle.
+const ocrNom = s => (s.nom_ocr ? '\u2315\u202f' : '') + s.name;
+const ocrTitre = s => s.nom_ocr ? `${s.name} — nom lu sur l'étiquette (fichier reçu : ${s.nom_ocr})` : s.name;
+
 // ── State ────────────────────────────────────────────────
 let state = {
     root: '',
@@ -97,6 +101,72 @@ setInterval(() => {
     _kaInteracted = false;
     fetch(_url('/api/foeto/organs'), { cache: 'no-store' }).catch(() => {});
 }, 4 * 60 * 1000);
+
+// ── Dictée vocale → note de la lame/photo ────────────────
+// La cible est figée au début de l'enregistrement : on peut changer de lame pendant la transcription.
+const voice = { rec: null, held: false };
+
+function voiceTarget() {
+    if (state.viewMode === 'slide' && state.currentSlideIndex >= 0) return state.slides[state.currentSlideIndex];
+    if (state.viewMode === 'photo' && state.currentPhotoIndex >= 0) return state.photos[state.currentPhotoIndex];
+    return null;
+}
+
+async function voiceStart(byKey = false) {
+    const t = voiceTarget();
+    if (!t) { toast('Aucune lame/photo active', true); return; }
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch (e) { toast('Micro indisponible : ' + e.message, true); return; }
+    const chunks = [];
+    const rec = new MediaRecorder(stream);
+    rec.ondataavailable = ev => chunks.push(ev.data);
+    rec.onstop = () => {
+        stream.getTracks().forEach(tr => tr.stop());
+        voiceSend(new Blob(chunks, { type: rec.mimeType }), t);
+    };
+    voice.rec = rec;
+    rec.start();
+    document.getElementById('btnVoice').classList.add('active');
+    if (byKey && !voice.held) voiceStop();   // V relâché pendant l'ouverture du micro
+}
+
+function voiceStop() {
+    if (!voice.rec) return;
+    voice.rec.stop();
+    voice.rec = null;
+    document.getElementById('btnVoice').classList.remove('active');
+}
+
+function voiceToggle() { voice.rec ? voiceStop() : voiceStart(); }
+
+async function voiceSend(blob, t) {
+    const fd = new FormData();
+    fd.append('audio', blob, 'note.webm');
+    fd.append('slide_id', t.name);
+    fd.append('slide_path', t.path);
+    toast(`Transcription… (${t.name})`);
+    try {
+        const res = await fetch(_url('/api/slide/voice-note'), { method: 'POST', body: fd });
+        // 524 Cloudflare (>100 s) : page HTML, pas de JSON — la note peut quand même être écrite côté serveur
+        if (!res.ok) { toast(`Dictée (${t.name}) : HTTP ${res.status}${res.status === 524 ? ' — délai dépassé, vérifier la note' : ''}`, true); return; }
+        const data = await res.json();
+        if (data.error) { toast('Dictée : ' + data.error, true); return; }
+        if (!data.text) { toast('Dictée : rien entendu', true); return; }
+        toast(`${t.name} : « ${data.text} »`);
+        // Panneau de labellisation ouvert sur cette lame : resynchroniser, sinon labelSave écraserait la dictée
+        const cur = voiceTarget();
+        if (cur && cur.name === t.name) {
+            state.labelNote = data.note;
+            const el = document.getElementById('labelNote');
+            if (el) el.value = data.note;
+        }
+    } catch (e) { toast('Dictée : ' + e.message, true); }
+}
+
+document.addEventListener('keyup', (e) => {
+    if (e.key === 'v' || e.key === 'V') { voice.held = false; voiceStop(); }
+});
 
 // ── OSD Creation Helper ──────────────────────────────────
 function createOSD(tileSources) {
@@ -303,7 +373,7 @@ function renderCaseIndex() {
             lines += anns.map(a => `<div class="ci-ann" title="${a.label}"><span class="ci-swatch" style="background:${a.color || '#888'}"></span>${a.label}</div>`).join('');
         }
         return `<div class="ci-slide ${active}">
-            <div class="ci-name" onclick="loadSlide(${i})" title="${s.name}">${s.name}</div>${lines}
+            <div class="ci-name" onclick="loadSlide(${i})" title="${ocrTitre(s)}">${ocrNom(s)}</div>${lines}
         </div>`;
     }).join('') || '<div class="sidebar-empty">Aucune lame</div>';
 }
@@ -338,7 +408,7 @@ function renderCarousel() {
             <div class="carousel-item slide-item ${state.viewMode === 'slide' && i === state.currentSlideIndex ? 'active' : ''} ${labeledClass}"
                  onclick="loadSlide(${i})" title="${s.name}">
                 <img src="${_BASE}/api/slide/thumbnail?path=${encodeURIComponent(s.path)}&w=160&h=160" alt="${s.name}" loading="lazy">
-                <div class="carousel-item-label">${s.name}</div>
+                <div class="carousel-item-label" title="${ocrTitre(s)}">${ocrNom(s)}</div>
             </div>`;
         }).join('');
         html += '</div>';
@@ -397,7 +467,7 @@ async function loadSlide(index) {
             state.objectivePower = info.objective_power || 0;
             const mppStr = state.mppX > 0 ? `  \u00b7  ${state.mppX.toFixed(3)} \u00b5m/px` : '';
             document.getElementById('slideMeta').textContent =
-                `${slide.name}  \u00b7  ${w.toLocaleString()} \u00d7 ${h.toLocaleString()} px  \u00b7  ${mpx} Mpx${mppStr}`;
+                `${ocrNom(slide)}  \u00b7  ${w.toLocaleString()} \u00d7 ${h.toLocaleString()} px  \u00b7  ${mpx} Mpx${mppStr}`;
             // Populate export level dropdown
             annPopulateLevels(info);
         }
@@ -613,6 +683,22 @@ document.addEventListener('keydown', (e) => {
         case 'e': case 'E':
             e.preventDefault();
             if (vp) { state.rotation = (state.rotation + 10) % 360; vp.setRotation(state.rotation); }
+            break;
+
+        // X / + : zoom avant | Y / - : zoom arrière (×2, comme le clic)
+        case 'x': case 'X': case '+':
+            e.preventDefault();
+            if (vp) { vp.zoomBy(2); vp.applyConstraints(); }
+            break;
+        case 'y': case 'Y': case '-':
+            e.preventDefault();
+            if (vp) { vp.zoomBy(0.5); vp.applyConstraints(); }
+            break;
+
+        // V maintenu : dictée (relâcher = envoi)
+        case 'v': case 'V':
+            e.preventDefault();
+            if (!e.repeat && !voice.rec) { voice.held = true; voiceStart(true); }
             break;
 
         // R: reset

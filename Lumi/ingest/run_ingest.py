@@ -8,9 +8,13 @@ Enchaîne 5 étapes vérifiées et idempotentes :
   1. ingest    : rsync --checksum SRC -> hot (flat), insère row storage='hot',
                  supprime la source APRÈS vérif. SKIP si nom_lame déjà en base.
   2. sort      : range les .mrxs flat en <cas>/ ET fixe lames.chemin.
-  3. integrity : check_mrxs_integrity récursif -> table integrite + TSV.
-  4. mask      : masque tissu (vignette sous-échantillonnée) -> GeoJSON + TSV.
-  5. blur      : OPT-IN (--with-blur) seulement. CPU lent (décode plein-format) ;
+  2b. ocr      : lames au nom atypique (« 06 », « DS_B08R_01S ») renommées d'après l'étiquette,
+                 lames.nom_ocr = ancien nom (renommer_ocr.py).
+  2c. d4v21    : source = sortie de la release D4V2.1 -> superpixels et heatmaps rangés à côté des lames
+                 (importer_d4v21.py).
+  3. integrity : check_mrxs_integrity sur les SEULES lames de ce passage -> table integrite + TSV.
+  4. mask      : masque tissu (vignette sous-échantillonnée), mêmes lames -> GeoJSON + TSV.
+  5. blur      : OPT-IN (--with-blur) seulement, mêmes lames. CPU lent (décode plein-format) ;
                  la netteté utile se dérive des embeddings la nuit.
 
 La partie NUIT (chroma -> embeddings, GPU) est dans run_night.py, lancée par
@@ -30,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import sqlite3
 import subprocess
 import sys
 from datetime import datetime
@@ -67,6 +72,11 @@ def main() -> None:
     dry = ["--dry-run"] if args.dry_run else []
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+    def ids():
+        with sqlite3.connect(f"file:{DB}?mode=ro", uri=True) as c:
+            return {i for (i,) in c.execute("SELECT id FROM lames")}
+    avant = ids()
+
     # 1. SRC -> hot (flat), insert rows
     run([py, HERE / "ingest_mrxs.py", args.src, HOT, "--db", DB, *dry])
 
@@ -78,20 +88,38 @@ def main() -> None:
         print("\n[OK] Dry-run terminé (integrity/blur/mask sautés).")
         return
 
+    def nouvelles(col):
+        with sqlite3.connect(f"file:{DB}?mode=ro", uri=True) as c:
+            return [v for i, v in c.execute(f"SELECT id, {col} FROM lames WHERE chemin IS NOT NULL") if i not in avant]
+
+    # 2b. noms atypiques de CE passage -> nom lu sur l'étiquette
+    if nouvelles("nom_lame"):
+        run([py, HERE / "renommer_ocr.py", *nouvelles("nom_lame")])
+
+    # 2c. source = sortie de la release D4V2.1 : superpixels (spx90, spx500) et overlays déjà calculés
+    #     au CHU, rangés à côté des lames sous leur nom en base
+    if (args.src / "_d4v21").is_dir() and nouvelles("nom_lame"):
+        run([py, HERE / "importer_d4v21.py", args.src, *nouvelles("nom_lame")])
+
+    # contrôle prospectif seulement (décision e8e404567ffa) : les lames ajoutées par CE passage
+    chemins = [HOT / ch for ch in nouvelles("chemin")]
+    if not chemins:
+        print("\n[OK] Aucune lame nouvelle : intégrité et masque sautés.")
+        return
     REPORTS.mkdir(parents=True, exist_ok=True)
     MASK_DIR.mkdir(parents=True, exist_ok=True)
 
     # 3. intégrité (récursif) -> table integrite + TSV
-    run([py, HERE / "check_mrxs_integrity.py", HOT, REPORTS / f"integrity_{ts}.tsv", "--db", DB])
+    run([py, HERE / "check_mrxs_integrity.py", *chemins, REPORTS / f"integrity_{ts}.tsv", "--db", DB])
 
     # 4. masque tissu (vignette sous-échantillonnée = rapide) -> GeoJSON + TSV
-    run([py, HERE / "Preanalytique_integrite_mask.py", HOT, MASK_DIR])
+    run([py, HERE / "Preanalytique_integrite_mask.py", *chemins, MASK_DIR])
 
     # 5. blur CPU : opt-in seulement. Décode plein-format (lent). La netteté
     #    utile se dérive des patch-embeddings la nuit ; blur_detect reste un
     #    outil de diagnostic standalone.
     if args.with_blur:
-        run([py, HERE / "blur_detect.py", HOT, "--db", DB])
+        run([py, HERE / "blur_detect.py", HOT, "--db", DB, "--lames", *nouvelles("nom_lame")])
 
     print("\n[OK] Chaîne jour terminée. Nuit (chroma+embeddings) : run_night.py @22h.")
 

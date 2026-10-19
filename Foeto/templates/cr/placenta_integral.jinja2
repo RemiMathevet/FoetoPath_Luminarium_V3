@@ -14,6 +14,7 @@ Disque placentaire
   Forme : {{ forme or "non précisée" }}.
   Complétude : {{ _completude(completude) }}.
 {% if grand_axe_cm and petit_axe_cm %}  Dimensions : {{ grand_axe_cm }} × {{ petit_axe_cm }} cm{% if epaisseur_cm %}, épaisseur {{ epaisseur_cm }} cm{% endif %}.
+{% endif %}{% if macro_auto.surface_basale_cm2 %}  Surface de la plaque basale mesurée sur cliché (automatique) : {{ macro_auto.surface_basale_cm2 }} cm².
 {% endif %}{% if masse_paree_g %}  Masse parée (cordon et membranes retirés) : {{ masse_paree_g }} g.
 {% endif %}{% if zscore and zscore.masse_ds is not none %}  Masse rapportée au terme : {{ zscore.masse_ds }} DS, {{ zscore.percentile }} — {{ zscore.trophicite|lower }} (réf. {{ (zscore.ref or {}).moyenne }} g ± {{ (zscore.ref or {}).sd }} à {{ terme_sa }} SA{% if zscore.extrapolated %}, valeur extrapolée{% endif %}).
 {% endif %}{% if zscore and zscore.ratio_fp %}  Ratio fœto-placentaire : {{ zscore.ratio_fp }}{% if zscore.ratio_ds is not none %} ({{ zscore.ratio_ds }} DS, réf. Redline){% endif %}.

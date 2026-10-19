@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+import re
 import shutil
 import sqlite3
 import subprocess
@@ -35,6 +36,9 @@ from pathlib import Path
 
 # env-driven, défaut = registre réel (jamais le stub 0-octet de Lames/lames.db)
 DB_DEFAULT = os.environ.get("LAMES_DB_PATH", "/media/SSDsamsung/db/lames.db")
+
+# Suffixe des copies sans niveau 0 (mrxs_truncate) : <lame>_x14, <lame>_x28
+COPIE_ALLEGEE = re.compile(r"_x\d+$")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -145,8 +149,10 @@ def safe_remove(path: Path) -> None:
 def discover_slides(src_dir: Path) -> list[tuple[Path, Path | None]]:
     """Retourne la liste (mrxs_file, dat_dir_or_None) triée par nom."""
     slides = []
-    for mrxs in sorted(src_dir.glob("*.mrxs")):
-        dat_dir = src_dir / mrxs.stem
+    # À plat, ou sortie Pipeline_D4V21_WSI : <lame>/mirax/<lame>_x28.mrxs
+    for mrxs in sorted([*src_dir.glob("*.mrxs"), *src_dir.glob("*/mirax/*.mrxs")],
+                       key=lambda p: p.name):
+        dat_dir = mrxs.parent / mrxs.stem
         slides.append((mrxs, dat_dir if dat_dir.is_dir() else None))
     return slides
 
@@ -187,6 +193,9 @@ def ingest(src_dir: Path, dst_dir: Path, db_path: Path, dry_run: bool) -> None:
     for mrxs, dat_dir in slides:
         if lame_exists(conn, mrxs.stem):
             log.info("SKIP  %s  (déjà en base)", mrxs.stem)
+        elif (complete := COPIE_ALLEGEE.sub("", mrxs.stem)) != mrxs.stem and lame_exists(conn, complete):
+            # ponytail: la lame complète prime ; la copie _xN reste dans la source
+            log.info("SKIP  %s  (lame complète %s déjà en base)", mrxs.stem, complete)
         else:
             to_process.append((mrxs, dat_dir))
 

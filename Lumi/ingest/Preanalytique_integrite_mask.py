@@ -409,7 +409,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(
         description="Détection et détourage de tissu sur lame entière — export annotation GeoJSON."
     )
-    ap.add_argument("input_path", type=Path,
+    ap.add_argument("input_path", type=Path, nargs="+",
                     help="Dossier racine (récursif) ou lame unique.")
     ap.add_argument("output_dir", type=Path,
                     help="Dossier de sortie pour les GeoJSON et le TSV récapitulatif.")
@@ -426,11 +426,11 @@ def main() -> int:
                     help="Facteur de sous-échantillonnage pour la vignette (défaut : 64).")
     args = ap.parse_args()
 
-    if not args.input_path.exists():
+    if not all(p.exists() for p in args.input_path):
         print(f"[ERREUR] Chemin introuvable : {args.input_path}", file=sys.stderr)
         return 2
 
-    slides = find_slides(args.input_path)
+    slides = sorted(x for p in args.input_path for x in find_slides(p))
     if not slides:
         print(f"[INFO] Aucune lame trouvée sous {args.input_path}", file=sys.stderr)
         return 0

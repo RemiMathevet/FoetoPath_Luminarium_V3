@@ -22,6 +22,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import re
 import configparser
 import os
 import sqlite3
@@ -82,9 +83,11 @@ COLUMNS = [
 
 def parse_slidedat(slidedat_path: Path) -> tuple[configparser.ConfigParser | None, str]:
     """Parse Slidedat.ini de façon tolérante. Retourne (parser, error_msg)."""
-    parser = configparser.ConfigParser(strict=False, interpolation=None)
-    # Slidedat.ini est généralement en latin-1 / cp1252
-    for enc in ("utf-8", "latin-1", "cp1252"):
+    # utf-8-sig D'ABORD : les Slidedat.ini du scanner commencent par un BOM ; en « utf-8 » il reste
+    # \ufeff devant [GENERAL] -> MissingSectionHeaderError, et la liste des Data attendus restait
+    # vide sur 4748 contrôles (2026-10-13). Un parser neuf par essai (lecture partielle sinon).
+    for enc in ("utf-8-sig", "latin-1", "cp1252"):
+        parser = configparser.ConfigParser(strict=False, interpolation=None)
         try:
             with open(slidedat_path, "r", encoding=enc) as f:
                 parser.read_file(f)
@@ -174,8 +177,15 @@ def check_one_slide(mrxs_path: Path) -> dict:
     row["found_data_files"] = str(len(present_data))
 
     missing = [f for f in expected if not (folder / f).is_file()]
+    # copie allégée de mrxs_truncate (<lame>_x14 / _x28) : les Data du haut de la pyramide sont
+    # absents PAR CONSTRUCTION (Slidedat.ini laissé intact) -> listés, mais ni erreur ni FAIL
+    tronquee = re.search(r"_x\d+$", mrxs_path.stem) is not None
+    # un Data*.dat de 0 octet est une copie avortée, pas un fichier présent (vu le 2026-10-13)
+    vides = [n for n in present_data if (folder / n).stat().st_size == 0]
+    if vides:
+        errors.append(f"data_files_vides:{len(vides)}")
     row["missing_data_files"] = ";".join(missing)
-    if missing:
+    if missing and not tronquee:
         errors.append(f"missing_data_files:{len(missing)}")
 
     # 6. taille totale dossier
@@ -207,8 +217,12 @@ def check_one_slide(mrxs_path: Path) -> dict:
     # statut global
     if not mrxs_exists or not folder_exists or not slidedat_exists or not row["index_dat_exists"] == "1":
         row["status"] = "FAIL"
-    elif missing or row["openslide_open_ok"] == "0":
+    elif (missing and not tronquee) or vides or row["openslide_open_ok"] == "0":
         row["status"] = "FAIL"
+    elif row["openslide_open_ok"] != "1":
+        # sans lecteur WSI, on n'a vérifié que la présence des fichiers : jamais OK
+        errors.append("ouverture_non_testee")
+        row["status"] = "WARN"
     elif errors:
         row["status"] = "WARN"
     else:
@@ -311,7 +325,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(
         description="Vérifie l'intégrité des lames MRXS avant batch FRANCINE."
     )
-    ap.add_argument("input_path", type=Path, help="Dossier racine (récursif) ou .mrxs unique.")
+    ap.add_argument("input_path", type=Path, nargs="+", help="Dossier racine (récursif) ou .mrxs unique.")
     ap.add_argument("output_tsv", type=Path, help="Chemin du TSV de sortie.")
     ap.add_argument(
         "--no-openslide",
@@ -329,11 +343,11 @@ def main() -> int:
         HAVE_OPENSLIDE = False
         HAVE_OMNISSIAH = False
 
-    if not args.input_path.exists():
+    if not all(p.exists() for p in args.input_path):
         print(f"[ERREUR] Chemin introuvable : {args.input_path}", file=sys.stderr)
         return 2
 
-    mrxs_files = find_mrxs_files(args.input_path)
+    mrxs_files = sorted(x for p in args.input_path for x in find_mrxs_files(p))
     if not mrxs_files:
         print(f"[INFO] Aucun .mrxs trouvé sous {args.input_path}", file=sys.stderr)
         write_tsv([], args.output_tsv)

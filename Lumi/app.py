@@ -147,7 +147,8 @@ def get_dz(slide_path: str) -> DeepZoomGenerator:
 # ── CHROMA (normalisation colorimétrique HES optionnelle, ?chroma=1) ────────
 _CHROMA_SRC_DIR = Path(os.environ.get("CHROMA_SRC_DIR", "/media/SSDsamsung/db/chroma_src"))
 _CHROMA_CALIB = Path(
-    os.environ.get("CHROMA_CALIB", "/home/mathevet/Bureau/chroma/calib_target.json"))
+    os.environ.get("CHROMA_CALIB", "/home/mathevet/Bureau/chroma/calib_target_v2.json"))
+# calib_target.json (v1) garde H et S inversés (NMF non ancrée) : ne plus le servir.
 try:
     sys.path.insert(0, str(Path(__file__).resolve().parent / "embeddings"))
     import chroma as _chroma
@@ -348,7 +349,22 @@ def slides():
         annotated = get_annotated_stems(root)
         for s in slide_list:
             s["annotated"] = s["name"] in annotated
+    ocr = _noms_ocr()
+    for s in slide_list:
+        s["nom_ocr"] = ocr.get(s["name"])
     return jsonify({"slides": slide_list, "photos": photo_list, "folder": folder})
+
+
+LAMES_DB = Path(os.environ.get("LAMES_DB_PATH", "/media/SSDsamsung/db/lames.db"))
+
+
+def _noms_ocr() -> dict:
+    """{nom_lame: ancien nom} des lames renommées d'après l'étiquette (ingest/renommer_ocr.py)."""
+    try:
+        with sqlite3.connect(f"file:{LAMES_DB}?mode=ro", uri=True) as c:
+            return dict(c.execute("SELECT nom_lame, nom_ocr FROM lames WHERE nom_ocr IS NOT NULL"))
+    except sqlite3.Error:                       # base absente ou colonne pas encore créée
+        return {}
 
 
 @app.route("/api/slide/info", methods=["POST"])
@@ -1261,6 +1277,103 @@ def slide_label_save():
     else:
         db.delete_slide_note(conn, slide_id)
     return jsonify({"ok": True, "labeled": len(organs) > 0})
+
+
+# ── Dictée vocale → note de la lame/photo ──────────────────────────────────
+# Deux écoutes indépendantes : Whisper (in-process, CPU) + Voxtral Mini (llama-server,
+# voxtral-mini.service, mode [TRANSCRIBE]). Accord = texte tel quel ; divergence = ⟨whisper / voxtral⟩.
+# Jamais de correction automatique : c'est Rémi qui tranche.
+# ponytail: un verrou global — les clips passent en file (~6 s Whisper + ~8 s Voxtral par clip de 4 s).
+_whisper = None
+_whisper_lock = threading.Lock()
+DICTEE_DIR = Path(os.environ.get("DICTEE_DIR", "/media/SSDsamsung/db/dictees"))
+VOXTRAL_URL = os.environ.get("VOXTRAL_URL", "http://127.0.0.1:8082")
+
+
+def _voxtral_transcrire(pcm):
+    """Transcription Voxtral (mode natif [TRANSCRIBE]) ; None si le service ne répond pas."""
+    import base64, urllib.request, wave
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(16000)
+        w.writeframes((pcm * 32767).astype(np.int16).tobytes())
+    body = {"prompt": {"prompt_string": "[INST]<__media__>[/INST]lang:fr[TRANSCRIBE]",   # marqueur fixé par LLAMA_MEDIA_MARKER
+                       "multimodal_data": [base64.b64encode(buf.getvalue()).decode()]},
+            "temperature": 0}
+    try:
+        req = urllib.request.Request(f"{VOXTRAL_URL}/completion", json.dumps(body).encode(),
+                                     {"Content-Type": "application/json"})
+        return json.load(urllib.request.urlopen(req, timeout=60))["content"].strip().strip('"').strip()
+    except Exception as e:
+        print(f"[dictee] Voxtral indisponible : {e}", flush=True)
+        return None
+
+
+def _fusion_ecoutes(w, v):
+    """Texte Whisper ; les passages où Voxtral entend autre chose deviennent ⟨whisper / voxtral⟩.
+    Casse et ponctuation ignorées pour la comparaison."""
+    import difflib, re
+    if not v:
+        return w
+    wt, vt = w.split(), v.split()
+    cle = lambda t: re.sub(r"[^\w'-]", "", t.lower())
+    sm = difflib.SequenceMatcher(None, [cle(t) for t in wt], [cle(t) for t in vt], autojunk=False)
+    ops = []   # un seul mot commun entre deux divergences (« Par en chyme ») : un seul bloc
+    for op in sm.get_opcodes():
+        if ops and op[0] != "equal" and len(ops) >= 2 and ops[-1][0] == "equal" \
+                and ops[-1][2] - ops[-1][1] == 1 and ops[-2][0] != "equal":
+            ops.pop(); prev = ops.pop()
+            op = ("replace", prev[1], op[2], prev[3], op[4])
+        ops.append(op)
+    out = []
+    for op, i1, i2, j1, j2 in ops:
+        if op == "equal":
+            out += wt[i1:i2]
+        else:
+            out.append(f"⟨{' '.join(wt[i1:i2]) or '∅'} / {' '.join(vt[j1:j2]) or '∅'}⟩")
+    return " ".join(out)
+
+
+@app.route("/api/slide/voice-note", methods=["POST"])
+def slide_voice_note():
+    global _whisper
+    slide_id = request.form.get("slide_id", "")
+    slide_path = request.form.get("slide_path", "")
+    audio = request.files.get("audio")
+    if not slide_id or audio is None:
+        return jsonify({"error": "slide_id et audio requis"}), 400
+    from faster_whisper import WhisperModel, decode_audio
+    raw = audio.read()
+    with _whisper_lock:
+        if _whisper is None:
+            _whisper = WhisperModel("large-v3-turbo", device="cpu", compute_type="int8", cpu_threads=16)
+        pcm = decode_audio(io.BytesIO(raw))
+        segs, _ = _whisper.transcribe(pcm, language="fr",
+                                      beam_size=1, vad_filter=True)  # ponytail: sans amorce ; la donner aux termes que Whisper rate réellement
+        text = " ".join(s.text.strip() for s in segs).strip()
+        voxtral = _voxtral_transcrire(pcm) if text else None
+    if not text:
+        return jsonify({"text": "", "note": None})
+    conn = db.get_db()
+    if slide_path and is_slide(slide_path):
+        db.upsert_slide(conn, slide_id, Path(slide_path).name,
+                        str(Path(slide_path).parent), "", get_slide_calibration(slide_path))
+    elif not db.get_slide(conn, slide_id):
+        db.upsert_slide(conn, slide_id, slide_id, "", "", {})
+    now = datetime.now()
+    ligne = f"[{now.strftime('%H:%M')}] {_fusion_ecoutes(text, voxtral)}"
+    old = db.get_slide_note(conn, slide_id)
+    note = (old + "\n" if old else "") + ligne
+    db.upsert_slide_note(conn, slide_id, note)
+    # Clip gardé pour la correction de nuit (audio + brouillon Whisper)
+    d = DICTEE_DIR / slide_id
+    d.mkdir(parents=True, exist_ok=True)
+    clip = d / f"{now.strftime('%Y%m%d_%H%M%S_%f')}.webm"
+    clip.write_bytes(raw)
+    conn.execute("INSERT INTO dictees (slide_id, created_at, audio_path, texte_whisper, texte_voxtral, note_ligne) "
+                 "VALUES (?,?,?,?,?,?)", (slide_id, now.isoformat(), str(clip), text, voxtral, ligne))
+    conn.commit()
+    return jsonify({"text": ligne.split("] ", 1)[1], "note": note, "voxtral": voxtral is not None})
 
 
 @lru_cache(maxsize=1)

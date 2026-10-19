@@ -70,6 +70,13 @@
         </svg>
         Heatmap
     </button>
+    <button class="btn btn-display" id="btnVoice" onclick="voiceToggle()" title="Dictée → note de la lame/photo (maintenir V, ou clic début/fin)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/>
+        </svg>
+        Dictée
+    </button>
     <select id="heatmapSelect" onchange="heatmapLoadVariant(this.value)" title="Variante de heatmap" style="display:none;height:28px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;"></select>
     <span class="zoom-indicator" id="zoomIndicator"></span>
     <div class="slide-meta" id="slideMeta"></div>
@@ -214,11 +221,8 @@
                         title="Affiche la grille de superpixels déjà en cache — pas de peinture, pas de limite de champ">Grille</button>
                 <select class="display-preset-btn" id="spUm" onchange="setSpUm(this.value)"
                         title="Taille visée du superpixel. En mode Grille seules les tailles déjà précalculées pour la lame s'affichent.">
-                    <option value="50">50 µm</option>
-                    <option value="60">60 µm</option>
-                    <option value="70">70 µm</option>
-                    <option value="80">80 µm</option>
-                    <option value="90" selected>90 µm</option>
+                    <option value="90" selected>spx90</option>
+                    <option value="500">spx500</option>
                 </select>
             </div>
 
@@ -291,7 +295,7 @@
         <div class="shortcuts-hint" id="shortcutsHint">
             <kbd>&#8592;</kbd><kbd>&#8593;</kbd><kbd>&#8595;</kbd><kbd>&#8594;</kbd> Déplacer 90%
             &nbsp;<kbd>4</kbd><kbd>6</kbd> / <kbd>Q</kbd><kbd>D</kbd> Préc./Suiv.
-            &nbsp;<kbd>7</kbd><kbd>9</kbd> Rot. 90° &nbsp;<kbd>A</kbd><kbd>E</kbd> Rot. 10°
+            &nbsp;<kbd>7</kbd><kbd>9</kbd> Rot. 90° &nbsp;<kbd>A</kbd><kbd>E</kbd> Rot. 10° &nbsp;<kbd>X</kbd>/<kbd>+</kbd> <kbd>Y</kbd>/<kbd>-</kbd> Zoom &nbsp;<kbd>V</kbd> maintenu Dictée
             &nbsp;<kbd>R</kbd> Reset &nbsp;<kbd>F</kbd> Plein écran &nbsp;<kbd>L</kbd> Étiquette &nbsp;<kbd>P</kbd> Peindre &nbsp;<kbd>N</kbd> Annoter &nbsp;<kbd>M</kbd> Mesurer &nbsp;<kbd>I</kbd> Affichage
         </div>
 

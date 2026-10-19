@@ -122,6 +122,20 @@ CREATE TABLE IF NOT EXISTS slide_notes (
     updated_at  TEXT NOT NULL
 );
 
+-- ── Dictées vocales (clip gardé pour la passe de correction de nuit) ───
+CREATE TABLE IF NOT EXISTS dictees (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    slide_id     TEXT NOT NULL,
+    created_at   TEXT NOT NULL,
+    audio_path   TEXT NOT NULL,
+    texte_whisper TEXT NOT NULL,
+    note_ligne   TEXT NOT NULL,          -- ligne exacte écrite dans slide_notes (pour la remplacer)
+    texte_corrige TEXT,                  -- NULL tant que la passe de nuit n'est pas faite
+    corrige_par  TEXT,
+    corrige_at   TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_dictees_slide ON dictees(slide_id);
+
 -- ── Diagnostic d'annotation (contexte LDA/embedding, distinct de labellisation) ─
 CREATE TABLE IF NOT EXISTS annotation_diagnosis (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -149,6 +163,7 @@ _MIGRATIONS = [
     ("embeddings", "pipeline_version", "TEXT"),
     ("embeddings", "mpp_target", "REAL"),
     ("annotations", "sp_key", "TEXT"),
+    ("dictees", "texte_voxtral", "TEXT"),   # 2e écoute indépendante (NULL si Voxtral indisponible)
 ]
 
 

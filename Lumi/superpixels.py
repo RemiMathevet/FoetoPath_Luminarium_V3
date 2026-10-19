@@ -78,9 +78,17 @@ def tile_key(sp_um: float, col: int, row: int) -> str:
     return f"{sp_um:g}_{col}_{row}"
 
 
+def cache_dir(slide_path) -> Path:
+    """Dossier du cache SLIC : à côté de la lame (viewer), ou $D4V21_SP_CACHE (release : jamais dans le
+    dossier du scanner)."""
+    import os
+    d = os.environ.get("D4V21_SP_CACHE")
+    return Path(d) if d else Path(slide_path).parent / "superpixels"
+
+
 def cache_path(slide_path: str, sp_um: float, col: int, row: int) -> Path:
     p = Path(slide_path)
-    d = p.parent / "superpixels"
+    d = cache_dir(p)
     d.mkdir(parents=True, exist_ok=True)
     return d / f"{p.stem}_sp{sp_um:g}v{SP_VERSION}_{col}_{row}.geojson"
 
